@@ -1,0 +1,57 @@
+Cấu trúc:
++ Danh sách môn học: mảng con trỏ MAX = 300 luôn theo thứ tự mã môn học:
+	- MAMH( char 15) 
+	- TENMH( char 50)
++ Danh sách lớp: mảng con trỏ MAX = 500:
+	- MALOP
+	- TENLOP
+	- niên khóa
+	- con trỏ dssv trỏ đến danh sách sinh viên thuộc lớp đó
++ Danh sách sinh viên: danh sách liên kết đơn:
+	- MSV
+	- HO
+	- TEN
+	- PHAI
+	- password
+	- con trỏ trỏ tới các môn đã thi trắc nghiệm
++ Danh sách Điểm thi: danh sách liên kết đơn:
+	- MAMH
+	- DIEM
++ Danh sách câu hỏi thi: cây nhị phân tìm kiếm:
+	- ID
+	- MAMH
+	- nội dung
+	- A
+	- B/
+	- C
+	- D
+	- đáp án
+Hàm:
++ Đăng nhập: phân quyền với giáo viên và học sinh
++ Chỉnh sửa lớp
++ in danh sách lớp theo niên khóa
++ Nhập sinh viên của lớp : nhập vào mã lớp trước, sau đó nhập các sinh viên vào lớp đó
++ Nhập môn học: cho phép cập nhật (thêm / xóa / hiệu chỉnh ) thông tin của môn học
++ Nhập câu hỏi thi (Id là số nguyên dương ngẫu nhiên do chương trình tự tạo)
++ Thi Trắc nghiệm ( trước khi thi hỏi người thi môn thi, số câu hỏi thi, 
+số phút thi-sau đó lấy ngẫu nhiên các câu hỏi trong danh sách câu hỏi thi của môn; 
++ In chi tiết các câu hỏi đã thi 1 môn học của  1 sinh viên
++ In bảng điểm thi trắc nghiệm môn học của 1 lớp (nếu có sinh viên chưa thi thì ghi “Chưa thi”.
+Lưu ý: Chương trình cho phép lưu các danh sách vào file; Kiểm tra các điều kiện làm dữ liệu bị sai. Sinh viên có thể tự thiết kế thêm danh sách để đáp ứng yêu cầu của đề tài.
+Ràng buộc:
+-Giáo viên đăng nhập thi sử dụng tất cả các chức năng
+-tài khoản không phân biệt hoa thường, còn mật khẩu thì có
+-Sinh viên chỉ có chức năng thi mà thôi
+-niên khóa trong lớp là chuỗi kí tự (2015-2016)
+-đáp án A B C D không được giống nhau
+-giáo viên thi chỉ biết điểm  không cần lưu
+-nhập sinh viên của lớp thì chỉ cần nhập mã lớp thì tự động thêm sinh viên và nhập tiếp mà không cần nhập lại mã lớp 
+-thi trắc nghiệm gồm thuật toán lấy ngẫu nhiên câu hỏi để thi( ví dụ 30 câu của 100)
+-thi thì phải hiện số phút đếm ngược
+- option để vươn tới 10 điểm: 
+	+ đáp án được gán ngẫu nhiên ở các đề khác nhau
+	+ nếu cúp điện thì sv đang thi vào nhập tài khoản và vẫn tiếp tục thi tiếp
+
+Khảo sát thực tế:
+- Đề thi có phải lưu lại không ? có 
+- In chi tiết các câu hỏi đã thi 1 môn học của  1 sinh viên phải có câu trả lời không ? có
