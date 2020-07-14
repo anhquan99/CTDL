@@ -53,8 +53,6 @@ struct Lop{
 	std::string TENLOP;
 	std::string NK; // nien hkoa
 	SV *sv;
-	
-	void 
 };
 
 struct DSLop{
