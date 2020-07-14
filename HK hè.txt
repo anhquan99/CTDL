@@ -51,7 +51,7 @@ Ràng buộc:
 - option để vươn tới 10 điểm: 
 	+ đáp án được gán ngẫu nhiên ở các đề khác nhau
 	+ nếu cúp điện thì sv đang thi vào nhập tài khoản và vẫn tiếp tục thi tiếp
-
+- Một sinh viên chỉ thi được một lần
 Khảo sát thực tế:
 - Đề thi có phải lưu lại không ? có 
 - In chi tiết các câu hỏi đã thi 1 môn học của  1 sinh viên phải có câu trả lời không ? có
