@@ -5,17 +5,22 @@
 #include <conio.h>
 #include <string>
 using namespace std;
+//layout
+void Layout();
+void InnerLayout();
 // login form
 void Login();
 // main menu
 void MainMenuGV();
 void MainMenuSV();
 // create update delete lop
-void ClassForm();
-void ClassList();
+void ThemLop();
+void DSLop();
+void SuaLop();
 // create update delete SV
-void ClassIDForm();
-void SVForm();
+void ThongTinSV();
+void ThemSV();
+void SuaSV();
 // create mon hoc
 void MonHocForm();
 // create cau hoi
@@ -61,14 +66,26 @@ void gotoxy(int x, int y) //set vi tri
 void InitWindow(){		//set vi tri va chieu dai, rong cua window
 	HWND consoleWindow = GetConsoleWindow();
 	system("mode 150");
-	SetWindowPos( consoleWindow, 0, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER );
+	SetWindowPos( consoleWindow, 0, 30, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER );
 }
 void Layout(){
 	system("cls");
 	setcursor(0,0);
 	TextColor(12);
 	gotoxy(40,0);
-	printf("DUNG PHIM LEN XUONG DE DIEU HUONG  ||  ENTER DE CHON");
+	printf("DUNG PHIM LEN XUONG DE DIEU HUONG  ||  ENTER DE NHAP || ESC DE QUAY LAI");
+	gotoxy(50,1);
+	printf("-------------------------------------");
+	gotoxy(40,2);
+	printf("POSTS AND TELECOMMUNICATIONS INSTITUTE OF TECHNOLOGY");
+	
+}
+void InnerLayout(){
+	system("cls");
+	setcursor(0,0);
+	TextColor(12);
+	gotoxy(30,0);
+	printf("DUNG PHIM LEN XUONG DE DIEU HUONG  ||  ENTER DE CHON || ESC DE QUAY LAI || F1 DE THEM || F2 DE XOA || F3 DE SUA ");
 	gotoxy(50,1);
 	printf("-------------------------------------");
 	gotoxy(40,2);
@@ -76,15 +93,15 @@ void Layout(){
 	
 }
 void Login(){
-	setcursor(1,1);
-	string UserAndPass[2] = {""};
-	int row = 4;
-	int col[2] = {44,45};
-	int size[2] = {0};
 	Layout();
+	setcursor(1,1);
+	string UserAndPass[2] = {""};// [1] : username; [2]: password
+	int row = 4;
+	int col[2] = {45,45};
+	int size[2] = {0};
 	TextColor(12);
 	gotoxy(60,3);
-	printf("LOGIN");
+	printf("DANG NHAP");
 	TextColor(2);
 	gotoxy(35,4);
 	printf("USERNAME:");
@@ -135,77 +152,77 @@ void Login(){
 	}
 }
 void MainMenuGV(){
-	gototop:
-	setcursor(0,0);
-	system("cls");
-	gotoxy(40,0);
-	printf("DUNG PHIM LEN XUONG DE DIEU HUONG  ||  ENTER DE CHON");
-	int x = 50;
-	char func[][100]={"1. Cap nhap danh sach may bay","2. Cap nhap chuyen bay", "3. Dat ve", "4. Huy ve", "5. Danh sach khach hang trong chuyen bay","6. Danh sach cac chuyen bay con trong cho", "7. Thong ke", "8. Thoat"};
-	gotoxy(x+10,1);
-	printf("PTIT AIRLINES");
-	int row = 2;
+	InnerLayout();
+	string func[3] = {"LOP", "MON HOC", "LICH THI"};
+	int row = 4;
+	int x = 55;
+	//create banner
+	TextColor(12);
+	gotoxy(60,3);
+	printf("DANG NHAP");
 	gotoxy(x,row);
-	TextColor(140);
-	printf("%s\n",func[0]);
+	TextColor(192);
+	cout << func[0] << "\n";
 	TextColor(2);
-	for(int i=3;i<10;i++){
-		gotoxy(x,i);
-		printf("%s",func[i-2]);
+	for(int i=1;i<3;i++){
+		gotoxy(x,row + i);
+		cout  << func[i] << "\n";
 	}	
 	while(1){
-		gotoMain:
 		int input;
 		input  = getch();
 		switch(input){
 			case 72:
-				if(row>2){
+				if(row>4){
 					gotoxy(x,row);
 					TextColor(2);
-					printf("%s\n",func[row-2]);
+					cout  << func[row -4] << "\n";
+//					printf("%s\n",func[row-2]);
 					row--;
 					gotoxy(x,row);
-					TextColor(140);
-					printf("%s\n",func[row-2]);
+					TextColor(192);
+					cout  << func[row -4] << "\n";
+//					printf("%s\n",func[row-2]);
 					TextColor(2);
 				}
 				break;
 			case 80:
-			if(row<9){
+			if(row<6){
 					gotoxy(x,row);
 					TextColor(2);
-					printf("%s\n",func[row-2]);
+					cout  << func[row -4] << "\n";
+//					printf("%s\n",func[row-2]);
 					row++;
 					gotoxy(x,row);
-					TextColor(140);
-					printf("%s\n",func[row-2]);
+					TextColor(192);
+					cout  << func[row -4] << "\n";
+//					printf("%s\n",func[row-2]);
 					TextColor(2);
 				}
 				break;	
 			case 13:
 				switch(row){
 					case 2:	//cap nhap danh sach may bay
-						goto gototop;
+//						goto gototop;
 						break;
 					case 3:	//cap nhap chuyen bay
-						goto gototop;
+//						goto gototop;
 						break;
 					case 4:	//dat ve
-						goto gototop;
+//						goto gototop;
 						break;
 					case 5:	//huy ve
-						goto gototop;
+//						goto gototop;
 						break;
 					case 6: //danh sach khach hang trong chuyen bay
-						setcursor(1,1);
-						goto gototop;
+//						goto gototop;
 						break;
 					case 7:	//danh sach cac chuyen bay con trong cho
 						setcursor(1,1);
-						goto gototop;
+//						goto gototop;
 						break;
 					case 8:	//thong ke
-						goto gototop;
+//						goto gototop;
 						break;
 					case 9:	//exit
 						return;
@@ -214,6 +231,147 @@ void MainMenuGV(){
 				}			
 		}
 	}	
+}
+void DSLop(){
+	InnerLayout();
+	int row = 4;
+	int x = 55;
+	string lop[3] = {"MA LOP", "TEN LOP", "NIEN KHOA"};
+	//create banner
+	TextColor(12);
+	gotoxy(60,3);
+	printf("DANH SACH LOP");
+	TextColor(2);
+	gotoxy(40, row);
+	cout << "NIEN KHOA:";
+	for( int i = 0; i < 3; i++){
+		gotoxy((i+1)*30, 5);
+		cout << lop[i];
+	}
+	setcursor(1,1);
+	// load danh sach lop theo mang de len xuong cho de dang
+	// tao 1 cai filter de search	
+	while(1){
+		int input;
+		input  = getch();
+		switch(input){
+				
+		}		
+	}
+}
+void ThemLop(){
+	Layout();
+	int row = 4;
+	int x = 30;
+	string lop[3] = {"MA LOP:", "TEN LOP:", "NIEN KHOA:"};
+	int col[3] ={7, 8, 10 };
+	string inputLop[3] = {""}; // [1]: ma lop; [2]: ten lop; [3]: nien khoa
+	//create banner
+	TextColor(12);
+	gotoxy(60,3);
+	printf("THEM LOP");
+	TextColor(2);
+	for( int i = 0; i < 3; i++){
+		gotoxy(x, row + i);
+		cout << lop[i];
+	}
+	setcursor(1,1);
+	gotoxy(x + col[row - 4] + inputLop[ row - 4].length() + 1, row);
+	while(1){
+		int input = getch();
+		if(input == 72){	//up
+			if(row>4){
+				row--;
+				gotoxy( x + col[row -4] + inputLop[row - 4].length() + 1, row);
+			}
+		}
+		else if(input == 80){	//down
+			if(row<6){
+				row++;
+				gotoxy( x + col[row - 4 ] + inputLop[row - 4].length() + 1, row);
+			}
+		}
+		else if( input == 13 ){ //enter
+			MessageBox(0,"XIN DANG NHAP LAI!!!","THONG BAO",0);
+		}
+		else if( input == 8 ){ //backspace
+			if( inputLop[row-4].length() > 0){
+				gotoxy( x+ col[row - 4]+ inputLop[row - 4].length(),row);
+				printf(" ");
+				inputLop[row - 4].pop_back();
+				gotoxy( x + col[row - 4]+ inputLop[row - 4].length() + 1,row);
+			}
+		}
+		else if( input != 224 && input !=72 && input != 80 && input != 8 ){ // input char 
+			if((input>=48&&input<=57)||(input>=97&&input<=122) && inputLop[row - 4].length() < 50){
+					gotoxy( x + col[row-4]+inputLop[row - 4].length() + 1,row);
+					char ch = (char) input;
+					ch = toupper(ch);
+					printf("%c",ch);
+					inputLop[row-4].push_back(ch);
+				}
+		}
+	}
+}
+void SuaLop(int id){
+	//tim kiem xong hien thi thong tin cua lop
+	//---------------------------------------//
+	//---------------------------------------//
+	Layout();
+	int row = 4;
+	int x = 30;
+	string lop[3] = {"MA LOP:", "TEN LOP:", "NIEN KHOA:"};
+	int col[3] ={7, 8, 10 };
+	string inputLop[3] = {""}; // [1]: ma lop; [2]: ten lop; [3]: nien khoa
+	//create banner
+	TextColor(12);
+	gotoxy(60,3);
+	printf("THEM LOP");
+	TextColor(2);
+	for( int i = 0; i < 3; i++){
+		gotoxy(x, row + i);
+		cout << lop[i];
+	}
+	setcursor(1,1);
+	gotoxy(x + col[row - 4] + inputLop[ row - 4].length() + 1, row);
+	while(1){
+		int input = getch();
+		if(input == 72){	//up
+			if(row>4){
+				row--;
+				gotoxy( x + col[row -4] + inputLop[row - 4].length() + 1, row);
+			}
+		}
+		else if(input == 80){	//down
+			if(row<6){
+				row++;
+				gotoxy( x + col[row - 4 ] + inputLop[row - 4].length() + 1, row);
+			}
+		}
+		else if( input == 13 ){ //enter
+			MessageBox(0,"XIN DANG NHAP LAI!!!","THONG BAO",0);
+		}
+		else if( input == 8 ){ //backspace
+			if( inputLop[row-4].length() > 0){
+				gotoxy( x+ col[row - 4]+ inputLop[row - 4].length(),row);
+				printf(" ");
+				inputLop[row - 4].pop_back();
+				gotoxy( x + col[row - 4]+ inputLop[row - 4].length() + 1,row);
+			}
+		}
+		else if( input != 224 && input !=72 && input != 80 && input != 8 ){ // input char 
+			if((input>=48&&input<=57)||(input>=97&&input<=122) && inputLop[row - 4].length() < 50){
+					gotoxy( x + col[row-4]+inputLop[row - 4].length() + 1,row);
+					char ch = (char) input;
+					ch = toupper(ch);
+					printf("%c",ch);
+					inputLop[row-4].push_back(ch);
+				}
+		}
+	}
+}
+void DSSVCuaLop(){
+	
 }
 //-----
 
