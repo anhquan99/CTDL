@@ -2,17 +2,22 @@
 // Mon: Cau truc du lieu
 // GV: Luu Nguyen Ky Thu
 // De tai: Thi trac nghiem
-#ifndef _tracnghiem
-#define _tracnghiem
-// body
+#ifndef Structure
+#define Structure
+
 #include <iostream>
 #include <string>
+
+//const
+const int MAXMH = 300;
+const int MAXLOP = 500;
+
 // create struct
-#define MAXMH = 300
 struct MonHoc{
-	string MAMH;
-	string TENMH;
+	std::string MAMH;
+	std::string TENMH;
 };
+
 struct DSMonHoc{
 	int index = 0;
 	MonHoc *ds[MAXMH]; // danh sach mon hoc
@@ -39,6 +44,14 @@ struct SV{
 };
 struct DSDiemThi{ // danh sach diem thi
 	string MAMH;
+
+struct time{
+	int gio;
+	int phut;
+};
+
+struct DT{ // danh sach diem thi
+	std::string MAMH;
 	double DIEM;
 	struct DT *next; // mon thi ke tiep
 	bool TrangThai; // neu sinh vien bi cup dien thi co the thi lai
@@ -52,19 +65,21 @@ struct DSThi{
 };
 struct CauHoi{
 	int ID;
-	string MAMH;
-	string NoiDung;
-	string A;
-	string B;
-	string C;
-	string D;
+	std::string MAMH;
+	std::string NoiDung;
+	std::string A;
+	std::string B;
+	std::string C;
+	std::string D;
 	char DapAn;
 };
+
 struct DSCauHoi{
 	CauHoi cauhoi;
 	struct DSCauHoi *left;
 	struct DSCauHoi *right;
 };
+
 struct date{
 	int gio;
 	int phut;
@@ -72,8 +87,4 @@ struct date{
 	int thang;
 	int nam;
 };
-struct time{
-	int gio;
-	int phut;
-};
-
+#endif
