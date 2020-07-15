@@ -34,10 +34,10 @@ struct SV{
 	string TEN;
 	bool PHAI;
 	string password;
-	DT *dt; // danh sach diem thi
+	DSDiemThi *dsdiemthi; // danh sach diem thi
 	SV *next; // sinh vien ke tiep
 };
-struct DT{ // danh sach diem thi
+struct DSDiemThi{ // danh sach diem thi
 	string MAMH;
 	double DIEM;
 	struct DT *next; // mon thi ke tiep
@@ -45,6 +45,10 @@ struct DT{ // danh sach diem thi
 	time ThoiGianConLai;
 	char *DapAn; // mang cap phat dong
 	int *DSCauHoi;  // mang cap phat dong
+};
+struct DSThi{
+	string MAMH;
+	int *DSSV;
 };
 struct CauHoi{
 	int ID;

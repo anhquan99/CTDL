@@ -1,17 +1,16 @@
 // increaser
 #include <iostream>
+#include <string>
+#include "GUI.h"
 using namespace std;
 
 int main ()
 {
-  int *a[5];
-//  *a = new int [5];
-  int b [5] = {1,2,3,4,5};
-  cout << "this\n";
-  for(int i = 0; i < 5; i++){
-    a[i] = &b[i];
-    cout << *a[i] << '\n';
-  } 
-  
-  return 0;
-}
+	InitWindow();
+	Login();
+//	string a[2] = {"abcd", "cdfe"};
+//	a[1].pop_back();
+//	int size = a[1].length();
+//	cout << size;
+//	return 0;
+} 
