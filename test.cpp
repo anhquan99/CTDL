@@ -11,7 +11,7 @@ struct SV{
 int main ()
 {
 //	InitWindow();
-//	ThemLop();
+//	DSLop();
 //	for(int i = 0; i <= 255; i++){
 //		TextColor(i);
 //		cout << i << "\n";

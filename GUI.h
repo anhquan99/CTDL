@@ -138,10 +138,10 @@ void Login(){
 			if((input>=48&&input<=57)||(input>=97&&input<=122) && UserAndPass[row - 4].length() < 50){
 					gotoxy(col[row-4]+size[row-4],row);
 					char ch = (char) input;
-					if(row == 5){
+					if(row == 5){ // password
 						printf("*");
 					}
-					else{
+					else{ // username
 						ch = toupper(ch);
 						printf("%c",ch);
 					}

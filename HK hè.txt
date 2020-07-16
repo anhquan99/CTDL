@@ -55,3 +55,10 @@ Ràng buộc:
 Khảo sát thực tế:
 - Đề thi có phải lưu lại không ? có 
 - In chi tiết các câu hỏi đã thi 1 môn học của  1 sinh viên phải có câu trả lời không ? có
+
+Vũ:
+-lớp: thêm sửa xóa, duyệt theo năm;
+-sinh viên: duyệt MSV và password, thêm xóa sửa
+-môn học: thêm xóa sửa
+-câu hỏi: thêm xóa sửa duyệt
+-thi trắc nghiệm: duyệt các câu hỏi đã thi 

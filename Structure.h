@@ -16,6 +16,7 @@ const int MAXLOP = 500;
 struct MonHoc{
 	std::string MAMH;
 	std::string TENMH;
+	time ThoiGianThi;
 };
 
 struct DSMonHoc{
@@ -42,9 +43,6 @@ struct SV{
 	DSDiemThi *dsdiemthi; // danh sach diem thi
 	SV *next; // sinh vien ke tiep
 };
-struct DSDiemThi{ // danh sach diem thi
-	string MAMH;
-
 struct time{
 	int gio;
 	int phut;
@@ -58,10 +56,6 @@ struct DT{ // danh sach diem thi
 	time ThoiGianConLai;
 	char *DapAn; // mang cap phat dong
 	int *DSCauHoi;  // mang cap phat dong
-};
-struct DSThi{
-	string MAMH;
-	int *DSSV;
 };
 struct CauHoi{
 	int ID;
