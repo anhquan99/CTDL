@@ -1,12 +1,12 @@
 #include <iostream>
 #include <fstream>
-#include <C:\Users\trand\OneDrive\Máy tính\pre\Structure.h>
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
 #include<conio.h>
 #include <ctype.h>
 #include <regex>
+#include <C:\Users\trand\OneDrive\Máy tính\CTDL\Structure.h>
 #include <stdlib.h> 
 const int MAXQUEST = 10;
 using namespace std;
@@ -71,27 +71,100 @@ void xoaPhanTuMangTuyenTinh(string &s, int viTri){
 
 }
 
-
-
 bool inThongTinLop(Lop *lop){
 	cout << "ma lop :" << lop->MALOP << endl;
 	cout << "ten lop :" << lop->TENLOP << endl;
 	cout << "nien khoa :" << lop->NK << endl;
-	cout << "dssv :" << lop->SinhVien << endl; 
 }
 
-int checkMaLop(DSLop classList, string &maLop){
+bool luuLopVaoCuoiFile(Lop lop){ // them ve phia sau
+	ofstream outfile("danhSachLop.txt", ios::out| ios::app | ios::binary);
+	if(outfile == NULL){
+		cout << "Loi file" << endl;
+		return false;
+	}
+	outfile.write(lop.MALOP.c_str(), lop.MALOP.size());
+	outfile.write("\0", sizeof(char));
+	outfile.write(lop.TENLOP.c_str(), lop.TENLOP.size());
+	outfile.write("\0", sizeof(char));
+	outfile.write(lop.NK.c_str(), lop.NK.size());
+	outfile.write("\0", sizeof(char));
+			
+	outfile.close();
+	return true;	
+}
+
+bool luuDanhSachLopMoi(DSLop danhSachLop){ // ghi de len file cu
+	ofstream outfile("danhSachLop.txt", ios::out | ios::binary);
+	if(outfile == NULL){
+		cout << "Loi file" << endl;
+		return false;
+	}
+	for(int i = 0; i < danhSachLop.index; i++){
+		outfile.write(danhSachLop.lop[i]->MALOP.c_str(), danhSachLop.lop[i]->MALOP.size());
+		outfile.write("\0", sizeof(char));
+		outfile.write(danhSachLop.lop[i]->TENLOP.c_str(), danhSachLop.lop[i]->TENLOP.size());
+		outfile.write("\0", sizeof(char));
+		outfile.write(danhSachLop.lop[i]->NK.c_str(), danhSachLop.lop[i]->NK.size());
+		outfile.write("\0", sizeof(char));	
+	}
+	outfile.close();
+	return true;
+}
+
+DSLop docDanhSachLop(){ // se co truyen vao tham so la ten file muon mo
+	DSLop danhSachLop;
+	streampos size;
+	Lop lop;
+	ifstream infile("danhSachLop.txt", ios::in | ios::binary | ios::ate);
+	if(infile == NULL){
+		cout << "Loi file" << endl;
+		exit(0);
+	}
+	size = infile.tellg();
+	infile.seekg (0, ios::beg);
+	while(size != infile.tellg()){
+		getline(infile, lop.MALOP, '\0');
+		getline(infile, lop.TENLOP, '\0');
+		getline(infile, lop.NK, '\0');
+		danhSachLop.lop[danhSachLop.index] = new Lop;
+		*danhSachLop.lop[danhSachLop.index] = lop;
+		danhSachLop.index++;
+	};
+	infile.close();	
+	return danhSachLop;
+}
+
+
+int checkMaLop(DSLop danhSachLop, string &maLop){
 	toUppercaseArray(maLop);
-	for(int i = 0; i < classList.index; i++)
-		if(classList.lop[i]->MALOP.compare(maLop) == 0)
+	for(int i = 0; i < danhSachLop.index; i++)
+		if(danhSachLop.lop[i]->MALOP.compare(maLop) == 0)
 			return i;
 	return -1;
 }
 
+
+bool kiemTraCuPhapNienKhoa(string &nienKhoa){
+	loaiBoKhoangTrangCuaChuoi(nienKhoa);
+	regex b("^[2-3][0-9]{3}[/-][2-3][0-9]{3}"); // thoa man regex = "2020-2025"
+	if(regex_match(nienKhoa, b) == false){
+		return false;
+	}
+	string namTruoc = nienKhoa.substr(0,4);
+	string namSau = nienKhoa.substr(5,4);
+	int truoc = stoi(namTruoc);
+	int sau = stoi(namSau);
+	if(truoc >= sau || sau - truoc > 7)  return false; // nien khoa chenh lech duoi 7
+	return true;
+}
+
+
 void insertClass(Lop &classroom, DSLop classlist){
-	classroom.SinhVien = NULL; // tam thoi gan bang null
+	classroom.sv = NULL; // tam thoi gan bang null
 	string maLop;
-	bool check;
+	//DSLop danhSachLopTuFile = docDanhSachLop();
+	bool check, check1;
 	do{
 		check = true;
 		cout << "Nhap ma lop: ";
@@ -108,28 +181,52 @@ void insertClass(Lop &classroom, DSLop classlist){
 	classroom.MALOP = maLop;
 	cout << "Nhap ten lop: ";
 	getline(cin, classroom.TENLOP);
-	cout << "Nhap nien khoa: ";
-	getline(cin, classroom.NK);
+	string nienKhoa;
+	do{
+		check1 = true;
+		cout << "Nhap nien khoa: ";
+		getline(cin, nienKhoa);
+		if(kiemTraCuPhapNienKhoa(nienKhoa) == false){
+			cout << "Nien khoa nhap vao khong hop le" << endl;
+			check1 = false;
+		}
+	}while(check1 == false);
+	classroom.NK = nienKhoa;
 }
 
-void insertClassList(DSLop &classList){
-	Lop classroom;
+bool insertClassList(DSLop &danhSachLop){
+	Lop lop;
 	char key_press;
-	while(classList.index < MAXLOP){
-		insertClass(classroom, classList);
-		classList.lop[classList.index] = new Lop;
-		*classList.lop[classList.index] = classroom;
-		classList.index++;
+	while(danhSachLop.index < MAXLOP){
+		insertClass(lop, danhSachLop);
+	//	luuLopVaoCuoiFile(classroom);
+		danhSachLop.lop[danhSachLop.index] = new Lop;
+		*danhSachLop.lop[danhSachLop.index] = lop;
+		danhSachLop.index++;
 		cout << "them thanh cong! them tiep hay thoi(ESC)" << endl;
 		key_press = getch();
 		if(key_press == 27) // For ESC
             break;
 	}
-	if(classList.index == MAXLOP)
+	if(danhSachLop.index == MAXLOP){
 		cout << "danh sach day" << endl;
+		return false;
+	}
+	return true;
+		
 }
 
-bool xoaLop(DSLop &danhSachLop,string maLop){
+void showClass(DSLop classList){
+	cout << "                     DANH SACH LOP " << endl ;
+	cout <<"MaLop       Tenlop           Nien khoa" << endl;
+	for (int i =0 ; i < classList.index ; i++){
+		cout << classList.lop[i]->MALOP << "       " << classList.lop[i]->TENLOP << "      " 
+		<<  classList.lop[i]->NK << endl;
+	}
+}
+
+bool xoaLop(string maLop){
+	DSLop danhSachLop = docDanhSachLop();
 	int i = checkMaLop(danhSachLop, maLop);
 	if(i == -1){
 		 cout << "Khong tim thay lop";
@@ -142,6 +239,7 @@ bool xoaLop(DSLop &danhSachLop,string maLop){
 		delete danhSachLop.lop[danhSachLop.index-1];
 		danhSachLop.index--;
 	}
+	luuDanhSachLopMoi(danhSachLop); // xoa xong ghi de len file cu danh sach lop moi nay vo
 	return true;
 }
 
@@ -153,25 +251,10 @@ bool themLopTheoThuTuMaLop(DSLop &danhSachLop){
 	for (j = 0; j < danhSachLop.index && (lop.MALOP.compare(danhSachLop.lop[j]->MALOP) == 1 ); j++ );
 	for (int i = danhSachLop.index-1; i >= j; i--)
 		danhSachLop.lop[i+1] = danhSachLop.lop[i];
-	//inThongTinLop(danhSachLop.lop[3]);
 	danhSachLop.lop[j] = new Lop;
 	*danhSachLop.lop[j] = lop;
 	danhSachLop.index++;
 	cout << danhSachLop.index;
-	return true;
-}
-
-bool kiemTraCuPhapNienKhoa(string &nienKhoa){
-	loaiBoKhoangTrangCuaChuoi(nienKhoa);
-	regex b("^[2-3][0-9]{3}[/-][2-3][0-9]{3}"); // thoa man regex = "2020-2025"
-	if(regex_match(nienKhoa, b) == false){
-		return false;
-	}
-	string namTruoc = nienKhoa.substr(0,4);
-	string namSau = nienKhoa.substr(5,4);
-	int truoc = stoi(namTruoc);
-	int sau = stoi(namSau);
-	if(truoc >= sau || sau - truoc > 7)  return false; // nien khoa chenh lech duoi 7
 	return true;
 }
 
@@ -193,10 +276,11 @@ bool inDanhSachLopTheoNienKhoa(DSLop danhSachLop, string &nienKhoa){
 	}
 }
 
-bool suaThongTinLop(DSLop &danhSachLop, string maLop){
+bool suaThongTinLop(string maLop){
 	string maLopTam;
 	string tenLop;
 	string nienKhoa;
+	DSLop danhSachLop = docDanhSachLop();
 	int viTri = checkMaLop(danhSachLop, maLop);
 	if( viTri == -1) return false; // khong tim thay lop trong danh sach lop
 	else{
@@ -233,59 +317,10 @@ bool suaThongTinLop(DSLop &danhSachLop, string maLop){
 		}while(checkNK == false);	
 		danhSachLop.lop[viTri]->NK = nienKhoa;
 	}
-	
+	showClass(danhSachLop);
+	luuDanhSachLopMoi(danhSachLop);
 }
 
-void showClass(DSLop classList){
-	cout << "                     DANH SACH LOP " << endl ;
-	cout <<"MaLop       Tenlop           Nien khoa" << endl;
-	for (int i =0 ; i < classList.index ; i++){
-		cout << classList.lop[i]->MALOP << "       " << classList.lop[i]->TENLOP << "      " 
-		<<  classList.lop[i]->NK << endl << classList.lop[i]->SinhVien << endl;
-	}
-}
-
-bool luuDanhSachLop(DSLop classList){
-	ofstream outfile("classList.txt", ios::out | ios::binary);
-	if(outfile == NULL){
-		cout << "Loi file" << endl;
-		return false;
-	}
-	int soLuong = 0;
-	for (int i=0; i < classList.index; i++){
-		outfile.write(classList.lop[i]->MALOP.c_str(), classList.lop[i]->MALOP.size());
-		outfile.write("\0", sizeof(char));
-		outfile.write(classList.lop[i]->TENLOP.c_str(), classList.lop[i]->TENLOP.size());
-		outfile.write("\0", sizeof(char));
-		outfile.write(classList.lop[i]->NK.c_str(), classList.lop[i]->NK.size());
-		outfile.write("\0", sizeof(char));
-		}
-	}
-			
-	outfile.close();
-	return true;	
-}
-
-bool docDanhSachLop(DSLop &classList){ // se co truyen vao tham so la ten file muon mo
-	streampos size;
-	ifstream infile("classList.txt", ios::in | ios::binary | ios::ate);
-	if(infile == NULL){
-		cout << "Loi file" << endl;
-		return false;
-	}
-	size = infile.tellg();
-	infile.seekg (0, ios::beg);
-	while(size != infile.tellg()){
-		getline(infile, lop.MALOP, '\0');
-		getline(infile, lop.TENLOP, '\0');
-		getline(infile, lop.NK, '\0');
-		classList.lop[classList.index] = new Lop;
-		*classList.lop[classList.index] = lop;
-		classList.index++;
-	};
-	infile.close();	
-	return true;
-}
 
 
 ptrsv kiemTraMaSinhVien(ptrsv First, string &maSinhVien){
@@ -301,7 +336,7 @@ ptrsv kiemTraMaSinhVien(ptrsv First, string &maSinhVien){
 bool themSinhVien(ptrsv &First, string MSV, string ho, string ten, bool phai, string password){ 
 	ptrsv p , Last;
 	char key_press;
-	p->dt = NULL;
+	p->dsdiemthi = NULL;
 	if(First != NULL)
 		for(Last = First; Last->next != NULL; Last = Last->next); // duyet den cuoi danh sach
 	while(1){
@@ -327,7 +362,7 @@ bool themSinhVien(ptrsv &First, string MSV, string ho, string ten, bool phai, st
 		fflush (stdin);
 		getline(cin, password);
 		
-		p = new SinhVien;
+		p = new SV;
 		p->MSV = MSV;
 		p->HO = ho;
 		p->TEN = ten;
@@ -413,11 +448,15 @@ xoaTiep:
 	
 }
 int main(){
-//	DSLop classList;
+//	DSLop danhSachLop;
+//	insertClassList(danhSachLop); // test luu mot lop vao cuoi danh sach co san trong file
+//	xoaLop("d17ptit");				// test xoa file
+//	showClass(docDanhSachLop());	// test doc danh sach lop tu file
+//	suaThongTinLop("d17cqat");	     // test sua thong tin lop
+	
 //	ptrsv first;
 //	first = NULL;
-	Lop lop2 = {"BT02", "an toan 2", "2030-2035", NULL};
-	
+//	Lop lop2 = {"BT02", "an toan 2", "2030-2035", NULL};
 //	themSinhVien(lop2.SinhVien);
 //	lietKeDanhSachSinhVien(lop2.SinhVien);
 //	xoaSinhVien(lop2.SinhVien);

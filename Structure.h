@@ -4,17 +4,14 @@
 // De tai: Thi trac nghiem
 #ifndef Structure
 #define Structure
-
 #include <iostream>
 #include <string>
+
 //const
 const int MAXMH = 300;
 const int MAXLOP = 500;
 
-struct time{
-	int gio;
-	int phut;
-};
+
 
 struct date{
 	int gio;
@@ -23,11 +20,16 @@ struct date{
 	int thang;
 	int nam;
 };
+
+struct thoiGian{
+	int gio;
+	int phut;
+};
 // create struct
 struct MonHoc{
 	std::string MAMH;
 	std::string TENMH;
-	time ThoiGianThi;
+	thoiGian ThoiGianThi;
 };
 
 struct DSMonHoc{
@@ -38,7 +40,7 @@ struct DT{ // danh sach diem thi
 	std::string MAMH;
 	double DIEM;
 	bool TrangThai; // neu sinh vien bi cup dien thi co the thi lai
-	time ThoiGianConLai;
+	thoiGian ThoiGianConLai;
 	struct DT *next; // mon thi ke tiep
 	char *DapAn; // mang cap phat dong
 	int *DSCauHoi;  // mang cap phat dong
@@ -53,6 +55,8 @@ struct SV{
 	DT *dsdiemthi; // danh sach diem thi
 	SV *next; // sinh vien ke tiep
 };
+
+typedef struct SV* ptrsv;
 struct Lop{
 	std::string MALOP;
 	std::string TENLOP;
