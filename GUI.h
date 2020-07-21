@@ -6,6 +6,13 @@
 #include <string>
 #include "Structure.h"
 using namespace std;
+
+// constant
+static int green = 10;
+static int blue = 11;
+static int yellow = 14;
+static int red = 12;
+static int redWrapper = 192;
 //layout
 void Layout();
 void InnerLayout();
@@ -40,8 +47,8 @@ void gotoxy(int x, int y);
 void InitWindow();
 
 // ham kiem tra
-bool kiemtraLop(string maLop, string tenLop, string nienkhoa);
-
+string kiemtraLop(string maLop, string tenLop, string nienkhoa);
+string kiemtraCauHoi(string NoiDung, string A, string B, string C, string D, string DapAn);
 // hien hoac an con tro 
 void setcursor(bool visible, DWORD size) // set bool visible = 0 - invisible, bool visible = 1 - visible
 {
@@ -107,15 +114,16 @@ void Login(){
 	int row = 4;
 	int col[2] = {45,45};
 	int size[2] = {0};
-	TextColor(12);
+	TextColor(red);
 	gotoxy(60,3);
 	printf("DANG NHAP");
-	TextColor(2);
+	TextColor(blue);
 	gotoxy(35,4);
 	printf("USERNAME:");
 	gotoxy(35,5);
 	printf("PASSWORD:");
 	gotoxy(col[row - 4] + size[row -4], row);
+	TextColor(green);
 	while(1){
 		int input = getch();
 		if(input == 72){	//up
@@ -183,17 +191,18 @@ void MainMenuGV(){
 	int row = 4;
 	int x = 55;
 	//create banner
-	TextColor(12);
+	TextColor(red);
 	gotoxy(60,3);
 	printf("DANG NHAP");
 	gotoxy(x,row);
 	TextColor(192);
 	cout << func[0] << "\n";
-	TextColor(2);
+	TextColor(blue);
 	for(int i=1;i<2;i++){
 		gotoxy(x,row + i);
 		cout  << func[i] << "\n";
 	}	
+	TextColor(green);
 	while(1){
 		int input;
 		input  = getch();
@@ -201,29 +210,29 @@ void MainMenuGV(){
 			case 72:
 				if(row>4){
 					gotoxy(x,row);
-					TextColor(2);
+					TextColor(green);
 					cout  << func[row -4] << "\n";
 //					printf("%s\n",func[row-2]);
 					row--;
 					gotoxy(x,row);
-					TextColor(192);
+					TextColor(redWrapper);
 					cout  << func[row -4] << "\n";
 //					printf("%s\n",func[row-2]);
-					TextColor(2);
+					TextColor(green);
 				}
 				break;
 			case 80:
 			if(row<5){
 					gotoxy(x,row);
-					TextColor(2);
+					TextColor(green);
 					cout  << func[row -4] << "\n";
 //					printf("%s\n",func[row-2]);
 					row++;
 					gotoxy(x,row);
-					TextColor(192);
+					TextColor(redWrapper);
 					cout  << func[row -4] << "\n";
 //					printf("%s\n",func[row-2]);
-					TextColor(2);
+					TextColor(green);
 				}
 				break;	
 			case 13:
@@ -250,10 +259,10 @@ void DSLopHoc(){
 	int col = 10;
 	string nk = "";
 	//create banner
-	TextColor(12);
+	TextColor(red);
 	gotoxy(60,3);
 	printf("DANH SACH LOP");
-	TextColor(2);
+	TextColor(green);
 	gotoxy(40, row);
 	cout << "NIEN KHOA:";
 	for( int i = 0; i < 3; i++){
@@ -340,16 +349,17 @@ void ThemLop(){
 	int col[3] ={7, 8, 10 };
 	string inputLop[3] = {""}; // [0]: ma lop; [1]: ten lop; [2]: nien khoa
 	//create banner
-	TextColor(12);
+	TextColor(red);
 	gotoxy(60,3);
 	printf("THEM LOP");
-	TextColor(2);
+	TextColor(blue);
 	for( int i = 0; i < 3; i++){
 		gotoxy(x, row + i);
 		cout << lop[i];
 	}
 	setcursor(1,1);
 	gotoxy(x + col[row - 4] + inputLop[ row - 4].length() + 1, row);
+	TextColor(green);
 	while(1){
 		int input = getch();
 		if(input == 72){	//up
@@ -365,7 +375,8 @@ void ThemLop(){
 			}
 		}
 		else if( input == 13 ){ //enter
-			if( kiemtraLop( inputLop[0], inputLop[1], inputLop[2])){
+			string flag = kiemtraLop( inputLop[0], inputLop[1], inputLop[2]);
+			if(flag == "true"){
 				// ham them lop
 				return;
 			}
@@ -412,16 +423,17 @@ void SuaLop(int id){
 	int col[3] ={7, 8, 10 };
 	string inputLop[3] = {""}; // [0]: ma lop; [1]: ten lop; [2]: nien khoa
 	//create banner
-	TextColor(12);
+	TextColor(red);
 	gotoxy(60,3);
 	printf("THEM LOP");
-	TextColor(2);
+	TextColor(blue);
 	for( int i = 0; i < 3; i++){
 		gotoxy(x, row + i);
 		cout << lop[i];
 	}
 	setcursor(1,1);
 	gotoxy(x + col[row - 4] + inputLop[ row - 4].length() + 1, row);
+	TextColor(green);
 	while(1){
 		int input = getch();
 		if(input == 72){	//up
@@ -437,7 +449,8 @@ void SuaLop(int id){
 			}
 		}
 		else if( input == 13 ){ //enter
-			if( kiemtraLop( inputLop[0], inputLop[1], inputLop[2])){
+			string flag = kiemtraLop( inputLop[0], inputLop[1], inputLop[2]);
+			if(flag == "true"){
 				// ham them lop
 				return;
 			}
@@ -476,10 +489,10 @@ void DSSVCuaLop(Lop lop){
 	int x = 55;
 	string sv[4] = {"MSV", "HO", "TEN", "PHAI"};
 	//create banner
-	TextColor(12);
+	TextColor(red);
 	gotoxy(50,3);
 	cout << "DANH SACH SINH VIEN CUA LOP " << lop.TENLOP;
-	TextColor(2);
+	TextColor(blue);
 	for( int i = 0; i < 4; i++){
 		gotoxy((i+1)*25, row);
 		cout << sv[i];
@@ -502,16 +515,17 @@ void ThemSV(){
 	int col[4] ={3, 4, 5, 9 };
 	string inputSV[4] = {""}; // [0]: HO; [1]: TEN; [2]: PHAI; [3]: PASSWORD
 	//create banner
-	TextColor(12);
+	TextColor(red);
 	gotoxy(60,3);
 	printf("THEM SINH VIEN");
-	TextColor(2);
+	TextColor(blue);
 	for( int i = 0; i < 4; i++){
 		gotoxy(x, row + i);
 		cout << sv[i];
 	}
 	setcursor(1,1);
 	gotoxy(x + col[row - 4] + inputSV[ row - 4].length() + 1, row);
+	TextColor(green);
 	while(1){
 		int input = getch();
 		if(input == 72){	//up
@@ -556,16 +570,17 @@ void TaoMonHoc(){
 	int col[3] ={11, 12, 14};
 	string inputMH[4] = {""}; // [0]: MA MON HOC; [1]: TEN MON HOC; [2]: THOI GIAN THI
 	//create banner
-	TextColor(12);
+	TextColor(red);
 	gotoxy(60,3);
 	printf("THEM MON HOC");
-	TextColor(2);
+	TextColor(blue);
 	for( int i = 0; i < 3; i++){
 		gotoxy(x, row + i);
 		cout << mh[i];
 	}
 	setcursor(1,1);
-	gotoxy(x + col[row - 4] + inputMH[ row - 4].length() + 1, row);
+	gotoxy(x + col[row - 4] + inputMH[ row - 4].length() + 1, row);\
+	TextColor(green);
 	while(1){
 		int input = getch();
 		if(input == 72){	//up
@@ -612,10 +627,10 @@ void DSMonHocUI(){
 	int x = 40;
 	string mon[3] = {"MA MON HOC", "TEN MON HOC", "THOI GIAN THI"};
 	//create banner
-	TextColor(12);
+	TextColor(red);
 	gotoxy(60,3);
 	printf("DANH SACH MON HOC");
-	TextColor(2);
+	TextColor(blue);
 	for( int i = 0; i < 3; i++){
 		gotoxy((i+1)*30, row);
 		cout << mon[i];
@@ -666,24 +681,27 @@ void DSMonHocUI(){
 		}	
 	}
 }
-void TaoCauHoi(){
+
+// chon mon hoc roi moi tao cau hoi
+void TaoCauHoi(string maMH){
 	Layout();
 	int row = 4;
 	int x = 30;
 	string cauhoi[7] = {"MA MON HOC:", "NOI DUNG:", "A:", "B:", "C:", "D:", "DAP AN:"};
 	int col[7] ={11, 9, 2, 2, 2, 2, 7};
-	string inputCauHoi[7] = {""}; // [0]: MA MON HOC; [1]: NOI DUNG; [2]: A; [3]: B; [4]: C; [5]: D; [6]: DAP AN
+	string inputCauHoi[6] = {""}; // [0]: MA MON HOC; [1]: NOI DUNG; [2]: A; [3]: B; [4]: C; [5]: D; [6]: DAP AN
 	//create banner
-	TextColor(12);
+	TextColor(red);
 	gotoxy(60,3);
 	printf("THEM MON HOC");
-	TextColor(2);
+	TextColor(blue);
 	for( int i = 0; i < 7; i++){
 		gotoxy(x, row + i);
 		cout << cauhoi[i];
 	}
 	setcursor(1,1);
 	gotoxy(x + col[row - 4] + inputCauHoi[ row - 4].length() + 1, row);
+	TextColor(green);
 	while(1){
 		int input = getch();
 		if(input == 72){	//up
@@ -699,7 +717,12 @@ void TaoCauHoi(){
 			}
 		}
 		else if( input == 13 ){ //enter
-			MessageBox(0,"XIN DANG NHAP LAI!!!","THONG BAO",0);
+			string flag = kiemtraCauHoi(inputCauHoi[1], inputCauHoi[2], inputCauHoi[3], inputCauHoi[4], inputCauHoi[5], inputCauHoi[6]);
+			if(flag == "true"){
+				return;
+			}
+			MessageBeep(MB_ICONWARNING);
+			MessageBox(0,"XIN NHAP LAI!!!","THONG BAO",0);	
 		}
 		else if( input == 8 ){ //backspace
 			if( inputCauHoi[row-4].length() > 0){
@@ -727,13 +750,13 @@ void MainMenuSV(){
 	int row = 4;
 	int x = 55;
 	//create banner
-	TextColor(12);
+	TextColor(red);
 	gotoxy(60,3);
 	printf("DANG NHAP");
 	gotoxy(x,row);
-	TextColor(192);
+	TextColor(redWrapper);
 	cout << func[0] << "\n";
-	TextColor(2);
+	TextColor(blue);
 	for(int i=1;i<3;i++){
 		gotoxy(x,row + i);
 		cout  << func[i] << "\n";
@@ -804,8 +827,11 @@ void MainMenuSV(){
 }
 
 // ham kiem tra
-bool kiemtraLop(string maLop, string tenLop, string nienkhoa){
-	return true;
+string kiemtraLop(string maLop, string tenLop, string nienkhoa){
+	return "true";
+}
+string kiemtraCauHoi(string NoiDung, string A, string B, string C, string D, string DapAn){
+	return "true";
 }
 //-----
 

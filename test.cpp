@@ -9,8 +9,6 @@ using namespace std;
 int main ()
 {
 	InitWindow();
-	MainMenuGV();
-//	int input = getch();
-//	cout << input;
+	Login();
 } 
 

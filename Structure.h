@@ -44,7 +44,7 @@ struct DT{ // danh sach diem thi
 	int *DSCauHoi;  // mang cap phat dong
 };
 struct SV{
-	string MSV;
+	std::string MSV;
 	std::string HO;
 	std::string TEN;
 	bool PHAI;
