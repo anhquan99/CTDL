@@ -245,12 +245,13 @@ void showClass(DSLop classList){
 	}
 }
 
-bool saveFile(DSLop classList){
+bool luuDanhSachLop(DSLop classList){
 	ofstream outfile("classList.txt", ios::out | ios::binary);
 	if(outfile == NULL){
 		cout << "Loi file" << endl;
 		return false;
 	}
+	int soLuong = 0;
 	for (int i=0; i < classList.index; i++){
 		outfile.write(classList.lop[i]->MALOP.c_str(), classList.lop[i]->MALOP.size());
 		outfile.write("\0", sizeof(char));
@@ -258,11 +259,6 @@ bool saveFile(DSLop classList){
 		outfile.write("\0", sizeof(char));
 		outfile.write(classList.lop[i]->NK.c_str(), classList.lop[i]->NK.size());
 		outfile.write("\0", sizeof(char));
-		SinhVien SinhVien;
-		if(classList.lop[i]->SinhVien != NULL){
-			SinhVien = *(classList.lop[i]->SinhVien);
-			outfile.write(reinterpret_cast<char*>(&SinhVien), sizeof(sizeof(SinhVien)));
-			cout << "null";
 		}
 	}
 			
@@ -270,8 +266,7 @@ bool saveFile(DSLop classList){
 	return true;	
 }
 
-bool openFile(DSLop &classList1){ // se co truyen vao tham so la ten file muon mo
-	Lop lop;
+bool docDanhSachLop(DSLop &classList){ // se co truyen vao tham so la ten file muon mo
 	streampos size;
 	ifstream infile("classList.txt", ios::in | ios::binary | ios::ate);
 	if(infile == NULL){
@@ -284,13 +279,11 @@ bool openFile(DSLop &classList1){ // se co truyen vao tham so la ten file muon m
 		getline(infile, lop.MALOP, '\0');
 		getline(infile, lop.TENLOP, '\0');
 		getline(infile, lop.NK, '\0');
-		infile.read(reinterpret_cast<char*>(&lop.SinhVien), sizeof(SinhVien) );
-		classList1.lop[classList1.index] = new Lop;
-		*classList1.lop[classList1.index] = lop;
-		classList1.index++;
+		classList.lop[classList.index] = new Lop;
+		*classList.lop[classList.index] = lop;
+		classList.index++;
 	};
 	infile.close();	
-	showClass(classList1);
 	return true;
 }
 
@@ -305,12 +298,10 @@ ptrsv kiemTraMaSinhVien(ptrsv First, string &maSinhVien){
 	return NULL;
 }
 
-bool themSinhVien(ptrsv &First){ 
+bool themSinhVien(ptrsv &First, string MSV, string ho, string ten, bool phai, string password){ 
 	ptrsv p , Last;
-	string MSV, ho, ten, password;
-	bool phai;
 	char key_press;
-	//p->dt = NULL;
+	p->dt = NULL;
 	if(First != NULL)
 		for(Last = First; Last->next != NULL; Last = Last->next); // duyet den cuoi danh sach
 	while(1){
@@ -426,10 +417,11 @@ int main(){
 //	ptrsv first;
 //	first = NULL;
 	Lop lop2 = {"BT02", "an toan 2", "2030-2035", NULL};
-	themSinhVien(lop2.SinhVien);
-	lietKeDanhSachSinhVien(lop2.SinhVien);
-	xoaSinhVien(lop2.SinhVien);
-	lietKeDanhSachSinhVien(lop2.SinhVien);
+	
+//	themSinhVien(lop2.SinhVien);
+//	lietKeDanhSachSinhVien(lop2.SinhVien);
+//	xoaSinhVien(lop2.SinhVien);
+//	lietKeDanhSachSinhVien(lop2.SinhVien);
 //	SV sv2 = {"A2", "nguyen", "van a", false, "123", NULL, NULL};
 //	SV sv1 = {"A1", "tran", "dang vu", true, "abc", NULL, NULL};
 //	lop1.sv = &sv1;
