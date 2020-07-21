@@ -49,6 +49,7 @@ struct SV{
 	std::string TEN;
 	bool PHAI;
 	std::string password;
+	int SoMonThi; // so mon da thi
 	DT *dsdiemthi; // danh sach diem thi
 	SV *next; // sinh vien ke tiep
 };
@@ -56,14 +57,13 @@ struct Lop{
 	std::string MALOP;
 	std::string TENLOP;
 	std::string NK; // nien hkoa
+	int SiSo; // si so sinh vien
 	SV *sv;
 };
 struct DSLop{
 	int index = 0;
 	Lop *lop[MAXLOP];
 };
-
-
 
 struct CauHoi{
 	int ID;
