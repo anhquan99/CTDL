@@ -10,7 +10,7 @@
 //const
 const int MAXMH = 300;
 const int MAXLOP = 500;
-
+const int MAXQUEST = 1000;
 struct time{
 	int gio;
 	int phut;
@@ -49,15 +49,14 @@ struct SV{
 	std::string TEN;
 	bool PHAI;
 	std::string password;
-	int SoMonThi; // so mon da thi
 	DT *dsdiemthi; // danh sach diem thi
 	SV *next; // sinh vien ke tiep
 };
+typedef struct SV* ptrsv;
 struct Lop{
 	std::string MALOP;
 	std::string TENLOP;
 	std::string NK; // nien hkoa
-	int SiSo; // si so sinh vien
 	SV *sv;
 };
 struct DSLop{
