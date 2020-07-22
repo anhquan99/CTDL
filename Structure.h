@@ -37,9 +37,9 @@ struct DSMonHoc{
 struct DT{ // danh sach diem thi
 	std::string MAMH;
 	double DIEM;
-	struct DT *next; // mon thi ke tiep
 	bool TrangThai; // neu sinh vien bi cup dien thi co the thi lai
 	time ThoiGianConLai;
+	struct DT *next; // mon thi ke tiep
 	char *DapAn; // mang cap phat dong
 	int *DSCauHoi;  // mang cap phat dong
 };
