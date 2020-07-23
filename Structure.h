@@ -10,8 +10,7 @@
 //const
 const int MAXMH = 300;
 const int MAXLOP = 500;
-
-
+const int MAXQUEST = 1000;
 
 struct date{
 	int gio;
@@ -22,8 +21,18 @@ struct date{
 };
 
 struct thoiGian{
-	int gio;
-	int phut;
+	int gio = 0;
+	int phut = 0;
+	
+	void nhapThoiGian(){
+		std::cout << "gio: ";
+		std::cin >> gio;
+		std::cout << std::endl << "phut: ";
+		std::cin >> phut;
+	}
+	void hienThiThoiGian(){
+		std::cout << gio << ":" << phut;
+	}
 };
 // create struct
 struct MonHoc{
@@ -36,6 +45,7 @@ struct DSMonHoc{
 	int index = 0;
 	MonHoc *ds[MAXMH]; // danh sach mon hoc
 };
+
 struct DT{ // danh sach diem thi
 	std::string MAMH;
 	double DIEM;
@@ -45,6 +55,7 @@ struct DT{ // danh sach diem thi
 	char *DapAn; // mang cap phat dong
 	int *DSCauHoi;  // mang cap phat dong
 };
+
 struct SV{
 	std::string MSV;
 	std::string HO;
@@ -57,12 +68,13 @@ struct SV{
 };
 
 typedef struct SV* ptrsv;
+
 struct Lop{
 	std::string MALOP;
 	std::string TENLOP;
 	std::string NK; // nien hkoa
 	int SiSo; // si so sinh vien
-	SV *sv;
+	ptrsv sv;
 };
 struct DSLop{
 	int index = 0;
@@ -85,4 +97,6 @@ struct DSCauHoi{
 	struct DSCauHoi *left;
 	struct DSCauHoi *right;
 };
+
+typedef struct DSCauHoi* ptrDSCauHoi;
 #endif
