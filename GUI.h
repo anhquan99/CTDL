@@ -5,6 +5,8 @@
 #include <conio.h>
 #include <string>
 #include "Structure.h"
+#include <fstream>
+#include <time.h>
 using namespace std;
 
 // constant
@@ -80,11 +82,23 @@ void gotoxy(int x, int y) //set vi tri
 //khoi tao random
 void initialArrayRandomNumber(){
 	int arrayRandomNumber[MAXQUEST];
+	int randomNumber;
+	srand(time(NULL));
+	int temp;
 	for(int i = 0; i < MAXQUEST; i++){  
 		arrayRandomNumber[i] = i;
 	}
 	arrayRandomNumber[0] = MAXQUEST/2;
 	arrayRandomNumber[MAXQUEST/2] = 0;
+	for(int i = 1; i < MAXQUEST-1; i++){
+		randomNumber = rand() % (MAXQUEST - i)+1;
+		//cout << "randomNumber = " << randomNumber << endl;
+		temp = arrayRandomNumber[MAXQUEST-i];
+		arrayRandomNumber[MAXQUEST-i] = arrayRandomNumber[randomNumber];
+		//cout <<"arrayRandomNumber[MAXQUEST-i] = " << arrayRandomNumber[MAXQUEST-i] << endl;	
+		arrayRandomNumber[randomNumber] = temp;		
+		//cout <<"arrayRandomNumber[randomNumber] = " << arrayRandomNumber[randomNumber] << endl;	
+	}
 	ofstream outfile("DSRandom.txt", ios::out | ios::binary);
 	if(outfile == NULL){
 		cout << "Loi file" << endl;
@@ -97,7 +111,6 @@ void initialArrayRandomNumber(){
 	}
 	outfile.close();
 }
-
 // random 
 int generateArrayRandomNumber(){											
 	int arrayRandomNumber[MAXQUEST];
@@ -111,17 +124,14 @@ int generateArrayRandomNumber(){
 	infile.seekg(0, ios::beg);
 	int index;
 	infile.read((char*) &index, sizeof(int));
+	if(index == MAXQUEST) return -1;
 //	cout << "index: " << index << "\n";
 	for(int i = 0; i < MAXQUEST; i++){
 		infile.read((char*) &arrayRandomNumber[i], sizeof(int));
 //		cout << arrayRandomNumber[i] << "\n";
 	}
 	infile.close();
-	srand(time(NULL));
-	int randomNumber = rand() % (MAXQUEST)+index;
-	int temp = arrayRandomNumber[randomNumber];
-	arrayRandomNumber[randomNumber] = arrayRandomNumber[index];
-	arrayRandomNumber[index] = temp;
+	int temp = arrayRandomNumber[index];
 	index++;
 	ofstream outfile("DSRandom.txt", ios::out | ios::binary);
 	if(outfile == NULL){
