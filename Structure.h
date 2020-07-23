@@ -62,7 +62,6 @@ struct SV{
 	std::string TEN;
 	bool PHAI;
 	std::string password;
-	int SoMonThi; // so mon da thi
 	DT *dsdiemthi; // danh sach diem thi
 	SV *next; // sinh vien ke tiep
 };
@@ -72,8 +71,7 @@ typedef struct SV* ptrsv;
 struct Lop{
 	std::string MALOP;
 	std::string TENLOP;
-	std::string NK; // nien hkoa
-	int SiSo; // si so sinh vien
+	std::string NK; // nien hkoa/ si so sinh vien
 	ptrsv sv;
 };
 struct DSLop{
