@@ -62,3 +62,4 @@ Vũ:
 -môn học: thêm xóa sửa
 -câu hỏi: thêm xóa sửa duyệt
 -thi trắc nghiệm: duyệt các câu hỏi đã thi 
+?? : thời gian thi nên đổi sang phút không
