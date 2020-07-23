@@ -10,25 +10,63 @@
 #include <stdlib.h> 
 using namespace std;
 
-
-void generateArrayRandomNumber(int arrayRandomNumber[]){											
-	int randomNumber;
-	srand(time(NULL));
-	int temp;
+//khoi tao random
+void initialArrayRandomNumber(){
+	int arrayRandomNumber[MAXQUEST];
 	for(int i = 0; i < MAXQUEST; i++){  
 		arrayRandomNumber[i] = i;
 	}
 	arrayRandomNumber[0] = MAXQUEST/2;
 	arrayRandomNumber[MAXQUEST/2] = 0;
-	for(int i = 1; i < MAXQUEST-1; i++){
-		randomNumber = rand() % (MAXQUEST - i)+1;
-		//cout << "randomNumber = " << randomNumber << endl;
-		temp = arrayRandomNumber[MAXQUEST-i];
-		arrayRandomNumber[MAXQUEST-i] = arrayRandomNumber[randomNumber];
-		//cout <<"arrayRandomNumber[MAXQUEST-i] = " << arrayRandomNumber[MAXQUEST-i] << endl;	
-		arrayRandomNumber[randomNumber] = temp;		
-		//cout <<"arrayRandomNumber[randomNumber] = " << arrayRandomNumber[randomNumber] << endl;	
+	ofstream outfile("DSRandom.txt", ios::out | ios::binary);
+	if(outfile == NULL){
+		cout << "Loi file" << endl;
+		return;
 	}
+	int index = 1;
+	outfile.write((char*) &index, sizeof(int));
+	for(int i = 0; i < MAXQUEST; i++){
+		outfile.write((char*)&arrayRandomNumber[i], sizeof(int));
+	}
+	outfile.close();
+}
+
+// random 
+int generateArrayRandomNumber(){											
+	int arrayRandomNumber[MAXQUEST];
+	streampos size;
+	ifstream infile("DSRandom.txt", ios::in | ios::binary | ios::ate);
+	if(infile == NULL){
+		cout << "Loi file" << endl;
+		return -1;
+	}
+	size = infile.tellg();
+	infile.seekg(0, ios::beg);
+	int index;
+	infile.read((char*) &index, sizeof(int));
+//	cout << "index: " << index << "\n";
+	for(int i = 0; i < MAXQUEST; i++){
+		infile.read((char*) &arrayRandomNumber[i], sizeof(int));
+//		cout << arrayRandomNumber[i] << "\n";
+	}
+	infile.close();
+	srand(time(NULL));
+	int randomNumber = rand() % (MAXQUEST)+index;
+	int temp = arrayRandomNumber[randomNumber];
+	arrayRandomNumber[randomNumber] = arrayRandomNumber[index];
+	arrayRandomNumber[index] = temp;
+	index++;
+	ofstream outfile("DSRandom.txt", ios::out | ios::binary);
+	if(outfile == NULL){
+		cout << "Loi file" << endl;
+		return -1;
+	}
+	outfile.write((char*) &index, sizeof(int));
+	for(int i = 0; i < MAXQUEST; i++){
+		outfile.write((char*)&arrayRandomNumber[i], sizeof(int));
+	}
+	outfile.close();
+	return temp;
 }
 
 void toUppercaseArray(string &s){
@@ -700,43 +738,10 @@ bool suaMonHoc(string maMonHoc, string maMonHocMoi, string tenMonHocMoi, thoiGia
 
 // cay nhi phan tim kiem - cau hoi
 
-void luuDaySoNgauNhien(int daySoNgauNhien[]){
-	ofstream outfile ("dayNgauNhien.txt", ios::out | ios::binary);
-	if(outfile == NULL){
-		cout << "file loi";
-		return;
-	}
-	for(int i = 0; i < MAXQUEST; i++){
-		outfile.write((char*)&(daySoNgauNhien[i]), sizeof(int));
-	}
-	outfile.close();
-}
-
-void docDaySoNgauNhien(int daySoNgauNhien[]){
-	ifstream infile("dayNgauNhien.txt", ios::in | ios::binary);
-	if(infile == NULL){
-		cout << "file loi";
-		return;
-	}
-	for(int i = 0; i < MAXQUEST; i++){
-		infile.read((char*)&daySoNgauNhien[i], sizeof(int));
-	}
-	for(int i = 0; i < MAXQUEST; i++)
-		cout << daySoNgauNhien[i] << endl;
-	infile.close();
-}
-
-CauHoi themCauHoiVoiIdNgauNhien(string maMonHoc, string noiDung, string a, string b, string c, string d, char dapAn){
-	int daySoNgauNhien[MAXQUEST];
-	docDaySoNgauNhien(daySoNgauNhien);
+CauHoi taoCauHoiVoiIdNgauNhien(string maMonHoc, string noiDung, string a, string b, string c, string d, char dapAn){
+	int random = generateArrayRandomNumber();
 	CauHoi cauHoi;
-	for(int i = 0; i < MAXQUEST; i++){
-		if(daySoNgauNhien[i] != -1){
-			cauHoi.ID = daySoNgauNhien[i];
-			daySoNgauNhien[i] = -1;
-			break;
-		}
-	}
+	cauHoi.ID = random;
 	cauHoi.MAMH = maMonHoc;
 	cauHoi.NoiDung = noiDung;
 	cauHoi.A = a;
@@ -747,16 +752,16 @@ CauHoi themCauHoiVoiIdNgauNhien(string maMonHoc, string noiDung, string a, strin
 	return cauHoi;
 }
 
-bool themNutVaoCay(ptrDSCauHoi &danhSachCauHoi, int id, CauHoi cauHoi){
+bool themCauHoiVaoCay(ptrDSCauHoi &danhSachCauHoi, CauHoi cauHoi){
 	if(danhSachCauHoi == NULL){  // duyet den nut la
 		danhSachCauHoi = new DSCauHoi;
 		danhSachCauHoi->cauhoi = cauHoi; // nhap info
 		danhSachCauHoi->left = NULL;
 		danhSachCauHoi->right = NULL;
-	}else if(id < danhSachCauHoi->cauhoi.ID){ // id nho hon id nut dang xet thi xet qua trai cua nut dang xet
-		themNutVaoCay(danhSachCauHoi->left, id, cauHoi);
-	}else if(id > danhSachCauHoi->cauhoi.ID){
-		themNutVaoCay(danhSachCauHoi->right, id, cauHoi);
+	}else if(cauHoi.ID < danhSachCauHoi->cauhoi.ID){ // id nho hon id nut dang xet thi xet qua trai cua nut dang xet
+		themCauHoiVaoCay(danhSachCauHoi->left, cauHoi);
+	}else if(cauHoi.ID > danhSachCauHoi->cauhoi.ID){
+		themCauHoiVaoCay(danhSachCauHoi->right, cauHoi);
 	}
 }
 
@@ -796,15 +801,66 @@ void duyetTienTu(ptrDSCauHoi &danhSachCauHoi){ // in danh sach câu hoi
 	}
 }
 
-bool luuCauHoi(ptrDSCauHoi danhSachCauHoi){
+bool luuDanhSachCauHoi(ptrDSCauHoi danhSachCauHoi){
+	const int STACKSIZE = 500;
+	ptrDSCauHoi Stack[STACKSIZE];
+	int sp = -1;
+	ptrDSCauHoi p = danhSachCauHoi;
 	ofstream outfile("danhSachCauHoi.txt", ios::out | ios::binary);
 	if(outfile == NULL){
 		cout << "loi file";
 		return false;
 	}
-	
+	while(p != NULL){
+		outfile.write((char*)&p->cauhoi.ID, sizeof(int));
+		outfile.write(p->cauhoi.MAMH.c_str(), sizeof(p->cauhoi.MAMH));
+		outfile.write((char*)"\0", sizeof(char));
+		outfile.write(p->cauhoi.NoiDung.c_str(), sizeof(p->cauhoi.NoiDung));
+		outfile.write((char*)"\0", sizeof(char));
+		outfile.write(p->cauhoi.A.c_str(), sizeof(p->cauhoi.A));
+		outfile.write((char*)"\0", sizeof(char));
+		outfile.write(p->cauhoi.B.c_str(), sizeof(p->cauhoi.B));
+		outfile.write((char*)"\0", sizeof(char));
+		outfile.write(p->cauhoi.C.c_str(), sizeof(p->cauhoi.C));
+		outfile.write((char*)"\0", sizeof(char));
+		outfile.write(p->cauhoi.D.c_str(), sizeof(p->cauhoi.D));
+		outfile.write((char*)"\0", sizeof(char));
+		outfile.write(&p->cauhoi.DapAn, sizeof(char));
+		if(p->right != NULL)
+			Stack[++sp] = p->right;
+		if(p->left != NULL)
+			p= p->left;
+		else if(sp == -1)
+			break;
+		else p = Stack[sp--];
+	}
+	fileout.close();
 }
 
+ptrDSCauHoi docDanhSachCauHoi(){
+	streampos size;
+	DSCauHoi danhSachCauHoi = NULL;
+	CauHoi cauHoi;
+	ifstream infile("danhSachCauHoi.txt", ios::in | ios::binary | ios::ate);
+	if(infile == NULL){
+		cout << "loi file";
+		exit(0);
+	}
+	size = infile.tellg();
+	infile.seekg (0, ios::beg);
+	while(infile.tellg() != size){
+		getline(infilem, cauHoi.MAMH, '\0');
+		infile.read(&cauHoi.ID, sizeof(int));
+		getline(infilem, cauHoi.NoiDung, '\0');
+		getline(infilem, cauHoi.A, '\0');
+		getline(infilem, cauHoi.B, '\0');
+		getline(infilem, cauHoi.C, '\0');
+		getline(infilem, cauHoi.D, '\0');
+		infile.read(&cauHoi.DapAn, sizeof(char));
+		themCauHoiVaoCay(danhSachCauHoi, cauHoi);
+	}
+	return danhSachCauHoi;
+}
 int main(){
 //	DSLop danhSachLop;
 //	insertClassList(danhSachLop); // test luu mot lop vao cuoi danh sach co san trong file
@@ -862,6 +918,19 @@ int main(){
 //	docDaySoNgauNhien(daySoNgauNhien);
 //	for(int i = 0; i < MAXQUEST; i++)
 //		cout << daySoNgauNhien[i] << endl;
-	themCauHoiVoiIdNgauNhien("SKD1108","chon dap an dung: 1+1 = ?","hai","mot","nam","tam",'A');
+	// duyet cau hoi
+//	CauHoi cauHoi1 = taoCauHoiVoiIdNgauNhien("SKD1108","chon dap an dung: 1+1 = ?","hai","mot","nam","tam",'a');
+//	CauHoi cauHoi2 = taoCauHoiVoiIdNgauNhien("SKD1108","chon dap an dung: 1+2 = ?","hai","mot","ba","tam",'c');
+//	CauHoi cauHoi3 = taoCauHoiVoiIdNgauNhien("SKD1108","chon dap an dung: 1+3 = ?","hai","bon","nam","tam",'b');
+//	ptrDSCauHoi danhSachCauHoi = NULL;
+//	themCauHoiVaoCay(danhSachCauHoi, cauHoi1);
+//	themCauHoiVaoCay(danhSachCauHoi, cauHoi2);
+//	themCauHoiVaoCay(danhSachCauHoi, cauHoi3);
+//	duyetTienTu(danhSachCauHoi);
+//	int random = generateArrayRandomNumber();
+//	initialArrayRandomNumber();
+	for(int i = 0; i < 100; i++){
+		cout << generateArrayRandomNumber() << endl;
+	}
 	return 0;
 }
