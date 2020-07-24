@@ -279,7 +279,7 @@ void MainMenuGV(){
 			case 72:
 				if(row>4){
 					gotoxy(x,row);
-					TextColor(green);
+					TextColor(blue);
 					cout  << func[row -4] << "\n";
 //					printf("%s\n",func[row-2]);
 					row--;
@@ -293,7 +293,7 @@ void MainMenuGV(){
 			case 80:
 			if(row<5){
 					gotoxy(x,row);
-					TextColor(green);
+					TextColor(blue);
 					cout  << func[row -4] << "\n";
 //					printf("%s\n",func[row-2]);
 					row++;
