@@ -112,19 +112,19 @@ void initialArrayRandomNumber(){
 	outfile.close();
 }
 // random 
-int generateArrayRandomNumber(){											
+int generateArrayRandomNumber(){
+	streampos size;											
 	int arrayRandomNumber[MAXQUEST];
-	streampos size;
 	ifstream infile("DSRandom.txt", ios::in | ios::binary | ios::ate);
 	if(infile == NULL){
 		cout << "Loi file" << endl;
 		return -1;
 	}
-	size = infile.tellg();
+	size = infile.tellg(); // ?????
 	infile.seekg(0, ios::beg);
 	int index;
 	infile.read((char*) &index, sizeof(int));
-	if(index == MAXQUEST) return -1;
+	if(index == MAXQUEST) return -1; // dùng het
 //	cout << "index: " << index << "\n";
 	for(int i = 0; i < MAXQUEST; i++){
 		infile.read((char*) &arrayRandomNumber[i], sizeof(int));
