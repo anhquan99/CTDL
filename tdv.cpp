@@ -10,51 +10,58 @@
 #include <stdlib.h> 
 using namespace std;
 
-//khoi tao random
 void initialArrayRandomNumber(){
 	int arrayRandomNumber[MAXQUEST];
+	int randomNumber;
+	srand(time(NULL));
+	int temp;
 	for(int i = 0; i < MAXQUEST; i++){  
 		arrayRandomNumber[i] = i;
 	}
 	arrayRandomNumber[0] = MAXQUEST/2;
 	arrayRandomNumber[MAXQUEST/2] = 0;
+	for(int i = 1; i < MAXQUEST-1; i++){
+		randomNumber = rand() % (MAXQUEST - i)+1;
+		//cout << "randomNumber = " << randomNumber << endl;
+		temp = arrayRandomNumber[MAXQUEST-i];
+		arrayRandomNumber[MAXQUEST-i] = arrayRandomNumber[randomNumber];
+		//cout <<"arrayRandomNumber[MAXQUEST-i] = " << arrayRandomNumber[MAXQUEST-i] << endl;	
+		arrayRandomNumber[randomNumber] = temp;		
+		//cout <<"arrayRandomNumber[randomNumber] = " << arrayRandomNumber[randomNumber] << endl;	
+	}
 	ofstream outfile("DSRandom.txt", ios::out | ios::binary);
 	if(outfile == NULL){
 		cout << "Loi file" << endl;
 		return;
 	}
-	int index = 1;
+	int index = 0; // sua tu index = 1 sang 0;
 	outfile.write((char*) &index, sizeof(int));
 	for(int i = 0; i < MAXQUEST; i++){
 		outfile.write((char*)&arrayRandomNumber[i], sizeof(int));
 	}
 	outfile.close();
 }
-
 // random 
-int generateArrayRandomNumber(){											
+int generateArrayRandomNumber(){	
+	streampos size;										
 	int arrayRandomNumber[MAXQUEST];
-	streampos size;
 	ifstream infile("DSRandom.txt", ios::in | ios::binary | ios::ate);
 	if(infile == NULL){
 		cout << "Loi file" << endl;
 		return -1;
 	}
-	size = infile.tellg();
+	size = infile.tellg(); // ?????
 	infile.seekg(0, ios::beg);
 	int index;
 	infile.read((char*) &index, sizeof(int));
+	if(index == MAXQUEST) return -1; // dùng het
 //	cout << "index: " << index << "\n";
 	for(int i = 0; i < MAXQUEST; i++){
 		infile.read((char*) &arrayRandomNumber[i], sizeof(int));
 //		cout << arrayRandomNumber[i] << "\n";
 	}
 	infile.close();
-	srand(time(NULL));
-	int randomNumber = rand() % (MAXQUEST)+index;
-	int temp = arrayRandomNumber[randomNumber];
-	arrayRandomNumber[randomNumber] = arrayRandomNumber[index];
-	arrayRandomNumber[index] = temp;
+	int temp = arrayRandomNumber[index];
 	index++;
 	ofstream outfile("DSRandom.txt", ios::out | ios::binary);
 	if(outfile == NULL){
@@ -407,7 +414,7 @@ bool luuDanhSachSinhVienMoi(string maLop, ptrsv danhSachSinhVien){
 	return true;
 }
 
-ptrsv docSinhVien(string maLop){
+ptrsv docDanhSachSinhVien(string maLop){
 	ptrsv p;
 	ptrsv danhSachSinhVien = NULL;
 	ptrsv last = NULL;
@@ -786,10 +793,10 @@ void duyetTrungTu(ptrDSCauHoi &danhSachCauHoi){
 	}while(1);
 }
 
-void duyetTienTu(ptrDSCauHoi &danhSachCauHoi){ // in danh sach câu hoi
+void duyetTienTu(ptrDSCauHoi danhSachCauHoi){ // in danh sach câu hoi
 	if(danhSachCauHoi != NULL){
-		cout <<"MaMH: " << danhSachCauHoi->cauhoi.MAMH << endl;
 		cout << "id: " << danhSachCauHoi->cauhoi.ID << endl;
+		cout <<"MaMH: " << danhSachCauHoi->cauhoi.MAMH << endl;
 		cout << "noi dung: " << danhSachCauHoi->cauhoi.NoiDung << endl;
 		cout << "a: " << danhSachCauHoi->cauhoi.A << endl;
 		cout << "b: " << danhSachCauHoi->cauhoi.B << endl;
@@ -813,19 +820,27 @@ bool luuDanhSachCauHoi(ptrDSCauHoi danhSachCauHoi){
 	}
 	while(p != NULL){
 		outfile.write((char*)&p->cauhoi.ID, sizeof(int));
-		outfile.write(p->cauhoi.MAMH.c_str(), sizeof(p->cauhoi.MAMH));
+		
+		outfile.write(p->cauhoi.MAMH.c_str(), p->cauhoi.MAMH.size());
 		outfile.write((char*)"\0", sizeof(char));
-		outfile.write(p->cauhoi.NoiDung.c_str(), sizeof(p->cauhoi.NoiDung));
+		
+		outfile.write(p->cauhoi.NoiDung.c_str(), p->cauhoi.NoiDung.size());
 		outfile.write((char*)"\0", sizeof(char));
-		outfile.write(p->cauhoi.A.c_str(), sizeof(p->cauhoi.A));
+		
+		outfile.write(p->cauhoi.A.c_str(), p->cauhoi.A.size());
 		outfile.write((char*)"\0", sizeof(char));
-		outfile.write(p->cauhoi.B.c_str(), sizeof(p->cauhoi.B));
+		
+		outfile.write(p->cauhoi.B.c_str(), p->cauhoi.B.size());
 		outfile.write((char*)"\0", sizeof(char));
-		outfile.write(p->cauhoi.C.c_str(), sizeof(p->cauhoi.C));
+		
+		outfile.write(p->cauhoi.C.c_str(), p->cauhoi.C.size());
 		outfile.write((char*)"\0", sizeof(char));
-		outfile.write(p->cauhoi.D.c_str(), sizeof(p->cauhoi.D));
+		
+		outfile.write(p->cauhoi.D.c_str(), p->cauhoi.D.size());
 		outfile.write((char*)"\0", sizeof(char));
-		outfile.write(&p->cauhoi.DapAn, sizeof(char));
+		
+		outfile.write((char*)&p->cauhoi.DapAn, sizeof(char));
+		
 		if(p->right != NULL)
 			Stack[++sp] = p->right;
 		if(p->left != NULL)
@@ -834,12 +849,12 @@ bool luuDanhSachCauHoi(ptrDSCauHoi danhSachCauHoi){
 			break;
 		else p = Stack[sp--];
 	}
-	fileout.close();
+	outfile.close();
 }
 
 ptrDSCauHoi docDanhSachCauHoi(){
 	streampos size;
-	DSCauHoi danhSachCauHoi = NULL;
+	ptrDSCauHoi danhSachCauHoi = NULL;
 	CauHoi cauHoi;
 	ifstream infile("danhSachCauHoi.txt", ios::in | ios::binary | ios::ate);
 	if(infile == NULL){
@@ -849,17 +864,113 @@ ptrDSCauHoi docDanhSachCauHoi(){
 	size = infile.tellg();
 	infile.seekg (0, ios::beg);
 	while(infile.tellg() != size){
-		getline(infilem, cauHoi.MAMH, '\0');
-		infile.read(&cauHoi.ID, sizeof(int));
-		getline(infilem, cauHoi.NoiDung, '\0');
-		getline(infilem, cauHoi.A, '\0');
-		getline(infilem, cauHoi.B, '\0');
-		getline(infilem, cauHoi.C, '\0');
-		getline(infilem, cauHoi.D, '\0');
-		infile.read(&cauHoi.DapAn, sizeof(char));
+		infile.read((char*)&cauHoi.ID, sizeof(int));
+		
+		getline(infile, cauHoi.MAMH, '\0');
+		
+		getline(infile, cauHoi.NoiDung, '\0');
+		
+		getline(infile, cauHoi.A, '\0');
+		
+		getline(infile, cauHoi.B, '\0');
+		
+		getline(infile, cauHoi.C, '\0');
+		
+		getline(infile, cauHoi.D, '\0');
+		
+		infile.read((char*)&cauHoi.DapAn, sizeof(char));
+		
 		themCauHoiVaoCay(danhSachCauHoi, cauHoi);
 	}
 	return danhSachCauHoi;
+}
+// thao tac voi diem thi
+bool themDiemThi(ptrDT &danhSachDiemThi, DT diemThi){
+	ptrDT p, last;
+	p = new DT;
+	*p = diemThi; p->next = NULL;
+	if(danhSachDiemThi != NULL)
+		for(last = danhSachDiemThi; last->next != NULL; last = last->next);
+	if(danhSachDiemThi == NULL) danhSachDiemThi = p;
+	else last->next = p;
+	last = p;
+	return true;
+}
+
+void lietKeDanhSachDiemThi(ptrDT danhSachDiemThi){
+	for(ptrDT p = danhSachDiemThi; p != NULL; p = p->next){
+		cout << "ma mon hoc: " << p->MAMH << endl;
+		cout << "diem: " << p->DIEM << endl;
+		cout << "trang thai: " << p->TrangThai << endl;
+		p->ThoiGianThi.hienThiThoiGian();
+		cout << "so cau: " << p->SoCau << endl;
+		if(p->SoCau > 0){
+			for(int i = 0; i < p->SoCau; i++){
+				cout << "id cau hoi: " << p->DSCauHoi[i] <<  endl;
+				cout << "dap an: " << p->DapAn[i] << endl;
+			}
+		}else cout << "sinh vien chua thi" << endl ;
+		cout <<"---------------------" << endl;
+	}
+	
+}
+
+bool luuDanhSachDiemThi(string maLop, ptrDT danhSachDiemThi){
+	string tenFile = maLop + "-diemThi.txt";	
+	ofstream outfile(tenFile, ios::out | ios::binary);
+	if(outfile == NULL){
+		cout << "loi file";
+		return false;
+	}
+	for(ptrDT p = danhSachDiemThi; p != NULL; p = p->next){
+		outfile.write(p->MAMH.c_str(), p->MAMH.size());
+		outfile.write("\0", sizeof(char));
+		outfile.write((char*)&p->DIEM, sizeof(double));
+		outfile.write((char*)&p->TrangThai, sizeof(bool));
+		outfile.write((char*)&p->ThoiGianThi.gio, sizeof(int));
+		outfile.write((char*)&p->ThoiGianThi.phut, sizeof(int));
+		outfile.write((char*)&p->SoCau, sizeof(int));	
+		if(p->SoCau > 0){	// da thi		
+			for(int i = 0; i < p->SoCau; i++){
+				outfile.write((char*)&(p->DSCauHoi[i]), sizeof(int));
+				outfile.write((char*)&(p->DapAn[i]), sizeof(char));
+//				cout << "p->DSCauHoi[i]: " << p->DSCauHoi[i] << endl;
+//				cout << "p->DapAn[i]: " << p->DapAn[i] << endl;
+			}
+		}
+	}
+}
+
+ptrDT docDanhSachDiemThi(string maLop){
+	ptrDT danhSachDiemThi = NULL;
+	DT diemThi;
+	streampos size;
+	string tenFile = maLop + "-diemThi.txt";
+	ifstream infile(tenFile, ios::in | ios::binary | ios::ate);
+	if(infile == NULL) {
+		cout << "loi file";
+		return danhSachDiemThi;
+	}
+	size = infile.tellg();
+	infile.seekg (0, ios::beg);
+	while(infile.tellg() != size){
+		getline(infile, diemThi.MAMH, '\0');
+		infile.read((char*)&diemThi.DIEM, sizeof(double));
+		infile.read((char*)&diemThi.TrangThai, sizeof(bool));
+		infile.read((char*)&diemThi.ThoiGianThi.gio, sizeof(int));
+		infile.read((char*)&diemThi.ThoiGianThi.phut, sizeof(int));
+		infile.read((char*)&diemThi.SoCau, sizeof(int));
+		if(diemThi.SoCau > 0){
+			diemThi.DSCauHoi = new int[diemThi.SoCau];
+			diemThi.DapAn = new char[diemThi.SoCau];
+			for(int i = 0; i < diemThi.SoCau; i++){
+				infile.read((char*)&diemThi.DSCauHoi[i], sizeof(int));
+				infile.read((char*)&diemThi.DapAn[i], sizeof(char));
+			}
+		}
+		themDiemThi(danhSachDiemThi, diemThi);
+	}
+	return danhSachDiemThi;
 }
 int main(){
 //	DSLop danhSachLop;
@@ -927,10 +1038,33 @@ int main(){
 //	themCauHoiVaoCay(danhSachCauHoi, cauHoi2);
 //	themCauHoiVaoCay(danhSachCauHoi, cauHoi3);
 //	duyetTienTu(danhSachCauHoi);
-//	int random = generateArrayRandomNumber();
-//	initialArrayRandomNumber();
-	for(int i = 0; i < 100; i++){
-		cout << generateArrayRandomNumber() << endl;
-	}
+//	luuDanhSachCauHoi(danhSachCauHoi); // ghi file
+//	docDanhSachCauHoi(); // doc file
+// 	initialArrayRandomNumber(); // khoi tao mang random
+
+	// test chuc nang diem thi
+//	thoiGian tg1;
+//	tg1.phut = 30;
+//	thoiGian tg2;
+//	tg2.gio = 1;
+//	tg2.phut = 10;
+//	thoiGian tg3;
+//	tg3.phut = 15;
+//	int dsch1 [5] = { 16, 2, 77, 40, 12071 };
+//	int dsch2 [5] = { 1, 12, 7, 10, 121 };
+//	int dsch3 [5] = { 6, 22, 47, 41, 1071 };
+//	char dsda1 [5] = { 'A', 'B', 'C', 'D', 'B' };
+//	char dsda2 [5] = { 'B', 'A', 'C', 'D', 'C' };
+//	char dsda3 [5] = { 'D', 'C', 'B', 'A', 'B' };
+//	DT dt1 = {"d17cqat", 8.5, 1, tg1, NULL, 5, dsch1, dsda1};
+//	DT dt2 = {"d17cqat", 1.5, 1, tg2, NULL, 5, dsch2, dsda2};
+//	DT dt3 = {"d17cqat", 3, 1, tg3, NULL, 5, dsch3, dsda3};
+//	ptrDT danhSachDiemThi = NULL;
+//	themDiemThi(danhSachDiemThi, dt1);
+//	themDiemThi(danhSachDiemThi, dt2);
+//	themDiemThi(danhSachDiemThi, dt3);
+//	lietKeDanhSachDiemThi(danhSachDiemThi);
+//	luuDanhSachDiemThi("d17cqat", danhSachDiemThi);
+//	lietKeDanhSachDiemThi(docDanhSachDiemThi("d17cqat"));
 	return 0;
 }

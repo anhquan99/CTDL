@@ -31,7 +31,7 @@ struct thoiGian{
 		std::cin >> phut;
 	}
 	void hienThiThoiGian(){
-		std::cout << gio << ":" << phut;
+		std::cout << gio << ":" << phut << std::endl;
 	}
 };
 // create struct
@@ -49,12 +49,15 @@ struct DSMonHoc{
 struct DT{ // danh sach diem thi
 	std::string MAMH;
 	double DIEM;
-	bool TrangThai; // neu sinh vien bi cup dien thi co the thi lai
-	thoiGian ThoiGianConLai;
+	bool TrangThai; // neu sinh vien bi cup dien thi co the thi lai: 0:dang thi 1:da thi
+	thoiGian ThoiGianThi; // 24/07/2020 thoigianconlai - > thoi gian thi
 	struct DT *next; // mon thi ke tiep
-	char *DapAn; // mang cap phat dong
+	int SoCau;
 	int *DSCauHoi;  // mang cap phat dong
+	char *DapAn; // mang cap phat dong
 };
+
+typedef struct DT* ptrDT;
 
 struct SV{
 	std::string MSV;
