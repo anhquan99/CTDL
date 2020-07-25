@@ -8,6 +8,7 @@
 #include <regex>
 #include <C:\Users\trand\OneDrive\Máy tính\CTDL\Structure.h>
 #include <stdlib.h> 
+#include "HamHoTro.h"
 using namespace std;
 
 void initialArrayRandomNumber(){
@@ -121,22 +122,22 @@ bool inThongTinLop(Lop *lop){
 	cout << "nien khoa :" << lop->NK << endl;
 }
 
-bool luuLopVaoCuoiFile(Lop lop){ // them ve phia sau
-	ofstream outfile("danhSachLop.txt", ios::out| ios::app | ios::binary);
-	if(outfile == NULL){
-		cout << "Loi file" << endl;
-		return false;
-	}
-	outfile.write(lop.MALOP.c_str(), lop.MALOP.size());
-	outfile.write("\0", sizeof(char));
-	outfile.write(lop.TENLOP.c_str(), lop.TENLOP.size());
-	outfile.write("\0", sizeof(char));
-	outfile.write(lop.NK.c_str(), lop.NK.size());
-	outfile.write("\0", sizeof(char));
-			
-	outfile.close();
-	return true;	
-}
+//bool luuLopVaoCuoiFile(Lop lop){ // them ve phia sau
+//	ofstream outfile("danhSachLop.txt", ios::out| ios::app | ios::binary);
+//	if(outfile == NULL){
+//		cout << "Loi file" << endl;
+//		return false;
+//	}
+//	outfile.write(lop.MALOP.c_str(), lop.MALOP.size());
+//	outfile.write("\0", sizeof(char));
+//	outfile.write(lop.TENLOP.c_str(), lop.TENLOP.size());
+//	outfile.write("\0", sizeof(char));
+//	outfile.write(lop.NK.c_str(), lop.NK.size());
+//	outfile.write("\0", sizeof(char));
+//			
+//	outfile.close();
+//	return true;	
+//}
 
 bool luuDanhSachLopMoi(DSLop danhSachLop){ // ghi de len file cu
 	ofstream outfile("danhSachLop.txt", ios::out | ios::binary);
@@ -636,8 +637,8 @@ bool luuDanhSachMonHoc(DSMonHoc danhSachMonHoc){
 		outfile.write("\0", sizeof(char));
 		outfile.write(danhSachMonHoc.ds[i]->TENMH.c_str(), danhSachMonHoc.ds[i]->TENMH.size());
 		outfile.write("\0", sizeof(char));
-		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.gio), sizeof(int));
 		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.phut), sizeof(int));
+		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.giay), sizeof(int));
 	}
 }
 
@@ -670,8 +671,8 @@ DSMonHoc docDanhSachMonHoc(){
 	while(infile.tellg() != size){
 		getline(infile, mon.MAMH, '\0');
 		getline(infile, mon.TENMH, '\0');
-		infile.read((char*)&mon.ThoiGianThi.gio, sizeof(int));
 		infile.read((char*)&mon.ThoiGianThi.phut, sizeof(int));
+		infile.read((char*)&mon.ThoiGianThi.giay, sizeof(int));
 		themVaoMangConTroDSMonHoc(danhSachMonHoc, mon);
 	}
 	return danhSachMonHoc;
@@ -902,7 +903,7 @@ void lietKeDanhSachDiemThi(ptrDT danhSachDiemThi){
 		cout << "ma mon hoc: " << p->MAMH << endl;
 		cout << "diem: " << p->DIEM << endl;
 		cout << "trang thai: " << p->TrangThai << endl;
-		p->ThoiGianThi.hienThiThoiGian();
+		p->ThoiGianConLai.hienThiThoiGian();
 		cout << "so cau: " << p->SoCau << endl;
 		if(p->SoCau > 0){
 			for(int i = 0; i < p->SoCau; i++){
@@ -927,8 +928,8 @@ bool luuDanhSachDiemThi(string maLop, ptrDT danhSachDiemThi){
 		outfile.write("\0", sizeof(char));
 		outfile.write((char*)&p->DIEM, sizeof(double));
 		outfile.write((char*)&p->TrangThai, sizeof(bool));
-		outfile.write((char*)&p->ThoiGianThi.gio, sizeof(int));
-		outfile.write((char*)&p->ThoiGianThi.phut, sizeof(int));
+		outfile.write((char*)&p->ThoiGianConLai.phut, sizeof(int));
+		outfile.write((char*)&p->ThoiGianConLai.giay, sizeof(int));
 		outfile.write((char*)&p->SoCau, sizeof(int));	
 		if(p->SoCau > 0){	// da thi		
 			for(int i = 0; i < p->SoCau; i++){
@@ -957,8 +958,8 @@ ptrDT docDanhSachDiemThi(string maLop){
 		getline(infile, diemThi.MAMH, '\0');
 		infile.read((char*)&diemThi.DIEM, sizeof(double));
 		infile.read((char*)&diemThi.TrangThai, sizeof(bool));
-		infile.read((char*)&diemThi.ThoiGianThi.gio, sizeof(int));
-		infile.read((char*)&diemThi.ThoiGianThi.phut, sizeof(int));
+		infile.read((char*)&diemThi.ThoiGianConLai.phut, sizeof(int));
+		infile.read((char*)&diemThi.ThoiGianConLai.giay, sizeof(int));
 		infile.read((char*)&diemThi.SoCau, sizeof(int));
 		if(diemThi.SoCau > 0){
 			diemThi.DSCauHoi = new int[diemThi.SoCau];
@@ -1066,5 +1067,6 @@ int main(){
 //	lietKeDanhSachDiemThi(danhSachDiemThi);
 //	luuDanhSachDiemThi("d17cqat", danhSachDiemThi);
 //	lietKeDanhSachDiemThi(docDanhSachDiemThi("d17cqat"));
+countdown();
 	return 0;
 }

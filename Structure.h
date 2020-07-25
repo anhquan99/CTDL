@@ -21,17 +21,17 @@ struct date{
 };
 
 struct thoiGian{
-	int gio = 0;
 	int phut = 0;
+	int giay = 0;
 	
 	void nhapThoiGian(){
-		std::cout << "gio: ";
-		std::cin >> gio;
-		std::cout << std::endl << "phut: ";
+		std::cout << "phut: ";
 		std::cin >> phut;
+		std::cout << std::endl << "giay: ";
+		std::cin >> giay;
 	}
 	void hienThiThoiGian(){
-		std::cout << gio << ":" << phut << std::endl;
+		std::cout << phut << ":" << giay << std::endl;
 	}
 };
 // create struct
@@ -50,7 +50,7 @@ struct DT{ // danh sach diem thi
 	std::string MAMH;
 	double DIEM;
 	bool TrangThai; // neu sinh vien bi cup dien thi co the thi lai: 0:dang thi 1:da thi
-	thoiGian ThoiGianThi; // 24/07/2020 thoigianconlai - > thoi gian thi
+	thoiGian ThoiGianConLai; // 24/07/2020 thoigianconlai - > thoi gian thi
 	struct DT *next; // mon thi ke tiep
 	int SoCau;
 	int *DSCauHoi;  // mang cap phat dong
