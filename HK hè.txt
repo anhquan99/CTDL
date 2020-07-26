@@ -63,6 +63,6 @@ Vũ:
 -câu hỏi: thêm xóa sửa duyệt
 -thi trắc nghiệm: duyệt các câu hỏi đã thi 
 ?? : thời gian thi nên đổi sang phút không
-?? : xóa lớp hay câu hỏi mà còn vướng thì có cho phép xóa hay không 
+?? : xóa lớp hay câu hỏi mà còn sinh viên thì có cho phép xóa hay không
 ?? : sửa câu hỏi có cho sửa id không ? nếu sửa lại thì id của câu hỏi bị sửa dùng lại được không ?
 ?? : ở phần lấy câu hỏi ngẫu nhiên từ

@@ -38,7 +38,6 @@ struct thoiGian{
 struct MonHoc{
 	std::string MAMH;
 	std::string TENMH;
-	thoiGian ThoiGianThi;
 };
 
 struct DSMonHoc{
@@ -49,7 +48,7 @@ struct DSMonHoc{
 struct DT{ // danh sach diem thi
 	std::string MAMH;
 	double DIEM;
-	bool TrangThai; // neu sinh vien bi cup dien thi co the thi lai: 0:dang thi 1:da thi
+	int TrangThai; // neu sinh vien bi cup dien thi co the thi lai: 0:chua thi 1:dang thi 2:da thi
 	thoiGian ThoiGianConLai; // 24/07/2020 thoigianconlai - > thoi gian thi
 	struct DT *next; // mon thi ke tiep
 	int SoCau;
