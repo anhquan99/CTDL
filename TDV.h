@@ -289,22 +289,19 @@ void showClass(DSLop classList){
 	}
 }
 
-bool xoaLop(string maLop){
-	DSLop danhSachLop = docDanhSachLop();
-	int i = checkMaLop(danhSachLop, maLop);
+bool xoaLop(DSLop &dsLop, Lop lop){
+	int i = checkMaLop(dsLop, lop.MALOP);
 	if(i == -1){
-		 cout << "Khong tim thay lop";
 		 return false;
 	}
 	else{
-		delete danhSachLop.lop[i];
-		for(int j = i+1; j < danhSachLop.index; j++){
-			danhSachLop.lop[j-1] = danhSachLop.lop[j];
+		delete dsLop.lop[i];
+		for(int j = i+1; j < dsLop.index; j++){
+			dsLop.lop[j-1] = dsLop.lop[j];
 		}
-		
-		danhSachLop.index--;
+		dsLop.index--;
 	}
-	luuDanhSachLopMoi(danhSachLop); // xoa xong ghi de len file cu danh sach lop moi nay vo
+	luuDanhSachLopMoi(dsLop); // xoa xong ghi de len file cu danh sach lop moi nay vo
 	return true;
 }
 
@@ -478,6 +475,15 @@ ptrsv kiemTraMaSinhVien(ptrsv First, string maSinhVien){
 	}
 	return NULL;
 }
+bool kiemTraMaSinhVienTatCa(string maSinhVien, DSLop dsLop){
+	for(int i = 0; i < dsLop.index; i++){
+		ptrsv temp = dsLop.lop[i]->sv;
+		if(kiemTraMaSinhVien(temp, maSinhVien) != NULL){
+			return false;
+		}
+	}
+	return true;
+}
 
 ptrsv laySVTruoc(Lop lop, ptrsv sv){
 	if( lop.sv == NULL || sv == lop.sv){
@@ -494,36 +500,21 @@ ptrsv laySVTruoc(Lop lop, ptrsv sv){
 	}
 }
 
-bool themSinhVien(string maLop){ 
-	SV sinhVien;
-	bool phai;
-	char key_press;
-	while(1){
-		fflush (stdin);
-		cout << "Nhap ma so sinh vien: ";
-		getline(cin, sinhVien.MSV);
-		
-		cout << "Nhap ho: ";
-		fflush (stdin);
-		getline(cin, sinhVien.HO);	
-			
-		cout << "Nhap ten: ";
-		fflush (stdin);
-		getline(cin, sinhVien.TEN);	
-			
-		cout << "Nhap phai  0-nu  1-nam: ";
-		cin >> sinhVien.PHAI;			
-		
-		cout << "Nhap password cua sinh vien( phan biet hoa thuong): ";
-		fflush (stdin);
-		getline(cin, sinhVien.password);
-		luuSinhVienVaoCuoiFile(maLop, sinhVien);
-		cout << "them thanh cong! them tiep hay thoi(ESC)" << endl;
-		key_press = getch();
-		if(key_press == 27) // For ESC
-            break;
-	}
-	return true;
+bool themSinhVien(ptrsv &danhSachSinhVien, SV sinhVien){ 
+	ptrsv p = new SV;
+	ptrsv last;
+	if (danhSachSinhVien!=NULL ) 
+    	for ( last = danhSachSinhVien ; last->next !=NULL; last=last->next) ;
+	p->MSV = sinhVien.MSV;
+	p->HO = sinhVien.HO;
+	p->TEN = sinhVien.TEN;
+	p->PHAI = sinhVien.PHAI;
+	p->password = sinhVien.password;
+	p->dsdiemthi = sinhVien.dsdiemthi;
+	p->next = NULL;
+	if(danhSachSinhVien == NULL) danhSachSinhVien = p;
+	else last->next = p;
+	last = p;
 }
 
 void lietKeDanhSachSinhVien(ptrsv First){
@@ -601,6 +592,25 @@ xoaTiep:
 	return true;
 }
 
+bool xoaSinhVienCuaQ( Lop &lop, ptrsv current){
+	string tenFile = current->MSV + ".txt";
+	if(current == NULL){
+		return false;
+	}
+	ptrsv before = laySVTruoc(lop, current);
+	if( before == NULL){
+		lop.sv = NULL;
+		return true;
+	}
+	else{
+		before->next = current->next;
+		delete current;
+	}
+	if(remove(tenFile.c_str()) != 0){
+		return false;
+	}
+	return true;
+}
 bool suaSinhVien(string maLop, string s_maSinhVien, string s_ho, string s_ten, bool s_phai, string s_password, ptrsv first){
 	ptrsv p; string maSinhVien;
 	char keyPress;
@@ -661,123 +671,123 @@ xoaTiep:
 
 // thao tac voi mon hoc
 
-bool luuDanhSachMonHoc(DSMonHoc danhSachMonHoc){
-	ofstream outfile("danhSachMonHoc.txt", ios::out | ios::binary);
-	if(outfile == NULL){
-		cout << "Loi file";
-		return false;
-	}
-	for(int i = 0; i < danhSachMonHoc.index; i++){
-		outfile.write(danhSachMonHoc.ds[i]->MAMH.c_str(), danhSachMonHoc.ds[i]->MAMH.size());
-		outfile.write("\0", sizeof(char));
-		outfile.write(danhSachMonHoc.ds[i]->TENMH.c_str(), danhSachMonHoc.ds[i]->TENMH.size());
-		outfile.write("\0", sizeof(char));
-		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.gio), sizeof(int));
-		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.phut), sizeof(int));
-	}
-}
-
-void lietKeDanhSachMonHoc(DSMonHoc danhSachMonHoc){
-	cout << "Ma mon hoc  " << "Ten mon hoc  " << "Thoi gian" << endl;
-	for(int i = 0; i < danhSachMonHoc.index; i++){
-		cout << danhSachMonHoc.ds[i]->MAMH << " " << danhSachMonHoc.ds[i]->TENMH << "  ";
-		danhSachMonHoc.ds[i]->ThoiGianThi.hienThiThoiGian();
-		cout << endl;
-	}
-}
-
-void themVaoMangConTroDSMonHoc(DSMonHoc &danhSachMonHoc, MonHoc mon){
-	danhSachMonHoc.ds[danhSachMonHoc.index] = new MonHoc;
-	*danhSachMonHoc.ds[danhSachMonHoc.index] = mon;
-	danhSachMonHoc.index++;
-}
-
-DSMonHoc docDanhSachMonHoc(){
-	streampos size;
-	DSMonHoc danhSachMonHoc;
-	MonHoc mon;
-	ifstream infile("danhSachMonHoc.txt", ios::in | ios::binary | ios::ate);
-	if(infile == NULL){
-		cout << "Loi file";
-		exit(0);
-	}
-	size = infile.tellg();
-	infile.seekg (0, ios::beg);
-	while(infile.tellg() != size){
-		getline(infile, mon.MAMH, '\0');
-		getline(infile, mon.TENMH, '\0');
-		infile.read((char*)&mon.ThoiGianThi.gio, sizeof(int));
-		infile.read((char*)&mon.ThoiGianThi.phut, sizeof(int));
-		themVaoMangConTroDSMonHoc(danhSachMonHoc, mon);
-	}
-	return danhSachMonHoc;
-}
-
-bool themMonHoc(string maMonHoc, string tenMonHoc, thoiGian thoiGianThi){
-	DSMonHoc danhSachMonHoc = docDanhSachMonHoc();
-	MonHoc monHoc;
-	if(danhSachMonHoc.index == MAXMH){
-		cout << "Danh sach mon hoc day";
-		return false;
-	}
-	monHoc.MAMH = maMonHoc;
-	monHoc.TENMH = tenMonHoc;
-	monHoc.ThoiGianThi = thoiGianThi;
-	themVaoMangConTroDSMonHoc(danhSachMonHoc, monHoc);
-	luuDanhSachMonHoc(danhSachMonHoc);
-	return true;
-}
-
-int kiemTraMaMonHoc(string maMonHoc){
-	DSMonHoc danhSachMonHoc = docDanhSachMonHoc();
-	for( int i = 0; i < danhSachMonHoc.index; i++){
-		if(danhSachMonHoc.ds[i]->MAMH.compare(maMonHoc) == 0){
-			return i;
-		}
-	}
-	return -1;
-}
-
-bool xoaMonHoc(string maMonHoc){
-	DSMonHoc danhSachMonHoc = docDanhSachMonHoc();
-	int viTri = kiemTraMaMonHoc(maMonHoc);
-	if( viTri == -1) {
-		cout << "Khong tim thay mon hoc";
-		return false;
-	}else{
-		delete danhSachMonHoc.ds[viTri];
-		for(int j = viTri+1; j < danhSachMonHoc.index; j++){
-			danhSachMonHoc.ds[j-1] = danhSachMonHoc.ds[j];
-		}		
-		danhSachMonHoc.index--;
-	}
-	//lietKeDanhSachMonHoc(danhSachMonHoc);
-	luuDanhSachMonHoc(danhSachMonHoc);
-	return true;
-}
-
-bool suaMonHoc(string maMonHoc, string maMonHocMoi, string tenMonHocMoi, thoiGian thoiGianThiMoi){
-	DSMonHoc danhSachMonHoc = docDanhSachMonHoc();
-	MonHoc monHoc;
-	if(danhSachMonHoc.index == MAXMH){
-		cout << "Danh sach mon hoc day";
-		return false;
-	}
-	int viTri = kiemTraMaMonHoc(maMonHoc);
-	if(viTri == -1){
-		cout << "Khong tim thay ma mon hoc";
-		return false;
-	}
-	monHoc.MAMH = maMonHocMoi;
-	monHoc.TENMH = tenMonHocMoi;
-	monHoc.ThoiGianThi = thoiGianThiMoi;
-	// chinh sua thong tin trong danh sach mon hoc
-	danhSachMonHoc.ds[viTri]->MAMH = maMonHocMoi; 
-	danhSachMonHoc.ds[viTri]->TENMH = tenMonHocMoi;
-	danhSachMonHoc.ds[viTri]->ThoiGianThi = thoiGianThiMoi;
-	luuDanhSachMonHoc(danhSachMonHoc);
-	return true;
-}
+//bool luuDanhSachMonHoc(DSMonHoc danhSachMonHoc){
+//	ofstream outfile("danhSachMonHoc.txt", ios::out | ios::binary);
+//	if(outfile == NULL){
+//		cout << "Loi file";
+//		return false;
+//	}
+//	for(int i = 0; i < danhSachMonHoc.index; i++){
+//		outfile.write(danhSachMonHoc.ds[i]->MAMH.c_str(), danhSachMonHoc.ds[i]->MAMH.size());
+//		outfile.write("\0", sizeof(char));
+//		outfile.write(danhSachMonHoc.ds[i]->TENMH.c_str(), danhSachMonHoc.ds[i]->TENMH.size());
+//		outfile.write("\0", sizeof(char));
+////		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.gio), sizeof(int));
+//		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.phut), sizeof(int));
+//	}
+//}
+//
+//void lietKeDanhSachMonHoc(DSMonHoc danhSachMonHoc){
+//	cout << "Ma mon hoc  " << "Ten mon hoc  " << "Thoi gian" << endl;
+//	for(int i = 0; i < danhSachMonHoc.index; i++){
+//		cout << danhSachMonHoc.ds[i]->MAMH << " " << danhSachMonHoc.ds[i]->TENMH << "  ";
+//		danhSachMonHoc.ds[i]->ThoiGianThi.hienThiThoiGian();
+//		cout << endl;
+//	}
+//}
+//
+//void themVaoMangConTroDSMonHoc(DSMonHoc &danhSachMonHoc, MonHoc mon){
+//	danhSachMonHoc.ds[danhSachMonHoc.index] = new MonHoc;
+//	*danhSachMonHoc.ds[danhSachMonHoc.index] = mon;
+//	danhSachMonHoc.index++;
+//}
+//
+//DSMonHoc docDanhSachMonHoc(){
+//	streampos size;
+//	DSMonHoc danhSachMonHoc;
+//	MonHoc mon;
+//	ifstream infile("danhSachMonHoc.txt", ios::in | ios::binary | ios::ate);
+//	if(infile == NULL){
+//		cout << "Loi file";
+//		exit(0);
+//	}
+//	size = infile.tellg();
+//	infile.seekg (0, ios::beg);
+//	while(infile.tellg() != size){
+//		getline(infile, mon.MAMH, '\0');
+//		getline(infile, mon.TENMH, '\0');
+//		infile.read((char*)&mon.ThoiGianThi.gio, sizeof(int));
+//		infile.read((char*)&mon.ThoiGianThi.phut, sizeof(int));
+//		themVaoMangConTroDSMonHoc(danhSachMonHoc, mon);
+//	}
+//	return danhSachMonHoc;
+//}
+//
+//bool themMonHoc(string maMonHoc, string tenMonHoc, thoiGian thoiGianThi){
+//	DSMonHoc danhSachMonHoc = docDanhSachMonHoc();
+//	MonHoc monHoc;
+//	if(danhSachMonHoc.index == MAXMH){
+//		cout << "Danh sach mon hoc day";
+//		return false;
+//	}
+//	monHoc.MAMH = maMonHoc;
+//	monHoc.TENMH = tenMonHoc;
+//	monHoc.ThoiGianThi = thoiGianThi;
+//	themVaoMangConTroDSMonHoc(danhSachMonHoc, monHoc);
+//	luuDanhSachMonHoc(danhSachMonHoc);
+//	return true;
+//}
+//
+//int kiemTraMaMonHoc(string maMonHoc){
+//	DSMonHoc danhSachMonHoc = docDanhSachMonHoc();
+//	for( int i = 0; i < danhSachMonHoc.index; i++){
+//		if(danhSachMonHoc.ds[i]->MAMH.compare(maMonHoc) == 0){
+//			return i;
+//		}
+//	}
+//	return -1;
+//}
+//
+//bool xoaMonHoc(string maMonHoc){
+//	DSMonHoc danhSachMonHoc = docDanhSachMonHoc();
+//	int viTri = kiemTraMaMonHoc(maMonHoc);
+//	if( viTri == -1) {
+//		cout << "Khong tim thay mon hoc";
+//		return false;
+//	}else{
+//		delete danhSachMonHoc.ds[viTri];
+//		for(int j = viTri+1; j < danhSachMonHoc.index; j++){
+//			danhSachMonHoc.ds[j-1] = danhSachMonHoc.ds[j];
+//		}		
+//		danhSachMonHoc.index--;
+//	}
+//	//lietKeDanhSachMonHoc(danhSachMonHoc);
+//	luuDanhSachMonHoc(danhSachMonHoc);
+//	return true;
+//}
+//
+//bool suaMonHoc(string maMonHoc, string maMonHocMoi, string tenMonHocMoi, thoiGian thoiGianThiMoi){
+//	DSMonHoc danhSachMonHoc = docDanhSachMonHoc();
+//	MonHoc monHoc;
+//	if(danhSachMonHoc.index == MAXMH){
+//		cout << "Danh sach mon hoc day";
+//		return false;
+//	}
+//	int viTri = kiemTraMaMonHoc(maMonHoc);
+//	if(viTri == -1){
+//		cout << "Khong tim thay ma mon hoc";
+//		return false;
+//	}
+//	monHoc.MAMH = maMonHocMoi;
+//	monHoc.TENMH = tenMonHocMoi;
+//	monHoc.ThoiGianThi = thoiGianThiMoi;
+//	// chinh sua thong tin trong danh sach mon hoc
+//	danhSachMonHoc.ds[viTri]->MAMH = maMonHocMoi; 
+//	danhSachMonHoc.ds[viTri]->TENMH = tenMonHocMoi;
+//	danhSachMonHoc.ds[viTri]->ThoiGianThi = thoiGianThiMoi;
+//	luuDanhSachMonHoc(danhSachMonHoc);
+//	return true;
+//}
 
 // cay nhi phan tim kiem - cau hoi
 
@@ -829,7 +839,7 @@ void duyetTrungTu(ptrDSCauHoi &danhSachCauHoi){
 	}while(1);
 }
 
-void duyetTienTu(ptrDSCauHoi &danhSachCauHoi){ // in danh sach câu hoi
+void duyetTienTu(ptrDSCauHoi &danhSachCauHoi){ // in danh sach cï¿½u hoi
 	if(danhSachCauHoi != NULL){
 		cout <<"MaMH: " << danhSachCauHoi->cauhoi.MAMH << endl;
 		cout << "id: " << danhSachCauHoi->cauhoi.ID << endl;
