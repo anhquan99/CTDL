@@ -7,6 +7,7 @@
 #include "Structure.h"
 #include <fstream>
 #include <time.h>
+#include "TDV.h"
 using namespace std;
 
 // constant
@@ -15,22 +16,23 @@ static int blue = 11;
 static int yellow = 14;
 static int red = 12;
 static int redWrapper = 192;
+static string pass = "THANH CONG";
 //layout
 void Layout();
 void InnerLayout();
 // login form
-void Login();
+void Login(DSLop &dsLop);
 // main menu
-void MainMenuGV();
+void MainMenuGV(DSLop &dsLop);
 void MainMenuSV();
 // create update delete lop
-void ThemLop();
-void DSLopHoc();
-void SuaLop();
+void ThemLop(DSLop &dsLop);
+void DSLopHoc(DSLop &dsLop);
+void SuaLop(Lop &lop, DSLop dsLop);
 void DSSVCuaLop(Lop lop);
 // create update delete SV
 void ThongTinSV();
-void ThemSV();
+void ThemSV(Lop &lop);
 void SuaSV();
 // create udpate mon hoc
 void TaoMonHoc();
@@ -49,7 +51,8 @@ void gotoxy(int x, int y);
 void InitWindow();
 
 // ham kiem tra
-string kiemtraLop(string maLop, string tenLop, string nienkhoa);
+string kiemtraLop(string maLop, string tenLop, string nienkhoa, DSLop classlist);
+string kiemtraSuaLop(string maLop, string maLopCu, string tenLop, string nienkhoa, DSLop classlist);
 string kiemtraCauHoi(string NoiDung, string A, string B, string C, string D, string DapAn);
 // hien hoac an con tro 
 void setcursor(bool visible, DWORD size) // set bool visible = 0 - invisible, bool visible = 1 - visible
@@ -78,73 +81,6 @@ void gotoxy(int x, int y) //set vi tri
   COORD c = { x, y };  
   SetConsoleCursorPosition(h,c);
 }
-
-//khoi tao random
-//void initialArrayRandomNumber(){
-//	int arrayRandomNumber[MAXQUEST];
-//	int randomNumber;
-//	srand(time(NULL));
-//	int temp;
-//	for(int i = 0; i < MAXQUEST; i++){  
-//		arrayRandomNumber[i] = i;
-//	}
-//	arrayRandomNumber[0] = MAXQUEST/2;
-//	arrayRandomNumber[MAXQUEST/2] = 0;
-//	for(int i = 1; i < MAXQUEST-1; i++){
-//		randomNumber = rand() % (MAXQUEST - i)+1;
-//		//cout << "randomNumber = " << randomNumber << endl;
-//		temp = arrayRandomNumber[MAXQUEST-i];
-//		arrayRandomNumber[MAXQUEST-i] = arrayRandomNumber[randomNumber];
-//		//cout <<"arrayRandomNumber[MAXQUEST-i] = " << arrayRandomNumber[MAXQUEST-i] << endl;	
-//		arrayRandomNumber[randomNumber] = temp;		
-//		//cout <<"arrayRandomNumber[randomNumber] = " << arrayRandomNumber[randomNumber] << endl;	
-//	}
-//	ofstream outfile("DSRandom.txt", ios::out | ios::binary);
-//	if(outfile == NULL){
-//		cout << "Loi file" << endl;
-//		return;
-//	}
-//	int index = 1;
-//	outfile.write((char*) &index, sizeof(int));
-//	for(int i = 0; i < MAXQUEST; i++){
-//		outfile.write((char*)&arrayRandomNumber[i], sizeof(int));
-//	}
-//	outfile.close();
-//}
-//// random 
-//int generateArrayRandomNumber(){
-//	streampos size;											
-//	int arrayRandomNumber[MAXQUEST];
-//	ifstream infile("DSRandom.txt", ios::in | ios::binary | ios::ate);
-//	if(infile == NULL){
-//		cout << "Loi file" << endl;
-//		return -1;
-//	}
-//	size = infile.tellg(); // ?????
-//	infile.seekg(0, ios::beg);
-//	int index;
-//	infile.read((char*) &index, sizeof(int));
-//	if(index == MAXQUEST) return -1; // dùng het
-////	cout << "index: " << index << "\n";
-//	for(int i = 0; i < MAXQUEST; i++){
-//		infile.read((char*) &arrayRandomNumber[i], sizeof(int));
-////		cout << arrayRandomNumber[i] << "\n";
-//	}
-//	infile.close();
-//	int temp = arrayRandomNumber[index];
-//	index++;
-//	ofstream outfile("DSRandom.txt", ios::out | ios::binary);
-//	if(outfile == NULL){
-//		cout << "Loi file" << endl;
-//		return -1;
-//	}
-//	outfile.write((char*) &index, sizeof(int));
-//	for(int i = 0; i < MAXQUEST; i++){
-//		outfile.write((char*)&arrayRandomNumber[i], sizeof(int));
-//	}
-//	outfile.close();
-//	return temp;
-//}
 
 void InitWindow(){		//set vi tri va chieu dai, rong cua window
 	HWND consoleWindow = GetConsoleWindow();
@@ -175,7 +111,7 @@ void InnerLayout(){
 	printf("POSTS AND TELECOMMUNICATIONS INSTITUTE OF TECHNOLOGY");
 	
 }
-void Login(){
+void Login(DSLop &dsLop){
 	gotoTop:
 	Layout();
 	setcursor(1,1);
@@ -209,7 +145,7 @@ void Login(){
 		}
 		else if( input == 13 ){ //enter
 			if( UserAndPass[0] == "GV" && UserAndPass[1] == "gv"){
-				MainMenuGV();
+				MainMenuGV(dsLop);
 				goto gotoTop;
 			}
 //			else{
@@ -253,7 +189,7 @@ void Login(){
 		}
 	}
 }
-void MainMenuGV(){
+void MainMenuGV(DSLop &dsLop){
 	gotoTop:
 	InnerLayout();
 	string func[2] = {"LOP", "MON HOC"};
@@ -307,7 +243,7 @@ void MainMenuGV(){
 			case 13:
 				switch(row){
 					case 4:	//lop 
-						DSLopHoc();
+						DSLopHoc(dsLop);
 						goto gotoTop;
 					case 5:	//mon hoc
 						DSMonHocUI();
@@ -319,7 +255,7 @@ void MainMenuGV(){
 		}
 	}	
 }
-void DSLopHoc(){
+void DSLopHoc(DSLop &dsLop){
 	gotoTop:
 	InnerLayout();
 	int row = 4;
@@ -327,18 +263,30 @@ void DSLopHoc(){
 	string lop[3] = {"MA LOP", "TEN LOP", "NIEN KHOA"};
 	int col = 10;
 	string nk = "";
+	gotoCurrent:
 	//create banner
 	TextColor(red);
 	gotoxy(60,3);
 	printf("DANH SACH LOP");
 	TextColor(green);
 	gotoxy(40, row);
-	cout << "NIEN KHOA:";
+	cout << "NIEN KHOA: " << nk;
+	TextColor(blue);
 	for( int i = 0; i < 3; i++){
 		gotoxy((i+1)*30, 5);
 		cout << lop[i];
 	}
-	gotoxy(50, row);
+	TextColor(green);
+	DSLop subList = inDanhSachLopTheoNienKhoa(dsLop, nk);
+	for(int i = 0; i < subList.index; i++){
+		gotoxy(30, 6 + i);
+		cout << subList.lop[i]->MALOP;
+		gotoxy(60, 6 + i);
+		cout << subList.lop[i]->TENLOP;
+		gotoxy(90, 6 + i);
+		cout << subList.lop[i]->NK;
+	}
+	gotoxy(50 + nk.length() + 1, row);
 	setcursor(1,1);
 	// load danh sach lop theo mang de len xuong cho de dang
 	// tao 1 cai filter de search	
@@ -346,33 +294,80 @@ void DSLopHoc(){
 		int input = getch();
 		if(input == 72){	//	up
 			if(row>4){
+				TextColor(green);
+				gotoxy(30, row);
+				cout << subList.lop[row - 6]->MALOP;
+				gotoxy(60, row);
+				cout << subList.lop[row - 6]->TENLOP;
+				gotoxy(90, row);
+				cout << subList.lop[row - 6]->NK;
 				row--;
-				if(row == 5){
-					setcursor(1,1);
+				if( row == 5){
 					row--;
-					gotoxy( x + col + nk.length(), row);
+					setcursor(1,1);
+					gotoxy(50 + nk.length() + 1, row);
+				}
+				else{
+					TextColor(redWrapper);
+					gotoxy(30, row);
+					cout << subList.lop[row - 6]->MALOP;
+					gotoxy(60, row);
+					cout << subList.lop[row - 6]->TENLOP;
+					gotoxy(90, row);
+					cout << subList.lop[row - 6]->NK;
+					TextColor(green);
 				}
 			}
 			// else load the list should be index
-			else{
-				
-			}
 		}
 		else if(input == 80){	// down
-			if(row<6){ // if row < array.length
-				row++;
-				setcursor(0,0);
-				if(row == 5){
-					row++;
+			if(subList.index > 0){
+				if(row + 1 < subList.index + 6){ // if row < array.length
+					if( row == 4){
+						row = 6;
+						setcursor(0,0);
+						TextColor(redWrapper);
+						gotoxy(30, row);
+						cout << subList.lop[row - 6]->MALOP;
+						gotoxy(60, row);
+						cout << subList.lop[row - 6]->TENLOP;
+						gotoxy(90, row);
+						cout << subList.lop[row - 6]->NK;
+						TextColor(green);
+					}
+					else{
+						TextColor(green);
+						gotoxy(30, row);
+						cout << subList.lop[row - 6]->MALOP;
+						gotoxy(60, row);
+						cout << subList.lop[row - 6]->TENLOP;
+						gotoxy(90, row);
+						cout << subList.lop[row - 6]->NK;
+						row++;
+						TextColor(redWrapper);
+						gotoxy(30, row);
+						cout << subList.lop[row - 6]->MALOP;
+						gotoxy(60, row);
+						cout << subList.lop[row - 6]->TENLOP;
+						gotoxy(90, row);
+						cout << subList.lop[row - 6]->NK;
+						TextColor(green);
+					}
+					//	load the list should be index
+					
 				}
-				//	load the list should be index
 			}
 		}
 		else if( input == 13 ){ //enter
 			if(row == 4){
 				//	iterate throught the array to search the right element
+				system("cls");
+				InnerLayout();
+				goto gotoCurrent;
 			}
 			else{
+				DSSVCuaLop(*subList.lop[row-6]);
+				goto gotoTop;
 				// move to deatil view
 			}
 		}
@@ -386,14 +381,16 @@ void DSLopHoc(){
 				}
 			}
 		}
-		else if( input == 102){ // sua
-			
+		else if( input == 102 && row != 4){ // sua
+			SuaLop(*dsLop.lop[row - 6], dsLop);
+			goto gotoTop;
 		}
 		else if( input == 120){	// xoa
-			MessageBox(0,"XIN DANG NHAP LAI!!!","THONG BAO",0);
+			int temp = MessageBox(0,"BAN CO CHAC CHAN MUON XOA KHONG ?", "XAC NHAN", MB_YESNO);	//pop up 1 message box
+			
 		}
-		else if( input == 110){// them moi
-			ThemLop();
+		else if( input == 110){// them lop
+			ThemLop(dsLop);
 			goto gotoTop;
 		}
 		else if( input == 27){
@@ -410,7 +407,7 @@ void DSLopHoc(){
 		}	
 	}
 }
-void ThemLop(){
+void ThemLop(DSLop &dsLop){
 	Layout();
 	int row = 4;
 	int x = 30;
@@ -444,13 +441,20 @@ void ThemLop(){
 			}
 		}
 		else if( input == 13 ){ //enter
-			string flag = kiemtraLop( inputLop[0], inputLop[1], inputLop[2]);
-			if(flag == "true"){
+			string flag = kiemtraLop( inputLop[0], inputLop[1], inputLop[2], dsLop);
+			if(flag == pass){
 				// ham them lop
+				Lop classroom = {inputLop[0], inputLop[1], inputLop[2], NULL};
+				insertClassListQ(classroom, dsLop);
+				ofstream outfile( inputLop[0] + ".txt", ios::out| ios::app | ios::binary);
+				outfile.close();
+				// save lop
+				// luu danh sach lop moi
+				luuDanhSachLopMoi(dsLop);
 				return;
 			}
 			MessageBeep(MB_ICONWARNING);
-			MessageBox(0,"XIN DANG NHAP LAI!!!","THONG BAO",0);
+			MessageBox(0,flag.c_str(),"THONG BAO",0);
 		}
 		else if( input == 8 ){ //backspace
 			if( inputLop[row-4].length() > 0){
@@ -464,7 +468,7 @@ void ThemLop(){
 			return;
 		}
 		else{ // input char 
-			if(((input>=48&&input<=57)||(input>=97&&input<=122)) && inputLop[row - 4].length() < 50 && row != 6){
+			if(((input>=48&&input<=57)||(input>=97&&input<=122)||(input==32)) && inputLop[row - 4].length() < 50 && row != 6){
 					gotoxy( x + col[row-4]+inputLop[row - 4].length() + 1,row);
 					char ch = (char) input;
 					ch = toupper(ch);
@@ -481,28 +485,37 @@ void ThemLop(){
 		}
 	}
 }
-void SuaLop(int id){
-	//tim kiem xong hien thi thong tin cua lop
-	//---------------------------------------//
-	//---------------------------------------//
+void SuaLop(Lop &lop, DSLop dsLop){
 	Layout();
 	int row = 4;
 	int x = 30;
-	string lop[3] = {"MA LOP:", "TEN LOP:", "NIEN KHOA:"};
+	string lopBanner[3] = {"MA LOP:", "TEN LOP:", "NIEN KHOA:"};
 	int col[3] ={7, 8, 10 };
 	string inputLop[3] = {""}; // [0]: ma lop; [1]: ten lop; [2]: nien khoa
+	inputLop[0] = lop.MALOP;
+	inputLop[1] = lop.TENLOP;
+	inputLop[2] = lop.NK;
 	//create banner
 	TextColor(red);
 	gotoxy(60,3);
-	printf("THEM LOP");
+	printf("SUA LOP");
 	TextColor(blue);
 	for( int i = 0; i < 3; i++){
 		gotoxy(x, row + i);
-		cout << lop[i];
+		cout << lopBanner[i];
 	}
+	// in thong tin cua lop
 	setcursor(1,1);
-	gotoxy(x + col[row - 4] + inputLop[ row - 4].length() + 1, row);
 	TextColor(green);
+	gotoxy(x + col[0] + 1, 4);
+	cout << inputLop[0];
+	gotoxy(x + col[1] + 1, 5);
+	cout << inputLop[1];
+	gotoxy(x + col[2] + 1, 6);
+	cout << inputLop[2];
+	//
+	
+	gotoxy(x + col[row - 4] + inputLop[ row - 4].length() + 1, row);
 	while(1){
 		int input = getch();
 		if(input == 72){	//up
@@ -518,13 +531,20 @@ void SuaLop(int id){
 			}
 		}
 		else if( input == 13 ){ //enter
-			string flag = kiemtraLop( inputLop[0], inputLop[1], inputLop[2]);
-			if(flag == "true"){
-				// ham them lop
+			string flag = kiemtraSuaLop( inputLop[0], lop.MALOP, inputLop[1], inputLop[2], dsLop);
+			string oldFile = lop.MALOP + ".txt";
+			string newFile = inputLop[0] + ".txt";
+			int result = rename( oldFile.c_str() , newFile.c_str() );
+			if(flag == pass && result == 0){
+				// sua lop
+				lop.MALOP = inputLop[0];
+				lop.TENLOP = inputLop[1];
+				lop.NK = inputLop[2];
+				luuDanhSachLopMoi(dsLop);
 				return;
 			}
 			MessageBeep(MB_ICONWARNING);
-			MessageBox(0,"XIN DANG NHAP LAI!!!","THONG BAO",0);
+			MessageBox(0,flag.c_str(),"THONG BAO",0);
 		}
 		else if( input == 8 ){ //backspace
 			if( inputLop[row-4].length() > 0){
@@ -534,8 +554,11 @@ void SuaLop(int id){
 				gotoxy( x + col[row - 4]+ inputLop[row - 4].length() + 1,row);
 			}
 		}
+		else if( input == 27){
+			return;
+		}
 		else{ // input char 
-			if(((input>=48&&input<=57)||(input>=97&&input<=122)) && inputLop[row - 4].length() < 50 && row != 6){
+			if(((input>=48&&input<=57)||(input>=97&&input<=122)||(input==32)) && inputLop[row - 4].length() < 50 && row != 6){
 					gotoxy( x + col[row-4]+inputLop[row - 4].length() + 1,row);
 					char ch = (char) input;
 					ch = toupper(ch);
@@ -552,8 +575,10 @@ void SuaLop(int id){
 		}
 	}
 }
-void DSSVCuaLop(Lop lop){
+void DSSVCuaLop(Lop &lop){
+	gotoTop:
 	InnerLayout();
+	setcursor(0,0);
 	int row = 4;
 	int x = 55;
 	string sv[4] = {"MSV", "HO", "TEN", "PHAI"};
@@ -566,17 +591,106 @@ void DSSVCuaLop(Lop lop){
 		gotoxy((i+1)*25, row);
 		cout << sv[i];
 	}
-	setcursor(1,1);
+	TextColor(green);
+	ptrsv current = lop.sv;
+	row++;
+	while(current != NULL){
+		if(current == lop.sv){
+			TextColor(redWrapper);
+		}
+		else{
+			TextColor(green);
+		}
+		gotoxy(25, row);
+		cout << current->MSV;
+		gotoxy(50, row);
+		cout << current->HO;
+		gotoxy(75, row);
+		cout << current->TEN;
+		gotoxy(100, row);
+		cout << current->PHAI;
+		current = current->next;
+		row++;
+	}
+	ptrsv beforeCurrent = NULL;
+	current = lop.sv;
+	row = 5;
 	// load danh sach sinh vien cua lop theo mang de len xuong cho de dang
 	while(1){
-		int input;
-		input  = getch();
-		switch(input){
-				
-		}		
+		int input = getch();
+		if(input == 72){	//	up
+			if(beforeCurrent != NULL){
+				TextColor(green);
+				gotoxy(25, row);
+				cout << current->MSV;
+				gotoxy(50, row);
+				cout << current->HO;
+				gotoxy(75, row);
+				cout << current->TEN;
+				gotoxy(100, row);
+				cout << current->PHAI;
+				row--;
+				current = beforeCurrent;
+				beforeCurrent = laySVTruoc(lop, current);
+				TextColor(redWrapper);
+				gotoxy(25, row);
+				gotoxy(25, row);
+				cout << current->MSV;
+				gotoxy(50, row);
+				cout << current->HO;
+				gotoxy(75, row);
+				cout << current->TEN;
+				gotoxy(100, row);
+				cout << current->PHAI;
+				TextColor(green);
+			}
+			// else load the list should be index
+		}
+		else if(input == 80){	// down
+			if(current->next != NULL){
+				TextColor(green);
+				gotoxy(25, row);
+				cout << current->MSV;
+				gotoxy(50, row);
+				cout << current->HO;
+				gotoxy(75, row);
+				cout << current->TEN;
+				gotoxy(100, row);
+				cout << current->PHAI;
+				row++;
+				current = current->next;
+				beforeCurrent = laySVTruoc(lop, current);
+				TextColor(redWrapper);
+				gotoxy(25, row);
+				cout << current->MSV;
+				gotoxy(50, row);
+				cout << current->HO;
+				gotoxy(75, row);
+				cout << current->TEN;
+				gotoxy(100, row);
+				cout << current->PHAI;
+				TextColor(green);
+			}
+		}
+		else if( input == 13 ){ //enter
+			// danh sach diem cua sinh vien
+		}
+		else if( input == 102){ // sua
+			
+		}
+		else if( input == 120){	// xoa
+			MessageBox(0,"XIN DANG NHAP LAI!!!","THONG BAO",0);
+		}
+		else if( input == 110){// them moi
+			ThemSV(lop);
+			goto gotoTop;
+		}
+		else if( input == 27){
+			return;
+		}
 	}
 }
-void ThemSV(){
+void ThemSV(Lop &lop){
 	Layout();
 	int row = 4;
 	int x = 30;
@@ -628,6 +742,14 @@ void ThemSV(){
 					printf("%c",ch);
 					inputSV[row-4].push_back(ch);
 				}
+			// password
+			if(((input>=48&&input<=57)|| (input>=65&&input<=90) ||(input>=97&&input<=122)) && inputSV[row - 4].length() < 50 && row  == 5){
+					gotoxy(col[row-4]+size[row-4],row);
+					char ch = (char) input;
+					printf("*");
+					UserAndPass[row-4].push_back(ch);
+					size[row-4]++;
+			}
 		}
 	}
 }
@@ -896,11 +1018,32 @@ void MainMenuSV(){
 }
 
 // ham kiem tra
-string kiemtraLop(string maLop, string tenLop, string nienkhoa){
-	return "true";
+string kiemtraLop(string maLop, string tenLop, string nienkhoa, DSLop classlist){
+	if (laKiTuVaLaSoNguyen(maLop) == false){
+		return "Nhap sai cu phap";
+	}
+	if(checkMaLop(classlist, maLop) >= 0){
+		return "Ma lop da ton tai";
+	}
+	else if(kiemTraCuPhapNienKhoa(nienkhoa) == false){
+		return "Nien khoa nhap vao khong hop le";
+	}
+	return pass;
+}
+string kiemtraSuaLop(string maLop, string maLopCu, string tenLop, string nienkhoa, DSLop classlist){
+	if (laKiTuVaLaSoNguyen(maLop) == false){
+		return "Nhap sai cu phap";
+	}
+	if( checkMaLopKhongCoMaLopCu(classlist, maLop, maLopCu) >= 0){
+		return "Ma lop da ton tai";
+	}
+	else if(kiemTraCuPhapNienKhoa(nienkhoa) == false){
+		return "Nien khoa nhap vao khong hop le";
+	}
+	return pass;
 }
 string kiemtraCauHoi(string NoiDung, string A, string B, string C, string D, string DapAn){
-	return "true";
+	return pass;
 }
 //-----
 
