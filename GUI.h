@@ -29,11 +29,11 @@ void MainMenuSV();
 void ThemLop(DSLop &dsLop);
 void DSLopHoc(DSLop &dsLop);
 void SuaLop(Lop &lop, DSLop dsLop);
-void DSSVCuaLop(Lop lop);
+void DSSVCuaLop(Lop &lop, DSLop dsLop);
 // create update delete SV
-void ThongTinSV();
-void ThemSV(Lop &lop);
-void SuaSV();
+//void ThongTinSV();
+void ThemSV(Lop &lop, DSLop dsLop);
+void SuaSV(ptrsv &sv);
 // create udpate mon hoc
 void TaoMonHoc();
 void SuaMonHoc();
@@ -54,6 +54,8 @@ void InitWindow();
 string kiemtraLop(string maLop, string tenLop, string nienkhoa, DSLop classlist);
 string kiemtraSuaLop(string maLop, string maLopCu, string tenLop, string nienkhoa, DSLop classlist);
 string kiemtraCauHoi(string NoiDung, string A, string B, string C, string D, string DapAn);
+string kiemtraSinhVien(string inputSV[5], DSLop dsLop);
+string kiemtraSuaSinhVien(string inputSV[5]);
 // hien hoac an con tro 
 void setcursor(bool visible, DWORD size) // set bool visible = 0 - invisible, bool visible = 1 - visible
 {
@@ -366,7 +368,7 @@ void DSLopHoc(DSLop &dsLop){
 				goto gotoCurrent;
 			}
 			else{
-				DSSVCuaLop(*subList.lop[row-6]);
+				DSSVCuaLop(*subList.lop[row-6], dsLop);
 				goto gotoTop;
 				// move to deatil view
 			}
@@ -382,11 +384,24 @@ void DSLopHoc(DSLop &dsLop){
 			}
 		}
 		else if( input == 102 && row != 4){ // sua
-			SuaLop(*dsLop.lop[row - 6], dsLop);
+			SuaLop(*subList.lop[row - 6], dsLop);
 			goto gotoTop;
 		}
-		else if( input == 120){	// xoa
-			int temp = MessageBox(0,"BAN CO CHAC CHAN MUON XOA KHONG ?", "XAC NHAN", MB_YESNO);	//pop up 1 message box
+		else if( input == 120 && row != 4){	// xoa
+			if(subList.lop[row - 6]->sv == NULL){
+				int temp = MessageBox(0,"BAN CO CHAC CHAN MUON XOA KHONG ?", "XAC NHAN", MB_YESNO);	//pop up 1 message box
+				string maLop = subList.lop[row - 6]->MALOP + ".txt";
+				if(temp == 6 && xoaLop(dsLop, *subList.lop[row - 6]) && remove(maLop.c_str()) == 0){
+					MessageBox(0,"THANH CONG!!!","THONG BAO",0);
+				}
+				else{
+					MessageBox(0,"KHONG THANH CONG!!!","THONG BAO",0);
+				}
+				goto gotoTop;
+			}
+			else{
+				MessageBox(0,"KHONG THE XOA LOP!!!","THONG BAO",0);
+			}
 			
 		}
 		else if( input == 110){// them lop
@@ -575,7 +590,7 @@ void SuaLop(Lop &lop, DSLop dsLop){
 		}
 	}
 }
-void DSSVCuaLop(Lop &lop){
+void DSSVCuaLop(Lop &lop, DSLop dsLop) {
 	gotoTop:
 	InnerLayout();
 	setcursor(0,0);
@@ -672,17 +687,30 @@ void DSSVCuaLop(Lop &lop){
 				TextColor(green);
 			}
 		}
-		else if( input == 13 ){ //enter
-			// danh sach diem cua sinh vien
-		}
-		else if( input == 102){ // sua
-			
+		else if( input == 102 && current != NULL){ // sua
+			SuaSV(current);
+			luuDanhSachSinhVienMoi(lop.MALOP, lop.sv);
+			goto gotoTop; 
 		}
 		else if( input == 120){	// xoa
-			MessageBox(0,"XIN DANG NHAP LAI!!!","THONG BAO",0);
+			if(current->dsdiemthi == NULL){
+				int temp = MessageBox(0,"BAN CO CHAC CHAN MUON XOA KHONG ?", "XAC NHAN", MB_YESNO);	//pop up 1 message box
+//				string maLop = subList.lop[row - 6]->MALOP + ".txt";
+				if(temp == 6 && xoaSinhVienCuaQ(lop, current)){
+					luuDanhSachSinhVienMoi(lop.MALOP, lop.sv);
+					MessageBox(0,"THANH CONG!!!","THONG BAO",0);
+					goto gotoTop;
+				}
+				else{
+					MessageBox(0,"KHONG THANH CONG!!!","THONG BAO",0);
+				}
+			}
+			else{
+				MessageBox(0,"KHONG THE XOA SINH VIEN!!!","THONG BAO",0);
+			}
 		}
 		else if( input == 110){// them moi
-			ThemSV(lop);
+			ThemSV(lop, dsLop);
 			goto gotoTop;
 		}
 		else if( input == 27){
@@ -690,19 +718,19 @@ void DSSVCuaLop(Lop &lop){
 		}
 	}
 }
-void ThemSV(Lop &lop){
+void ThemSV(Lop &lop, DSLop dsLop){
 	Layout();
 	int row = 4;
 	int x = 30;
-	string sv[4] = {"HO:", "TEN:", "PHAI:", "PASSWORD:"};
-	int col[4] ={3, 4, 5, 9 };
-	string inputSV[4] = {""}; // [0]: HO; [1]: TEN; [2]: PHAI; [3]: PASSWORD
+	string sv[5] = {"MA SINH VIEN:", "HO:", "TEN:", "PHAI:", "PASSWORD:"};
+	int col[5] ={13, 3, 4, 5, 9 };
+	string inputSV[5] = {""}; // [0]: MSV;[1]: HO; [2]: TEN; [3]: PHAI; [4]: PASSWORD
 	//create banner
 	TextColor(red);
 	gotoxy(60,3);
 	printf("THEM SINH VIEN");
 	TextColor(blue);
-	for( int i = 0; i < 4; i++){
+	for( int i = 0; i < 5; i++){
 		gotoxy(x, row + i);
 		cout << sv[i];
 	}
@@ -718,13 +746,33 @@ void ThemSV(Lop &lop){
 			}
 		}
 		else if(input == 80){	//down
-			if(row<7){
+			if(row<8){
 				row++;
 				gotoxy( x + col[row - 4 ] + inputSV[row - 4].length() + 1, row);
 			}
 		}
 		else if( input == 13 ){ //enter
-			MessageBox(0,"XIN DANG NHAP LAI!!!","THONG BAO",0);
+			string flag = kiemtraSinhVien(inputSV, dsLop);
+			if(flag == pass){
+				// ham them lop
+				bool phai;
+				if(inputSV[3] == "NAM"){
+					phai = true;
+				}
+				else phai = false;
+				SV sv = {inputSV[0], inputSV[1], inputSV[2], phai, inputSV[4], NULL, NULL};
+				ptrsv temp = lop.sv;
+				themSinhVien(temp, sv);
+				ofstream outfile( inputSV[0] + ".txt", ios::out| ios::app | ios::binary);
+				outfile.close();
+				// save lop
+				// luu danh sach lop moi
+				luuDanhSachSinhVienMoi(lop.MALOP, temp);
+				return;
+			}
+			MessageBeep(MB_ICONWARNING);
+			MessageBox(0,flag.c_str(),"THONG BAO",0);
+			
 		}
 		else if( input == 8 ){ //backspace
 			if( inputSV[row-4].length() > 0){
@@ -734,21 +782,152 @@ void ThemSV(Lop &lop){
 				gotoxy( x + col[row - 4]+ inputSV[row - 4].length() + 1,row);
 			}
 		}
+		else if( input == 27){ // esc
+			return;
+		}
 		else if( input != 224 && input !=72 && input != 80 && input != 8 ){ // input char 
-			if((input>=48&&input<=57)||(input>=97&&input<=122) && inputSV[row - 4].length() < 50){
+			if(((input>=97&&input<=122)||(input==32)) && inputSV[row - 4].length() < 50 && row != 8 && row != 4){
 					gotoxy( x + col[row-4]+inputSV[row - 4].length() + 1,row);
 					char ch = (char) input;
 					ch = toupper(ch);
 					printf("%c",ch);
-					inputSV[row-4].push_back(ch);
+					inputSV[row-4].push_back(ch);	
+				}
+			if(((input>=48&&input<=57)|| (input>=65&&input<=90) ||(input>=97&&input<=122)) && inputSV[row - 4].length() < 50 && row != 8 && row == 4){
+					gotoxy( x + col[row-4]+inputSV[row - 4].length() + 1,row);
+					char ch = (char) input;
+					ch = toupper(ch);
+					printf("%c",ch);
+					inputSV[row-4].push_back(ch);	
 				}
 			// password
-			if(((input>=48&&input<=57)|| (input>=65&&input<=90) ||(input>=97&&input<=122)) && inputSV[row - 4].length() < 50 && row  == 5){
-					gotoxy(col[row-4]+size[row-4],row);
+			if(((input>=48&&input<=57)|| (input>=65&&input<=90) ||(input>=97&&input<=122)) && inputSV[row - 4].length() < 50 && row  == 8){
+					gotoxy( x + col[row-4]+ inputSV[row - 4].length() + 1,row);
 					char ch = (char) input;
 					printf("*");
-					UserAndPass[row-4].push_back(ch);
-					size[row-4]++;
+					inputSV[row-4].push_back(ch);
+			}
+		}
+	}
+}
+
+void SuaSV(ptrsv &sv){
+	Layout();
+	int row = 4;
+	int x = 30;
+	string svLabel[5] = {"MA SINH VIEN:", "HO:", "TEN:", "PHAI:", "PASSWORD:"};
+	int col[5] ={13, 3, 4, 5, 9 };
+	string inputSV[5] = {""}; // [0]: MSV;[1]: HO; [2]: TEN; [3]: PHAI; [4]: PASSWORD
+	inputSV[0] = sv->MSV;
+	inputSV[1] = sv->HO;
+	inputSV[2] = sv->TEN;
+	if( sv->PHAI){
+		inputSV[3] = "NAM";
+	}
+	else{
+		inputSV[3] = "NU";
+	}
+	inputSV[4] = sv->password;
+	//create banner
+	TextColor(red);
+	gotoxy(60,3);
+	printf("THEM SINH VIEN");
+	TextColor(blue);
+	for( int i = 0; i < 5; i++){
+		gotoxy(x, row + i);
+		cout << svLabel[i];
+	}
+	TextColor(green);
+	gotoxy( x + col[0] + 1, 4);
+	cout << inputSV[0];
+	gotoxy( x + col[1] + 1, 5);
+	cout << inputSV[1];
+	gotoxy( x + col[2] + 1, 6);
+	cout << inputSV[2];
+	gotoxy( x + col[3] + 1, 7);
+	cout << inputSV[3];
+	gotoxy( x + col[4] + 1, 8);
+	for(int i = 0; i < inputSV[4].length(); i++){
+		cout << "*";
+	}
+	setcursor(1,1);
+	row = 5;
+	gotoxy(x + col[row - 4] + inputSV[ row - 4].length() + 1, row);
+	while(1){
+		int input = getch();
+		if(input == 72){	//up
+			if(row>5){
+				row--;
+				gotoxy( x + col[row -4] + inputSV[row - 4].length() + 1, row);
+			}
+		}
+		else if(input == 80){	//down
+			if(row<8){
+				row++;
+				gotoxy( x + col[row - 4 ] + inputSV[row - 4].length() + 1, row);
+			}
+		}
+		else if( input == 13 ){ //enter
+			int temp = MessageBox(0,"BAN CO CHAC CHAN MUON SUA KHONG ?", "XAC NHAN", MB_YESNO);	//pop up 1 message box
+			if(temp == 6){
+				string flag = kiemtraSuaSinhVien(inputSV);
+				if(flag == pass){
+					// ham them lop
+					bool phai;
+					if(inputSV[3] == "NAM"){
+						phai = true;
+					}
+					else phai = false;
+					sv->HO = inputSV[1];
+					sv->TEN = inputSV[2];
+					sv->PHAI = phai;
+					sv->password = inputSV[4];
+	//				SV sv = {inputSV[0], inputSV[1], inputSV[2], phai, inputSV[4], NULL, NULL};
+	//				ptrsv temp = lop.sv;
+	//				themSinhVien(temp, sv);
+	//				ofstream outfile( inputSV[0] + ".txt", ios::out| ios::app | ios::binary);
+	//				outfile.close();
+					// save lop
+					// luu danh sach lop moi
+	//				luuDanhSachSinhVienMoi(lop.MALOP, temp);
+					return;
+				}
+				MessageBeep(MB_ICONWARNING);
+				MessageBox(0,flag.c_str(),"THONG BAO",0);
+			}
+		}
+		else if( input == 8 ){ //backspace
+			if( inputSV[row-4].length() > 0){
+				gotoxy( x+ col[row - 4]+ inputSV[row - 4].length(),row);
+				printf(" ");
+				inputSV[row - 4].pop_back();
+				gotoxy( x + col[row - 4]+ inputSV[row - 4].length() + 1,row);
+			}
+		}
+		else if( input == 27){ // esc
+			return;
+		}
+		else if( input != 224 && input !=72 && input != 80 && input != 8 ){ // input char 
+			if(((input>=97&&input<=122)||(input==32)) && inputSV[row - 4].length() < 50 && row != 8 && row != 4){
+					gotoxy( x + col[row-4]+inputSV[row - 4].length() + 1,row);
+					char ch = (char) input;
+					ch = toupper(ch);
+					printf("%c",ch);
+					inputSV[row-4].push_back(ch);	
+				}
+			if(((input>=48&&input<=57)|| (input>=65&&input<=90) ||(input>=97&&input<=122)) && inputSV[row - 4].length() < 50 && row != 8 && row == 4){
+					gotoxy( x + col[row-4]+inputSV[row - 4].length() + 1,row);
+					char ch = (char) input;
+					ch = toupper(ch);
+					printf("%c",ch);
+					inputSV[row-4].push_back(ch);	
+				}
+			// password
+			if(((input>=48&&input<=57)|| (input>=65&&input<=90) ||(input>=97&&input<=122)) && inputSV[row - 4].length() < 50 && row  == 8){
+					gotoxy( x + col[row-4]+ inputSV[row - 4].length() + 1,row);
+					char ch = (char) input;
+					printf("*");
+					inputSV[row-4].push_back(ch);
 			}
 		}
 	}
@@ -1019,6 +1198,9 @@ void MainMenuSV(){
 
 // ham kiem tra
 string kiemtraLop(string maLop, string tenLop, string nienkhoa, DSLop classlist){
+	if (maLop == "" || tenLop == "" || nienkhoa == "" ){
+		return "KHONG THE BO TRONG!!!";
+	}
 	if (laKiTuVaLaSoNguyen(maLop) == false){
 		return "Nhap sai cu phap";
 	}
@@ -1031,6 +1213,10 @@ string kiemtraLop(string maLop, string tenLop, string nienkhoa, DSLop classlist)
 	return pass;
 }
 string kiemtraSuaLop(string maLop, string maLopCu, string tenLop, string nienkhoa, DSLop classlist){
+	if (maLop == "" || tenLop == "" || nienkhoa == "" ){
+		return "KHONG THE BO TRONG!!!";
+	}
+	
 	if (laKiTuVaLaSoNguyen(maLop) == false){
 		return "Nhap sai cu phap";
 	}
@@ -1041,6 +1227,27 @@ string kiemtraSuaLop(string maLop, string maLopCu, string tenLop, string nienkho
 		return "Nien khoa nhap vao khong hop le";
 	}
 	return pass;
+}
+string kiemtraSinhVien(string inputSV[5], DSLop dsLop){
+	for(int i = 0; i < 5; i++){
+		if( inputSV[i] == "") return "KHONG THE BO TRONG!!!";
+	}
+	if(kiemTraMaSinhVienTatCa(inputSV[0], dsLop) == false){
+		return "DA TON TAI MA SINH VIEN!!!";
+	}
+	if(inputSV[3] == "NAM" || inputSV[3] == "NU"){
+		return pass;
+	}
+	return "GIOI TINH KHONG HOP LE";
+}
+string kiemtraSuaSinhVien(string inputSV[5]){
+	for(int i = 0; i < 5; i++){
+		if( inputSV[i] == "") return "KHONG THE BO TRONG!!!";
+	}
+	if(inputSV[3] == "NAM" || inputSV[3] == "NU"){
+		return pass;
+	}
+	return "GIOI TINH KHONG HOP LE";
 }
 string kiemtraCauHoi(string NoiDung, string A, string B, string C, string D, string DapAn){
 	return pass;
