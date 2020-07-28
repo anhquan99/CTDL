@@ -437,12 +437,13 @@ ptrsv kiemTraMaSinhVien(ptrsv First, string maSinhVien){
 bool themSinhVien(ptrsv &danhSachSinhVien, SV sinhVien){ 
 	ptrsv p = new SV;
 	ptrsv last;
-	p->MSV = sinhVien.MSV;
-	p->HO = sinhVien.HO;
-	p->TEN = sinhVien.TEN;
-	p->PHAI = sinhVien.PHAI;
-	p->password = sinhVien.password;
-	p->dsdiemthi = sinhVien.dsdiemthi;
+//	p->MSV = sinhVien.MSV;
+//	p->HO = sinhVien.HO;
+//	p->TEN = sinhVien.TEN;
+//	p->PHAI = sinhVien.PHAI;
+//	p->password = sinhVien.password;
+//	p->dsdiemthi = sinhVien.dsdiemthi;
+	*p = sinhVien;
 	p->next = NULL;
 	if(danhSachSinhVien == NULL) danhSachSinhVien = p;
 	else last->next = p;
@@ -1013,7 +1014,7 @@ int tinhDiem(int* danhSachIdCauHoi, char* danhSachDapAn, int soLuongCau){
 	return soCauDung;
 }
 
-void thiTracNghiem(string maSinhVien, string maMonHoc ,int thoiGianThi, int soCauHoi){
+/*void thiTracNghiem(string maSinhVien, string maMonHoc ,int thoiGianThi, int soCauHoi){
 	DT diemThi;
 	diemThi.DSCauHoi = new int[soCauHoi];
 	diemThi.DapAn = new char[soCauHoi];
@@ -1106,7 +1107,7 @@ void thiTracNghiem(string maSinhVien, string maMonHoc ,int thoiGianThi, int soCa
 	ptrDT danhSachDiemThi = NULL;
 	themDiemThi(danhSachDiemThi, diemThi);
 	luuDanhSachDiemThi(maSinhVien, danhSachDiemThi);
-}
+}*/
 int main(){
 
 
@@ -1141,14 +1142,14 @@ int main(){
 //	ptrsv dsat = NULL;
 //	SV at1 = {"N17DCAT079", "tran", "dang vu", 1, "vu", NULL};
 //	SV at2 = {"N17DCAT049", "nguyen", "hoang thong", 1, "thong", NULL};
-//	SV at3 = {"N17DCAT079", "hoang", "my nhu", 0, "nhu", NULL};
+//	SV at3 = {"N17DCAT089", "hoang", "my nhu", 0, "nhu", NULL};
 //	SV at4 = {"N17DCAT015", "do", "anh quan", 1, "quan", NULL};
 //	themSinhVien(dsat, at1);
 //	themSinhVien(dsat, at2);
 //	themSinhVien(dsat, at3);
 //	themSinhVien(dsat, at4);
 //	luuDanhSachSinhVien("D17CQAT01", dsat);	
-	//	lietKeDanhSachSinhVien(docDanhSachSinhVien("D17CQAT01"));
+//		lietKeDanhSachSinhVien(dsat);
 	//xoaSinhVien(danhSachLop.lop[viTri]->MALOP, docSinhVien(danhSachLop.lop[viTri]->MALOP));  // test xoa sinh viên
 	
 //	suaSinhVien(danhSachLop.lop[viTri]->MALOP,"n17cqat069", "nguyen", "minh beo", true, "fffff",
@@ -1199,10 +1200,10 @@ int main(){
 //	luuDanhSachCauHoi(danhSachCauHoi); // ghi file
 // 	initialArrayRandomNumber(); // khoi tao mang random
 	//cout << "--------------Cau hoi thi trac nghiem---------------" << endl;
-//	duyetTienTu(docDanhSachCauHoi()); // doc file
+	duyetTienTu(docDanhSachCauHoi()); // doc file
 	InitWindow();
 	Layout();
-	thiTracNghiem("N17dcat079", "SKD1108", 3, 4);
+//	thiTracNghiem("N17dcat079", "SKD1108", 3, 4);
 	// lam bai thi
 
 
@@ -1210,7 +1211,6 @@ int main(){
 //	thoiGian tg1;
 //	tg1.phut = 30;
 //	thoiGian tg2;
-//	tg2.gio = 1;
 //	tg2.phut = 10;
 //	thoiGian tg3;
 //	tg3.phut = 15;
@@ -1228,7 +1228,7 @@ int main(){
 //	themDiemThi(danhSachDiemThi, dt2);
 //	themDiemThi(danhSachDiemThi, dt3);
 //	lietKeDanhSachDiemThi(danhSachDiemThi);
-//	luuDanhSachDiemThi("d17cqat", danhSachDiemThi);
+//	luuDanhSachDiemThi("n17dcat079", danhSachDiemThi);
 //	lietKeDanhSachDiemThi(docDanhSachDiemThi("d17cqat"));
 	return 0;
 }
