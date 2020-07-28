@@ -6,18 +6,45 @@
 #include "TDV.h"
 #include <fstream>
 #include <unistd.h>
-
+#include <time.h>
 using namespace std;
 DSLop dsLop;
-
+DSMonHoc dsMonHoc;
+// input array id cau hoi
+// so cau hoi
+//int * randomCauHoi(int arrayCauHoi[], int soCauHoi){ 
+//	int *randomResult = new int[soCauHoi];
+//	if(soCauHoi == (int) sizeof(arrayCauHoi)) return arrayCauHoi;
+//	else if(soCauHoi >  (int) sizeof(arrayCauHoi) || soCauHoi <= 0) return NULL;
+//	else{
+//		int temp;
+//		srand(time(NULL));
+//		for(int i = 0; i < soCauHoi; i++){
+//			int randomNumber = rand() % ((int) sizeof(arrayCauHoi) - 1) + i;
+//			temp = arrayCauHoi[randomNumber];
+//			arrayCauHoi[randomNumber] = arrayCauHoi[i];
+//			arrayCauHoi[i] = temp;
+//			randomResult[i] = temp;	
+//		}
+//	}
+//	return randomResult;
+//}
 int main ()
 {
+	// ham doc file
 	dsLop = docDanhSachLop();
+	dsMonHoc = docDanhSachMonHoc();
 	for(int i = 0; i < dsLop.index; i++){
 		dsLop.lop[i]->sv =  docSinhVien(dsLop.lop[i]->MALOP);
+		ptrsv temp = dsLop.lop[i]->sv;
+		while(temp != NULL){
+			temp->dsdiemthi = docDanhSachDiemThi(temp->MSV);
+			temp = temp->next;
+		}
 	}
 	InitWindow();
-	Login(dsLop);
+	Login(dsLop, dsMonHoc);
+
 //	showClass(dsLop);
 //	DSLop danhSachLop;
 //	streampos size;
@@ -39,5 +66,6 @@ int main ()
 //	};
 //	cout << danhSachLop.index;
 //	infile.close();	
+
 } 
 

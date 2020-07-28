@@ -21,19 +21,20 @@ static string pass = "THANH CONG";
 void Layout();
 void InnerLayout();
 // login form
-void Login(DSLop &dsLop);
+void Login(DSLop &dsLop, DSMonHoc dsMonHoc);
 // main menu
-void MainMenuGV(DSLop &dsLop);
+void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc);
 void MainMenuSV();
 // create update delete lop
 void ThemLop(DSLop &dsLop);
-void DSLopHoc(DSLop &dsLop);
+void DSLopHoc(DSLop &dsLop, DSMonHoc dsMonHoc);
 void SuaLop(Lop &lop, DSLop dsLop);
-void DSSVCuaLop(Lop &lop, DSLop dsLop);
+void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc);
 // create update delete SV
 //void ThongTinSV();
 void ThemSV(Lop &lop, DSLop dsLop);
 void SuaSV(ptrsv &sv);
+void DSDiemCuaSV(ptrsv sv, DSMonHoc dsMonHoc);
 // create udpate mon hoc
 void TaoMonHoc();
 void SuaMonHoc();
@@ -113,7 +114,7 @@ void InnerLayout(){
 	printf("POSTS AND TELECOMMUNICATIONS INSTITUTE OF TECHNOLOGY");
 	
 }
-void Login(DSLop &dsLop){
+void Login(DSLop &dsLop, DSMonHoc dsMonHoc){
 	gotoTop:
 	Layout();
 	setcursor(1,1);
@@ -147,7 +148,7 @@ void Login(DSLop &dsLop){
 		}
 		else if( input == 13 ){ //enter
 			if( UserAndPass[0] == "GV" && UserAndPass[1] == "gv"){
-				MainMenuGV(dsLop);
+				MainMenuGV(dsLop, dsMonHoc);
 				goto gotoTop;
 			}
 //			else{
@@ -191,7 +192,7 @@ void Login(DSLop &dsLop){
 		}
 	}
 }
-void MainMenuGV(DSLop &dsLop){
+void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc){
 	gotoTop:
 	InnerLayout();
 	string func[2] = {"LOP", "MON HOC"};
@@ -245,7 +246,7 @@ void MainMenuGV(DSLop &dsLop){
 			case 13:
 				switch(row){
 					case 4:	//lop 
-						DSLopHoc(dsLop);
+						DSLopHoc(dsLop, dsMonHoc);
 						goto gotoTop;
 					case 5:	//mon hoc
 						DSMonHocUI();
@@ -257,7 +258,7 @@ void MainMenuGV(DSLop &dsLop){
 		}
 	}	
 }
-void DSLopHoc(DSLop &dsLop){
+void DSLopHoc(DSLop &dsLop, DSMonHoc dsMonHoc){
 	gotoTop:
 	InnerLayout();
 	int row = 4;
@@ -368,7 +369,7 @@ void DSLopHoc(DSLop &dsLop){
 				goto gotoCurrent;
 			}
 			else{
-				DSSVCuaLop(*subList.lop[row-6], dsLop);
+				DSSVCuaLop(*subList.lop[row-6], dsLop, dsMonHoc);
 				goto gotoTop;
 				// move to deatil view
 			}
@@ -590,7 +591,7 @@ void SuaLop(Lop &lop, DSLop dsLop){
 		}
 	}
 }
-void DSSVCuaLop(Lop &lop, DSLop dsLop) {
+void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc) {
 	gotoTop:
 	InnerLayout();
 	setcursor(0,0);
@@ -708,6 +709,11 @@ void DSSVCuaLop(Lop &lop, DSLop dsLop) {
 			else{
 				MessageBox(0,"KHONG THE XOA SINH VIEN!!!","THONG BAO",0);
 			}
+		}
+		else if( input == 13 ){ //enter
+			//ds diem cua sinh vien
+			DSDiemCuaSV(current, dsMonHoc);
+			goto gotoTop;
 		}
 		else if( input == 110){// them moi
 			ThemSV(lop, dsLop);
@@ -929,6 +935,119 @@ void SuaSV(ptrsv &sv){
 					printf("*");
 					inputSV[row-4].push_back(ch);
 			}
+		}
+	}
+}
+void DSDiemCuaSV(ptrsv sv, DSMonHoc dsMonHoc) {
+	gotoTop:
+	InnerLayout();
+	setcursor(0,0);
+	int row = 4;
+	int x = 55;
+	string dtLabel[3] = {"MA MON HOC", "SO CAU HOI", "DIEM"};
+	//create banner
+	TextColor(red);
+	gotoxy(50,3);
+	cout << "DANH SACH DIEM THI CUA SINH VIEN: " << sv->MSV;
+	TextColor(blue);
+	for( int i = 0; i < 3; i++){
+		gotoxy((i+1)*25, row);
+		cout << dtLabel[i];
+	}
+	TextColor(green);
+	ptrDT current = sv->dsdiemthi;
+	row++;
+	while(current != NULL){
+		if(current == sv->dsdiemthi){
+			TextColor(redWrapper);
+		}
+		else{
+			TextColor(green);
+		}
+		gotoxy(25, row);
+		cout << current->MAMH;
+		gotoxy(50, row);
+		cout << current->SoCau;
+		gotoxy(75, row);
+		cout << current->DIEM;
+		for(int i = 0; i < dsMonHoc.index; i++){
+			if(current->MAMH == dsMonHoc.ds[i]->MAMH){
+				dsMonHoc.ds[i] = dsMonHoc.ds[dsMonHoc.index - 1];
+				dsMonHoc.index--;
+				break;
+			}
+		}
+		row++;
+		current = current->next;
+	}
+	for(int i = 0; i < dsMonHoc.index; i++){
+		gotoxy(25, row + i);
+		cout << dsMonHoc.ds[i]->MAMH;
+//		gotoxy(50, row);
+//		cout << current->SoCau;
+		gotoxy(75, row + i);
+		cout << "CHUA THI";
+	}
+	ptrDT beforeCurrent = NULL;
+	current = sv->dsdiemthi;
+	row = 5;
+	// load danh sach sinh vien cua lop theo mang de len xuong cho de dang
+	while(1){
+		int input = getch();
+		gotoxy(11,11);
+		cout << input;
+		if(input == 72){	//	up
+			if(beforeCurrent != NULL){
+				TextColor(green);
+				gotoxy(25, row);
+				cout << current->MAMH;
+				gotoxy(50, row);
+				cout << current->SoCau;
+				gotoxy(75, row);
+				cout << current->DIEM;
+				row--;
+				current = beforeCurrent;
+				beforeCurrent = layDTTruoc(*sv, current);
+				TextColor(redWrapper);
+				gotoxy(25, row);
+				cout << current->MAMH;
+				gotoxy(50, row);
+				cout << current->SoCau;
+				gotoxy(75, row);
+				cout << current->DIEM;
+				TextColor(green);
+			}
+			// else load the list should be index
+		}
+		else if(input == 80){	// down
+			gotoxy(10,10);
+			cout << current->next;
+			if(current->next != NULL){
+				TextColor(green);
+				gotoxy(25, row);
+				cout << current->MAMH;
+				gotoxy(50, row);
+				cout << current->SoCau;
+				gotoxy(75, row);
+				cout << current->DIEM;
+				row++;
+				current = current->next;
+				beforeCurrent = layDTTruoc(*sv, current);
+				TextColor(redWrapper);
+				gotoxy(25, row);
+				cout << current->MAMH;
+				gotoxy(50, row);
+				cout << current->SoCau;
+				gotoxy(75, row);
+				cout << current->DIEM;
+				TextColor(green);
+			}
+		}
+		else if( input == 13 ){ //enter
+			//ds diem cua sinh vien
+		}
+		else if( input == 27){
+			return;
 		}
 	}
 }
