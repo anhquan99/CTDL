@@ -671,7 +671,7 @@ xoaTiep:
 
 // thao tac voi mon hoc
 
-<<<<<<< HEAD
+
 bool luuDanhSachMonHoc(DSMonHoc danhSachMonHoc){
 	ofstream outfile("danhSachMonHoc.txt", ios::out | ios::binary);
 	if(outfile == NULL){
@@ -789,7 +789,7 @@ bool suaMonHoc(string maMonHoc, string maMonHocMoi, string tenMonHocMoi, thoiGia
 	luuDanhSachMonHoc(danhSachMonHoc);
 	return true;
 }
-=======
+
 //bool luuDanhSachMonHoc(DSMonHoc danhSachMonHoc){
 //	ofstream outfile("danhSachMonHoc.txt", ios::out | ios::binary);
 //	if(outfile == NULL){
@@ -907,7 +907,6 @@ bool suaMonHoc(string maMonHoc, string maMonHocMoi, string tenMonHocMoi, thoiGia
 //	luuDanhSachMonHoc(danhSachMonHoc);
 //	return true;
 //}
->>>>>>> 04bf951493d34f57bcb239563f45df71e778b365
 
 // cay nhi phan tim kiem - cau hoi
 
