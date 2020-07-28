@@ -672,8 +672,8 @@ bool luuDanhSachMonHoc(DSMonHoc danhSachMonHoc){
 		outfile.write("\0", sizeof(char));
 		outfile.write(danhSachMonHoc.ds[i]->TENMH.c_str(), danhSachMonHoc.ds[i]->TENMH.size());
 		outfile.write("\0", sizeof(char));
-		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.gio), sizeof(int));
-		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.phut), sizeof(int));
+//		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.gio), sizeof(int));
+//		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.phut), sizeof(int));
 	}
 }
 
@@ -681,7 +681,7 @@ void lietKeDanhSachMonHoc(DSMonHoc danhSachMonHoc){
 	cout << "Ma mon hoc  " << "Ten mon hoc  " << "Thoi gian" << endl;
 	for(int i = 0; i < danhSachMonHoc.index; i++){
 		cout << danhSachMonHoc.ds[i]->MAMH << " " << danhSachMonHoc.ds[i]->TENMH << "  ";
-		danhSachMonHoc.ds[i]->ThoiGianThi.hienThiThoiGian();
+//		danhSachMonHoc.ds[i]->ThoiGianThi.hienThiThoiGian();
 		cout << endl;
 	}
 }
@@ -706,8 +706,8 @@ DSMonHoc docDanhSachMonHoc(){
 	while(infile.tellg() != size){
 		getline(infile, mon.MAMH, '\0');
 		getline(infile, mon.TENMH, '\0');
-		infile.read((char*)&mon.ThoiGianThi.gio, sizeof(int));
-		infile.read((char*)&mon.ThoiGianThi.phut, sizeof(int));
+//		infile.read((char*)&mon.ThoiGianThi.gio, sizeof(int));
+//		infile.read((char*)&mon.ThoiGianThi.phut, sizeof(int));
 		themVaoMangConTroDSMonHoc(danhSachMonHoc, mon);
 	}
 	return danhSachMonHoc;
@@ -722,7 +722,7 @@ bool themMonHoc(string maMonHoc, string tenMonHoc, thoiGian thoiGianThi){
 	}
 	monHoc.MAMH = maMonHoc;
 	monHoc.TENMH = tenMonHoc;
-	monHoc.ThoiGianThi = thoiGianThi;
+//	monHoc.ThoiGianThi = thoiGianThi;
 	themVaoMangConTroDSMonHoc(danhSachMonHoc, monHoc);
 	luuDanhSachMonHoc(danhSachMonHoc);
 	return true;
@@ -770,11 +770,11 @@ bool suaMonHoc(string maMonHoc, string maMonHocMoi, string tenMonHocMoi, thoiGia
 	}
 	monHoc.MAMH = maMonHocMoi;
 	monHoc.TENMH = tenMonHocMoi;
-	monHoc.ThoiGianThi = thoiGianThiMoi;
+//	monHoc.ThoiGianThi = thoiGianThiMoi;
 	// chinh sua thong tin trong danh sach mon hoc
 	danhSachMonHoc.ds[viTri]->MAMH = maMonHocMoi; 
 	danhSachMonHoc.ds[viTri]->TENMH = tenMonHocMoi;
-	danhSachMonHoc.ds[viTri]->ThoiGianThi = thoiGianThiMoi;
+//	danhSachMonHoc.ds[viTri]->ThoiGianThi = thoiGianThiMoi;
 	luuDanhSachMonHoc(danhSachMonHoc);
 	return true;
 }
