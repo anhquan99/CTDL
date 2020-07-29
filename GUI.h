@@ -45,6 +45,7 @@ void DSMonHocUI(DSMonHoc &dsMonHoc, ptrDSCauHoi &dsCauHoi);
 void TaoCauHoi(MonHoc monHoc, ptrDSCauHoi &dsCauHoi);
 void DSCauHoiTheoMonHoc(MonHoc monHoc, ptrDSCauHoi &dsCauHoi);
 void SuaCauHoi(ptrDSCauHoi &CauHoi);
+void ChiTietCauHoi(ptrDSCauHoi CauHoi);
 // Thi trac nghiem
 void Thi();
 
@@ -58,7 +59,7 @@ void InitWindow();
 // ham kiem tra
 string kiemtraLop(string maLop, string tenLop, string nienkhoa, DSLop classlist);
 string kiemtraSuaLop(string maLop, string maLopCu, string tenLop, string nienkhoa, DSLop classlist);
-string kiemtraCauHoi(string NoiDung, string A, string B, string C, string D, string DapAn);
+string kiemtraCauHoi(string NoiDung, string A, string B, string C, string D, char DapAn);
 string kiemtraSinhVien(string inputSV[5], DSLop dsLop);
 string kiemtraSuaSinhVien(string inputSV[5]);
 string kiemtraMonHoc(string inputMH[2], DSMonHoc dsMonHoc);
@@ -1074,67 +1075,65 @@ void DSDiemCuaSV(ptrsv sv, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi) {
 //chua xong
 void ChiTietDT(ptrDT dt, ptrDSCauHoi dsCauHoi){
 	ChitietDemLayout();
-	gotoxy(10,10);
-	for(int i=0;i<dt->SoCau;i++){
-		cout << dt->DSCauHoi[i] << endl;
-	}
-	while(1){
-		
-	}
-//	ptrDSCauHoi cauHoi = dsCauHoi;
-//	int index = 0;
-//	gotoTop:
-//	ChitietDemLayout();
-//	setcursor(0,0);
-//	int row = 4;
-//	int x = 55;
-//	string dtLabel[7] = {"CAU HOI:", "A", "B", "C", "D", "DAP AN", "CAU TRA LOI"};
-//	int col[7] = {8, 1, 1, 1, 1,  6, 11};
-//	//create banner
-//	TextColor(red);
-//	gotoxy(50,3);
-//	cout << "DANH SACH CAU TRA LOI MON THI: " << dt->MAMH;
-//	TextColor(blue);
-//	for( int i = 0; i < 7; i++){
-//		gotoxy(25, row + i);
-//		cout << dtLabel[i];
+//	gotoxy(10,10);
+//	for(int i=0;i<dt->SoCau;i++){
+//		cout << dt->DSCauHoi[i] << endl;
 //	}
-//	TextColor(green);
-//	gotoxy(25 + col[0] + 1, 4);
-//	cout << cauHoi->cauhoi.NoiDung;
-//	gotoxy(25 + col[1] + 1, 5);
-//	cout << cauHoi->cauhoi.A;
-//	gotoxy(25 + col[2] + 1, 6);
-//	cout << cauHoi->cauhoi.B;
-//	gotoxy(25 + col[3] + 1, 7);
-//	cout << cauHoi->cauhoi.C;
-//	gotoxy(25 + col[4] + 1, 8);
-//	cout << cauHoi->cauhoi.D;
-//	gotoxy(25 + col[5] + 1, 9);
-//	cout << cauHoi->cauhoi.DapAn;
-//	gotoxy(25 + col[6] + 1, 10);
-//	cout << dt->DapAn[index];
-//	row = 5;
-//	setcursor(0,0);
-//	// load danh sach sinh vien cua lop theo mang de len xuong cho de dang
 //	while(1){
-//		int input = getch();
-//		gotoxy(10,10);
-//		cout << input;
-//		if(input == 46 && index > 0){	//	left
-//			index--;
-//			cauHoi = timKiemCauHoiTheoId(dt->DSCauHoi[index], dsCauHoi);
-//			goto gotoTop;
-//		}
-//		else if(input == 47 && index < dt->SoCau){	// right
-//			index++;
-//			cauHoi = timKiemCauHoiTheoId(dt->DSCauHoi[index], dsCauHoi);
-//			goto gotoTop;
-//		}
-//		else if( input == 27){
-//			return;
-//		}
+//		
 //	}
+	ptrDSCauHoi cauHoi = dsCauHoi;
+	int index = 0;
+	gotoTop:
+	ChitietDemLayout();
+	setcursor(0,0);
+	int row = 4;
+	int x = 55;
+	string dtLabel[7] = {"CAU HOI:", "A", "B", "C", "D", "DAP AN", "CAU TRA LOI"};
+	int col[7] = {8, 1, 1, 1, 1,  6, 11};
+	//create banner
+	TextColor(red);
+	gotoxy(50,3);
+	cout << "DANH SACH CAU TRA LOI MON THI: " << dt->MAMH;
+	TextColor(blue);
+	for( int i = 0; i < 7; i++){
+		gotoxy(25, row + i);
+		cout << dtLabel[i];
+	}
+	TextColor(green);
+	gotoxy(25 + col[0] + 1, 4);
+	cout << cauHoi->cauhoi.NoiDung;
+	gotoxy(25 + col[1] + 1, 5);
+	cout << cauHoi->cauhoi.A;
+	gotoxy(25 + col[2] + 1, 6);
+	cout << cauHoi->cauhoi.B;
+	gotoxy(25 + col[3] + 1, 7);
+	cout << cauHoi->cauhoi.C;
+	gotoxy(25 + col[4] + 1, 8);
+	cout << cauHoi->cauhoi.D;
+	gotoxy(25 + col[5] + 1, 9);
+	cout << cauHoi->cauhoi.DapAn;
+	gotoxy(25 + col[6] + 1, 10);
+	cout << dt->DapAn[index];
+	row = 5;
+	setcursor(0,0);
+	// load danh sach sinh vien cua lop theo mang de len xuong cho de dang
+	while(1){
+		int input = getch();
+		if(input == 44 && index > 0){	//	left
+			index--;
+			cauHoi = timKiemCauHoiTheoId(dt->DSCauHoi[index], dsCauHoi);
+			goto gotoTop;
+		}
+		else if(input == 46 && index < dt->SoCau - 1){	// right
+			index++;
+			cauHoi = timKiemCauHoiTheoId(dt->DSCauHoi[index], dsCauHoi);
+			goto gotoTop;
+		}
+		else if( input == 27){
+			return;
+		}
+	}
 }
 void TaoMonHoc(DSMonHoc &dsMonHoc){
 	Layout();
@@ -1398,12 +1397,15 @@ void TaoCauHoi(MonHoc monHoc, ptrDSCauHoi &dsCauHoi){
 			}
 		}
 		else if( input == 13 ){ //enter
-			string flag = kiemtraCauHoi(inputCauHoi[0], inputCauHoi[1], inputCauHoi[2], inputCauHoi[3], inputCauHoi[4], inputCauHoi[5]);
-			if(flag == "true"){
+			string flag = kiemtraCauHoi(inputCauHoi[0], inputCauHoi[1], inputCauHoi[2], inputCauHoi[3], inputCauHoi[4], inputCauHoi[5][0]);
+			if(flag == pass){
+				CauHoi temp = taoCauHoiVoiIdNgauNhien(monHoc.MAMH, inputCauHoi[0], inputCauHoi[1], inputCauHoi[2], inputCauHoi[3], inputCauHoi[4], inputCauHoi[5][0]);
+				themCauHoiVaoCay(dsCauHoi, temp);
+				luuDanhSachCauHoi(dsCauHoi);
 				return;
 			}
 			MessageBeep(MB_ICONWARNING);
-			MessageBox(0,"XIN NHAP LAI!!!","THONG BAO",0);	
+			MessageBox(0,flag.c_str(),"THONG BAO",0);	
 		}
 		else if( input == 8 ){ //backspace
 			if( inputCauHoi[row-4].length() > 0 && row != 9){
@@ -1424,7 +1426,7 @@ void TaoCauHoi(MonHoc monHoc, ptrDSCauHoi &dsCauHoi){
 					printf("%c",ch);
 					inputCauHoi[row-4].push_back(ch);
 			}
-			if((input >= 65 && input <= 68)  && inputCauHoi[row - 4].length() < 1 && row == 9){
+			if((input >= 97 && input <= 100)  && inputCauHoi[row - 4].length() < 1 && row == 9){
 					gotoxy( x + col[row-4]+inputCauHoi[row - 4].length() + 1,row);
 					char ch = (char) input;
 					ch = toupper(ch);
@@ -1487,18 +1489,22 @@ void SuaCauHoi(ptrDSCauHoi &ptrCauHoi){
 			}
 		}
 		else if( input == 13 ){ //enter
-			string flag = kiemtraCauHoi(inputCauHoi[0], inputCauHoi[1], inputCauHoi[2], inputCauHoi[3], inputCauHoi[4], inputCauHoi[5]);
-			if(flag == "true"){
-				ptrCauHoi->cauhoi.NoiDung = inputCauHoi[0];
-				ptrCauHoi->cauhoi.A = inputCauHoi[1];
-				ptrCauHoi->cauhoi.B = inputCauHoi[2];
-				ptrCauHoi->cauhoi.C = inputCauHoi[3];
-				ptrCauHoi->cauhoi.D = inputCauHoi[4];
-				ptrCauHoi->cauhoi.DapAn = inputCauHoi[5][0];
-				return;
+			string flag = kiemtraCauHoi(inputCauHoi[0], inputCauHoi[1], inputCauHoi[2], inputCauHoi[3], inputCauHoi[4], inputCauHoi[5][0]);
+			if(flag == pass){
+				int temp = MessageBox(0,"BAN CO CHAC CHAN MUON SUA KHONG ?", "XAC NHAN", MB_YESNO);	//pop up 1 message box
+				if(temp == 6){
+					ptrCauHoi->cauhoi.NoiDung = inputCauHoi[0];
+					ptrCauHoi->cauhoi.A = inputCauHoi[1];
+					ptrCauHoi->cauhoi.B = inputCauHoi[2];
+					ptrCauHoi->cauhoi.C = inputCauHoi[3];
+					ptrCauHoi->cauhoi.D = inputCauHoi[4];
+					ptrCauHoi->cauhoi.DapAn = inputCauHoi[5][0];
+					return;	
+				}
+				
 			}
 			MessageBeep(MB_ICONWARNING);
-			MessageBox(0,"XIN NHAP LAI!!!","THONG BAO",0);	
+			MessageBox(0,flag.c_str(),"THONG BAO",0);	
 		}
 		else if( input == 8 ){ //backspace
 			if( inputCauHoi[row-4].length() > 0 && row != 9){
@@ -1519,13 +1525,59 @@ void SuaCauHoi(ptrDSCauHoi &ptrCauHoi){
 					printf("%c",ch);
 					inputCauHoi[row-4].push_back(ch);
 			}
-			if((input >= 65 && input <= 68)  && inputCauHoi[row - 4].length() < 1 && row == 9){
+			if((input >= 97 && input <= 100)  && inputCauHoi[row - 4].length() < 1 && row == 9){
 					gotoxy( x + col[row-4]+inputCauHoi[row - 4].length() + 1,row);
 					char ch = (char) input;
 					ch = toupper(ch);
 					printf("%c",ch);
 					inputCauHoi[row-4][0] = ch;
 			}
+		}
+	}
+}
+void ChiTietCauHoi(ptrDSCauHoi ptrCauHoi){
+	Layout();
+	int row = 4;
+	int x = 30;
+	string cauhoi[6] = {"CAU HOI:", "A:", "B:", "C:", "D:", "DAP AN:"};
+	int col[6] ={8, 2, 2, 2, 2, 7};
+	string inputCauHoi[6] = {""}; // [0]: NOI DUNG; [1]: A; [2]: B; [3]: C; [4]: D; [5]: DAP AN
+	inputCauHoi[0] = ptrCauHoi->cauhoi.NoiDung;
+	inputCauHoi[1] = ptrCauHoi->cauhoi.A;
+	inputCauHoi[2] = ptrCauHoi->cauhoi.B;
+	inputCauHoi[3] = ptrCauHoi->cauhoi.C;
+	inputCauHoi[4] = ptrCauHoi->cauhoi.D;
+	inputCauHoi[5] = ptrCauHoi->cauhoi.DapAn;
+	//create banner
+	TextColor(red);
+	gotoxy(60,3);
+	cout << "SUA CAU HOI : " << ptrCauHoi->cauhoi.ID;
+	TextColor(blue);
+	for( int i = 0; i < 6; i++){
+		gotoxy(x, row + i);
+		cout << cauhoi[i];
+	}
+	TextColor(green);
+	gotoxy(x + col[0] + 1, row );
+	cout << ptrCauHoi->cauhoi.NoiDung;
+	gotoxy(x + col[1] + 1, row + 1);
+	cout << ptrCauHoi->cauhoi.A;
+	gotoxy(x + col[2] + 1, row + 2);
+	cout << ptrCauHoi->cauhoi.B;
+	gotoxy(x + col[3] + 1, row + 3);
+	cout << ptrCauHoi->cauhoi.C;
+	gotoxy(x + col[4] + 1, row  + 4);
+	cout << ptrCauHoi->cauhoi.D;
+	gotoxy(x + col[5] + 1, row + 5);
+	cout << ptrCauHoi->cauhoi.DapAn;
+	setcursor(1,1);
+	gotoxy(x + col[row - 4] + inputCauHoi[ row - 4].length() + 1, row);
+	TextColor(green);
+	setcursor(0,0);
+	while(1){
+		int input = getch();
+		if( input == 27){	//ESC
+			return;
 		}
 	}
 }
@@ -1578,7 +1630,7 @@ void DSCauHoiTheoMonHoc(MonHoc monHoc, ptrDSCauHoi &dsCauHoi){
 			}
 			// else load the list should be index
 		}
-		else if(input == 80 && row < soCau + 5){	// down
+		else if(input == 80 && row < soCau + 4){	// down
 			TextColor(green);
 			gotoxy(25, row);
 			cout << danhSachCauHoiTheoMaMonHoc[row - 5].NoiDung;
@@ -1588,9 +1640,15 @@ void DSCauHoiTheoMonHoc(MonHoc monHoc, ptrDSCauHoi &dsCauHoi){
 			cout << danhSachCauHoiTheoMaMonHoc[row - 5].NoiDung;
 			TextColor(green);
 		}
+		else if( input == 13 ){ //enter
+			ptrDSCauHoi temp = timKiemCauHoiTheoId(danhSachCauHoiTheoMaMonHoc[row - 5].ID,dsCauHoi);
+			ChiTietCauHoi(temp);
+			goto gotoTop;
+		}
 		else if( input == 102){ // sua
 			ptrDSCauHoi temp = timKiemCauHoiTheoId(danhSachCauHoiTheoMaMonHoc[row - 5].ID,dsCauHoi);
 			SuaCauHoi(temp);
+			luuDanhSachCauHoi(dsCauHoi);
 			goto gotoTop;
 		}
 		else if( input == 120){	// xoa
@@ -1757,10 +1815,13 @@ string kiemtraSuaMonHoc(string inputMH[2]){
 	return pass;
 }
 string kiemtraCauHoi(string NoiDung, string A, string B, string C, string D, char DapAn){
-	if( NoiDung == "" || A  == "" || B == "" || C == "" || D == "" || isblank(DapAn)){
+	if( NoiDung == "" || A  == "" || B == "" || C == "" || D == ""){
 		return "KHONG THE BO TRONG!!!"; 
 	}
-	return pass;
+	if( DapAn == 'A' || DapAn == 'B' || DapAn == 'C' || DapAn == 'D' ){
+		return pass; 
+	}
+	return "XIN VUI LONG NHAP LAI!!!";
 }
 //-----
 

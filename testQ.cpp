@@ -38,8 +38,8 @@ int main ()
 //		cout << "Loi file" << endl;
 //		exit(0);
 //	}
-//	size = infile.tellg();
-//	infile.seekg (0, ios::beg);
+//	size = infile.tellg();v
+//	infile.seekg (0, ios::bgeg);
 //	while(size != infile.tellg()){
 //		getline(infile, lop.MALOP, '\0');
 //		getline(infile, lop.TENLOP, '\0');
