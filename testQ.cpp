@@ -10,28 +10,12 @@
 using namespace std;
 DSLop dsLop;
 DSMonHoc dsMonHoc;
-// input array id cau hoi
-// so cau hoi
-//int * randomCauHoi(int arrayCauHoi[], int soCauHoi){ 
-//	int *randomResult = new int[soCauHoi];
-//	if(soCauHoi == (int) sizeof(arrayCauHoi)) return arrayCauHoi;
-//	else if(soCauHoi >  (int) sizeof(arrayCauHoi) || soCauHoi <= 0) return NULL;
-//	else{
-//		int temp;
-//		srand(time(NULL));
-//		for(int i = 0; i < soCauHoi; i++){
-//			int randomNumber = rand() % ((int) sizeof(arrayCauHoi) - 1) + i;
-//			temp = arrayCauHoi[randomNumber];
-//			arrayCauHoi[randomNumber] = arrayCauHoi[i];
-//			arrayCauHoi[i] = temp;
-//			randomResult[i] = temp;	
-//		}
-//	}
-//	return randomResult;
-//}
+ptrDSCauHoi dsCauHoi;
+
 int main ()
 {
 	// ham doc file
+	dsCauHoi = docDanhSachCauHoi();
 	dsLop = docDanhSachLop();
 	dsMonHoc = docDanhSachMonHoc();
 	for(int i = 0; i < dsLop.index; i++){
@@ -43,7 +27,7 @@ int main ()
 		}
 	}
 	InitWindow();
-	Login(dsLop, dsMonHoc);
+	Login(dsLop, dsMonHoc, dsCauHoi);
 
 //	showClass(dsLop);
 //	DSLop danhSachLop;

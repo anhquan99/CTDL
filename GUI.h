@@ -20,27 +20,31 @@ static string pass = "THANH CONG";
 //layout
 void Layout();
 void InnerLayout();
+void ChitietDemLayout();
 // login form
-void Login(DSLop &dsLop, DSMonHoc dsMonHoc);
+void Login(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi);
 // main menu
-void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc);
+void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi);
 void MainMenuSV();
 // create update delete lop
 void ThemLop(DSLop &dsLop);
-void DSLopHoc(DSLop &dsLop, DSMonHoc dsMonHoc);
+void DSLopHoc(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi);
 void SuaLop(Lop &lop, DSLop dsLop);
-void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc);
+void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi);
 // create update delete SV
 //void ThongTinSV();
 void ThemSV(Lop &lop, DSLop dsLop);
 void SuaSV(ptrsv &sv);
-void DSDiemCuaSV(ptrsv sv, DSMonHoc dsMonHoc);
+void DSDiemCuaSV(ptrsv sv, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi);
+void ChiTietDT(ptrDT dt, ptrDSCauHoi dsCauHoi);
 // create udpate mon hoc
-void TaoMonHoc();
-void SuaMonHoc();
-void DSMonHocUI();
+void TaoMonHoc(DSMonHoc &dsMonHoc);
+void SuaMonHoc(MonHoc &monHoc);
+void DSMonHocUI(DSMonHoc &dsMonHoc, ptrDSCauHoi &dsCauHoi);
 // create cau hoi
-void TaoCauHoi();
+void TaoCauHoi(MonHoc monHoc, ptrDSCauHoi &dsCauHoi);
+void DSCauHoiTheoMonHoc(MonHoc monHoc, ptrDSCauHoi &dsCauHoi);
+void SuaCauHoi(ptrDSCauHoi &CauHoi);
 // Thi trac nghiem
 void Thi();
 
@@ -57,6 +61,8 @@ string kiemtraSuaLop(string maLop, string maLopCu, string tenLop, string nienkho
 string kiemtraCauHoi(string NoiDung, string A, string B, string C, string D, string DapAn);
 string kiemtraSinhVien(string inputSV[5], DSLop dsLop);
 string kiemtraSuaSinhVien(string inputSV[5]);
+string kiemtraMonHoc(string inputMH[2], DSMonHoc dsMonHoc);
+string kiemtraSuaMonHoc(string inputMH[2]);
 // hien hoac an con tro 
 void setcursor(bool visible, DWORD size) // set bool visible = 0 - invisible, bool visible = 1 - visible
 {
@@ -114,7 +120,18 @@ void InnerLayout(){
 	printf("POSTS AND TELECOMMUNICATIONS INSTITUTE OF TECHNOLOGY");
 	
 }
-void Login(DSLop &dsLop, DSMonHoc dsMonHoc){
+void ChitietDemLayout(){
+	system("cls");
+	setcursor(0,0);
+	TextColor(12);
+	gotoxy(30,0);
+	printf("DUNG PHIM < > DE DIEU HUONG  || ESC DE QUAY LAI ");
+	gotoxy(50,1);
+	printf("-------------------------------------");
+	gotoxy(40,2);
+	printf("POSTS AND TELECOMMUNICATIONS INSTITUTE OF TECHNOLOGY");
+}
+void Login(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 	gotoTop:
 	Layout();
 	setcursor(1,1);
@@ -148,7 +165,7 @@ void Login(DSLop &dsLop, DSMonHoc dsMonHoc){
 		}
 		else if( input == 13 ){ //enter
 			if( UserAndPass[0] == "GV" && UserAndPass[1] == "gv"){
-				MainMenuGV(dsLop, dsMonHoc);
+				MainMenuGV(dsLop, dsMonHoc, dsCauHoi);
 				goto gotoTop;
 			}
 //			else{
@@ -192,7 +209,7 @@ void Login(DSLop &dsLop, DSMonHoc dsMonHoc){
 		}
 	}
 }
-void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc){
+void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 	gotoTop:
 	InnerLayout();
 	string func[2] = {"LOP", "MON HOC"};
@@ -246,10 +263,10 @@ void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc){
 			case 13:
 				switch(row){
 					case 4:	//lop 
-						DSLopHoc(dsLop, dsMonHoc);
+						DSLopHoc(dsLop, dsMonHoc, dsCauHoi);
 						goto gotoTop;
 					case 5:	//mon hoc
-						DSMonHocUI();
+						DSMonHocUI(dsMonHoc, dsCauHoi);
 						goto gotoTop;			
 				}	
 				break;
@@ -258,7 +275,7 @@ void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc){
 		}
 	}	
 }
-void DSLopHoc(DSLop &dsLop, DSMonHoc dsMonHoc){
+void DSLopHoc(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 	gotoTop:
 	InnerLayout();
 	int row = 4;
@@ -369,7 +386,7 @@ void DSLopHoc(DSLop &dsLop, DSMonHoc dsMonHoc){
 				goto gotoCurrent;
 			}
 			else{
-				DSSVCuaLop(*subList.lop[row-6], dsLop, dsMonHoc);
+				DSSVCuaLop(*subList.lop[row-6], dsLop, dsMonHoc, dsCauHoi);
 				goto gotoTop;
 				// move to deatil view
 			}
@@ -591,7 +608,7 @@ void SuaLop(Lop &lop, DSLop dsLop){
 		}
 	}
 }
-void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc) {
+void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi) {
 	gotoTop:
 	InnerLayout();
 	setcursor(0,0);
@@ -663,7 +680,8 @@ void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc) {
 			// else load the list should be index
 		}
 		else if(input == 80){	// down
-			if(current->next != NULL){
+			if(current != NULL){
+				if(current->next != NULL){
 				TextColor(green);
 				gotoxy(25, row);
 				cout << current->MSV;
@@ -687,13 +705,14 @@ void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc) {
 				cout << current->PHAI;
 				TextColor(green);
 			}
+			}
 		}
 		else if( input == 102 && current != NULL){ // sua
 			SuaSV(current);
 			luuDanhSachSinhVienMoi(lop.MALOP, lop.sv);
 			goto gotoTop; 
 		}
-		else if( input == 120){	// xoa
+		else if( input == 120 && current != NULL){	// xoa
 			if(current->dsdiemthi == NULL){
 				int temp = MessageBox(0,"BAN CO CHAC CHAN MUON XOA KHONG ?", "XAC NHAN", MB_YESNO);	//pop up 1 message box
 //				string maLop = subList.lop[row - 6]->MALOP + ".txt";
@@ -710,9 +729,9 @@ void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc) {
 				MessageBox(0,"KHONG THE XOA SINH VIEN!!!","THONG BAO",0);
 			}
 		}
-		else if( input == 13 ){ //enter
+		else if( input == 13 && current != NULL){ //enter
 			//ds diem cua sinh vien
-			DSDiemCuaSV(current, dsMonHoc);
+			DSDiemCuaSV(current, dsMonHoc, dsCauHoi);
 			goto gotoTop;
 		}
 		else if( input == 110){// them moi
@@ -938,7 +957,7 @@ void SuaSV(ptrsv &sv){
 		}
 	}
 }
-void DSDiemCuaSV(ptrsv sv, DSMonHoc dsMonHoc) {
+void DSDiemCuaSV(ptrsv sv, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi) {
 	gotoTop:
 	InnerLayout();
 	setcursor(0,0);
@@ -994,8 +1013,6 @@ void DSDiemCuaSV(ptrsv sv, DSMonHoc dsMonHoc) {
 	// load danh sach sinh vien cua lop theo mang de len xuong cho de dang
 	while(1){
 		int input = getch();
-		gotoxy(11,11);
-		cout << input;
 		if(input == 72){	//	up
 			if(beforeCurrent != NULL){
 				TextColor(green);
@@ -1020,9 +1037,8 @@ void DSDiemCuaSV(ptrsv sv, DSMonHoc dsMonHoc) {
 			// else load the list should be index
 		}
 		else if(input == 80){	// down
-			gotoxy(10,10);
-			cout << current->next;
-			if(current->next != NULL){
+			if(current != NULL){
+				if(current->next != NULL){
 				TextColor(green);
 				gotoxy(25, row);
 				cout << current->MAMH;
@@ -1042,28 +1058,97 @@ void DSDiemCuaSV(ptrsv sv, DSMonHoc dsMonHoc) {
 				cout << current->DIEM;
 				TextColor(green);
 			}
+			}
 		}
-		else if( input == 13 ){ //enter
+		else if( input == 13 && current != NULL){ //enter
 			//ds diem cua sinh vien
+			ChiTietDT(current, dsCauHoi);
+			goto gotoTop;
 		}
 		else if( input == 27){
 			return;
 		}
 	}
 }
-void TaoMonHoc(){
+
+//chua xong
+void ChiTietDT(ptrDT dt, ptrDSCauHoi dsCauHoi){
+	ChitietDemLayout();
+	gotoxy(10,10);
+	for(int i=0;i<dt->SoCau;i++){
+		cout << dt->DSCauHoi[i] << endl;
+	}
+	while(1){
+		
+	}
+//	ptrDSCauHoi cauHoi = dsCauHoi;
+//	int index = 0;
+//	gotoTop:
+//	ChitietDemLayout();
+//	setcursor(0,0);
+//	int row = 4;
+//	int x = 55;
+//	string dtLabel[7] = {"CAU HOI:", "A", "B", "C", "D", "DAP AN", "CAU TRA LOI"};
+//	int col[7] = {8, 1, 1, 1, 1,  6, 11};
+//	//create banner
+//	TextColor(red);
+//	gotoxy(50,3);
+//	cout << "DANH SACH CAU TRA LOI MON THI: " << dt->MAMH;
+//	TextColor(blue);
+//	for( int i = 0; i < 7; i++){
+//		gotoxy(25, row + i);
+//		cout << dtLabel[i];
+//	}
+//	TextColor(green);
+//	gotoxy(25 + col[0] + 1, 4);
+//	cout << cauHoi->cauhoi.NoiDung;
+//	gotoxy(25 + col[1] + 1, 5);
+//	cout << cauHoi->cauhoi.A;
+//	gotoxy(25 + col[2] + 1, 6);
+//	cout << cauHoi->cauhoi.B;
+//	gotoxy(25 + col[3] + 1, 7);
+//	cout << cauHoi->cauhoi.C;
+//	gotoxy(25 + col[4] + 1, 8);
+//	cout << cauHoi->cauhoi.D;
+//	gotoxy(25 + col[5] + 1, 9);
+//	cout << cauHoi->cauhoi.DapAn;
+//	gotoxy(25 + col[6] + 1, 10);
+//	cout << dt->DapAn[index];
+//	row = 5;
+//	setcursor(0,0);
+//	// load danh sach sinh vien cua lop theo mang de len xuong cho de dang
+//	while(1){
+//		int input = getch();
+//		gotoxy(10,10);
+//		cout << input;
+//		if(input == 46 && index > 0){	//	left
+//			index--;
+//			cauHoi = timKiemCauHoiTheoId(dt->DSCauHoi[index], dsCauHoi);
+//			goto gotoTop;
+//		}
+//		else if(input == 47 && index < dt->SoCau){	// right
+//			index++;
+//			cauHoi = timKiemCauHoiTheoId(dt->DSCauHoi[index], dsCauHoi);
+//			goto gotoTop;
+//		}
+//		else if( input == 27){
+//			return;
+//		}
+//	}
+}
+void TaoMonHoc(DSMonHoc &dsMonHoc){
 	Layout();
 	int row = 4;
 	int x = 30;
-	string mh[3] = {"MA MON HOC:", "TEN MON HOC:", "THOI GIAN THI:"};
-	int col[3] ={11, 12, 14};
-	string inputMH[4] = {""}; // [0]: MA MON HOC; [1]: TEN MON HOC; [2]: THOI GIAN THI
+	string mh[2] = {"MA MON HOC:", "TEN MON HOC:"};
+	int col[2] ={11, 12};
+	string inputMH[2] = {""}; // [0]: MA MON HOC; [1]: TEN MON HOC
 	//create banner
 	TextColor(red);
 	gotoxy(60,3);
 	printf("THEM MON HOC");
 	TextColor(blue);
-	for( int i = 0; i < 3; i++){
+	for( int i = 0; i < 2; i++){
 		gotoxy(x, row + i);
 		cout << mh[i];
 	}
@@ -1079,13 +1164,21 @@ void TaoMonHoc(){
 			}
 		}
 		else if(input == 80){	//down
-			if(row<6){
+			if(row<5){
 				row++;
 				gotoxy( x + col[row - 4 ] + inputMH[row - 4].length() + 1, row);
 			}
 		}
 		else if( input == 13 ){ //enter
-			MessageBox(0,"XIN DANG NHAP LAI!!!","THONG BAO",0);
+			string flag = kiemtraMonHoc(inputMH, dsMonHoc);
+			MonHoc monHoc = {inputMH[0], inputMH[1]};
+			if(flag == pass && themMonHocTheoThuTuMaMonHoc(dsMonHoc, monHoc)){
+				luuDanhSachMonHoc(dsMonHoc);
+				return;
+			}
+			MessageBeep(MB_ICONWARNING);
+			MessageBox(0,flag.c_str(),"THONG BAO",0);
+			
 		}
 		else if( input == 8 ){ //backspace
 			if( inputMH[row-4].length() > 0){
@@ -1096,7 +1189,83 @@ void TaoMonHoc(){
 			}
 		}
 		else if( input != 224 && input !=72 && input != 80 && input != 8 ){ // input char 
-			if((input>=48&&input<=57)||(input>=97&&input<=122) && inputMH[row - 4].length() < 50){
+			if(((input>=48&&input<=57)||(input>=97&&input<=122)) && inputMH[row - 4].length() < 50 && row == 4){
+					gotoxy( x + col[row-4]+inputMH[row - 4].length() + 1,row);
+					char ch = (char) input;
+					ch = toupper(ch);
+					printf("%c",ch);
+					inputMH[row-4].push_back(ch);
+				}
+			if(((input>=48&&input<=57)||(input>=97&&input<=122)||(input==32)) && inputMH[row - 4].length() < 50 && row == 5){
+					gotoxy( x + col[row-4]+inputMH[row - 4].length() + 1,row);
+					char ch = (char) input;
+					ch = toupper(ch);
+					printf("%c",ch);
+					inputMH[row-4].push_back(ch);
+				}
+		}
+		else if( input == 27){	//ESC
+			return;
+		}
+	}
+}
+void SuaMonHoc(MonHoc &monHoc){
+	Layout();
+	int row = 4;
+	int x = 30;
+	string mh[2] = {"MA MON HOC:", "TEN MON HOC:"};
+	int col[2] ={11, 12};
+	string inputMH[2] = {monHoc.MAMH, monHoc.TENMH}; // [0]: MA MON HOC; [1]: TEN MON HOC
+	//create banner
+	TextColor(red);
+	gotoxy(60,3);
+	printf("THEM MON HOC");
+	TextColor(blue);
+	for( int i = 0; i < 2; i++){
+		gotoxy(x, row + i);
+		cout << mh[i];
+	}
+	TextColor(green);
+	gotoxy(x+ col[0] + 1, row);
+	cout << monHoc.MAMH;
+	gotoxy(x+ col[1] + 1, row + 1);
+	cout << monHoc.TENMH;
+	setcursor(1,1);
+	row = 5;
+	gotoxy(x + col[row - 4] + inputMH[ row - 4].length() + 1, row);
+	
+	while(1){
+		int input = getch();
+		if( input == 13 ){ //enter
+			string flag = kiemtraSuaMonHoc(inputMH);
+			if(flag == pass){
+				monHoc.TENMH = inputMH[1];
+				return;
+			}
+			MessageBeep(MB_ICONWARNING);
+			MessageBox(0,flag.c_str(),"THONG BAO",0);
+			
+		}
+		else if( input == 8 ){ //backspace
+			if( inputMH[row-4].length() > 0){
+				gotoxy( x+ col[row - 4]+ inputMH[row - 4].length(),row);
+				printf(" ");
+				inputMH[row - 4].pop_back();
+				gotoxy( x + col[row - 4]+ inputMH[row - 4].length() + 1,row);
+			}
+		}
+		else if( input == 27){	//ESC
+			return;
+		}
+		else if( input != 224 && input !=72 && input != 80 && input != 8 ){ // input char 
+//			if(((input>=48&&input<=57)||(input>=97&&input<=122)) && inputMH[row - 4].length() < 50 && row == 4){
+//					gotoxy( x + col[row-4]+inputMH[row - 4].length() + 1,row);
+//					char ch = (char) input;
+//					ch = toupper(ch);
+//					printf("%c",ch);
+//					inputMH[row-4].push_back(ch);
+//				}
+			if(((input>=48&&input<=57)||(input>=97&&input<=122)||(input==32)) && inputMH[row - 4].length() < 50 && row == 5){
 					gotoxy( x + col[row-4]+inputMH[row - 4].length() + 1,row);
 					char ch = (char) input;
 					ch = toupper(ch);
@@ -1106,63 +1275,86 @@ void TaoMonHoc(){
 		}
 	}
 }
-void SuaMonHoc(){
-	
-}
-void DSMonHocUI(){
+void DSMonHocUI(DSMonHoc &dsMonHoc, ptrDSCauHoi &dsCauHoi){
 	gotoTop:
 	InnerLayout();
-	int row = 4;
+	int row = 5;
 	int x = 40;
-	string mon[3] = {"MA MON HOC", "TEN MON HOC", "THOI GIAN THI"};
+	string mon[2] = {"MA MON HOC", "TEN MON HOC"};
 	//create banner
 	TextColor(red);
 	gotoxy(60,3);
 	printf("DANH SACH MON HOC");
 	TextColor(blue);
-	for( int i = 0; i < 3; i++){
-		gotoxy((i+1)*30, row);
+	for( int i = 0; i < 2; i++){
+		gotoxy((i+1)*40, 4);
 		cout << mon[i];
 	}
 	// load danh sach mon hoc theo mang de len xuong cho de dang
 	// bat dau to mau cho dau danh sach 
+	for(int i = 0; i < dsMonHoc.index; i++){
+		if( i == 0 ){
+			TextColor(redWrapper);
+			gotoxy(40, row + i);
+			cout << dsMonHoc.ds[i]->MAMH;
+			gotoxy(80, row + i);
+			cout << dsMonHoc.ds[i]->TENMH;
+			TextColor(green);
+		}
+		else{
+			gotoxy(40, row + i);
+			cout << dsMonHoc.ds[i]->MAMH;
+			gotoxy(80, row + i);
+			cout << dsMonHoc.ds[i]->TENMH;
+		}
+	}
+	row = 5;
 	while(1){
 		int input = getch();
-		if(input == 72){	//	up
-			if(row>6){
-				row--;
-			}
-			// else load the list should be index
-			else{
-				
-			}
+		if(input == 72 && row > 5){	//	up
+			TextColor(green);
+			gotoxy(40, row);
+			cout << dsMonHoc.ds[row - 5]->MAMH;
+			gotoxy(80, row);
+			cout << dsMonHoc.ds[row - 5]->TENMH;
+			row--;
+			TextColor(redWrapper);
+			gotoxy(40, row);
+			cout << dsMonHoc.ds[row - 5]->MAMH;
+			gotoxy(80, row);
+			cout << dsMonHoc.ds[row - 5]->TENMH;
+			TextColor(green);
 		}
-		else if(input == 80){	// down
-			if(row<6){ // if row < array.length
-				row++;
-				setcursor(0,0);
-				if(row == 5){
-					row++;
-				}
-				//	load the list should be index
-			}
+		else if(input == 80 && row < dsMonHoc.index + 4){	// down
+			TextColor(green);
+			gotoxy(40, row);
+			cout << dsMonHoc.ds[row - 5]->MAMH;
+			gotoxy(80, row);
+			cout << dsMonHoc.ds[row - 5]->TENMH;
+			row++;
+			TextColor(redWrapper);
+			gotoxy(40, row);
+			cout << dsMonHoc.ds[row - 5]->MAMH;
+			gotoxy(80, row);
+			cout << dsMonHoc.ds[row - 5]->TENMH;
+			TextColor(green);
 		}
 		else if( input == 13 ){ //enter
-			if(row == 4){
-				//	iterate throught the array to search the right element
-			}
-			else{
-				// move to deatil view
-			}
+			//go to detail view
+			DSCauHoiTheoMonHoc(*dsMonHoc.ds[row - 5], dsCauHoi);
+			goto gotoTop;
 		}
 		else if( input == 102){ // sua
-			
+			//go to fix view
+			SuaMonHoc(*dsMonHoc.ds[row - 5]);
+			luuDanhSachMonHoc(dsMonHoc);
+			goto gotoTop;
 		}
 		else if( input == 120){	// xoa
-			MessageBox(0,"XIN DANG NHAP LAI!!!","THONG BAO",0);
+			MessageBox(0,"KHONG THE XOA MON HOC!!!","THONG BAO",0);
 		}
 		else if( input == 110){// them moi
-			TaoMonHoc();
+			TaoMonHoc(dsMonHoc);
 			goto gotoTop;
 		}
 		else if( input == 27){	//ESC
@@ -1172,19 +1364,19 @@ void DSMonHocUI(){
 }
 
 // chon mon hoc roi moi tao cau hoi
-void TaoCauHoi(string maMH){
+void TaoCauHoi(MonHoc monHoc, ptrDSCauHoi &dsCauHoi){
 	Layout();
 	int row = 4;
 	int x = 30;
-	string cauhoi[7] = {"MA MON HOC:", "NOI DUNG:", "A:", "B:", "C:", "D:", "DAP AN:"};
-	int col[7] ={11, 9, 2, 2, 2, 2, 7};
-	string inputCauHoi[6] = {""}; // [0]: MA MON HOC; [1]: NOI DUNG; [2]: A; [3]: B; [4]: C; [5]: D; [6]: DAP AN
+	string cauhoi[6] = {"CAU HOI:", "A:", "B:", "C:", "D:", "DAP AN:"};
+	int col[6] ={8, 2, 2, 2, 2, 7};
+	string inputCauHoi[6] = {""}; // [0]: NOI DUNG; [1]: A; [2]: B; [3]: C; [4]: D; [5]: DAP AN
 	//create banner
 	TextColor(red);
 	gotoxy(60,3);
-	printf("THEM MON HOC");
+	cout << "THEM CAU HOI CHO MON: " << monHoc.TENMH;
 	TextColor(blue);
-	for( int i = 0; i < 7; i++){
+	for( int i = 0; i < 6; i++){
 		gotoxy(x, row + i);
 		cout << cauhoi[i];
 	}
@@ -1200,13 +1392,13 @@ void TaoCauHoi(string maMH){
 			}
 		}
 		else if(input == 80){	//down
-			if(row<10){
+			if(row<9){
 				row++;
 				gotoxy( x + col[row - 4 ] + inputCauHoi[row - 4].length() + 1, row);
 			}
 		}
 		else if( input == 13 ){ //enter
-			string flag = kiemtraCauHoi(inputCauHoi[1], inputCauHoi[2], inputCauHoi[3], inputCauHoi[4], inputCauHoi[5], inputCauHoi[6]);
+			string flag = kiemtraCauHoi(inputCauHoi[0], inputCauHoi[1], inputCauHoi[2], inputCauHoi[3], inputCauHoi[4], inputCauHoi[5]);
 			if(flag == "true"){
 				return;
 			}
@@ -1214,21 +1406,202 @@ void TaoCauHoi(string maMH){
 			MessageBox(0,"XIN NHAP LAI!!!","THONG BAO",0);	
 		}
 		else if( input == 8 ){ //backspace
-			if( inputCauHoi[row-4].length() > 0){
+			if( inputCauHoi[row-4].length() > 0 && row != 9){
 				gotoxy( x+ col[row - 4]+ inputCauHoi[row - 4].length(),row);
 				printf(" ");
 				inputCauHoi[row - 4].pop_back();
 				gotoxy( x + col[row - 4]+ inputCauHoi[row - 4].length() + 1,row);
 			}
 		}
+		else if( input == 27){	//ESC
+			return;
+		}
 		else if( input != 224 && input !=72 && input != 80 && input != 8 ){ // input char 
-			if((input>=48&&input<=57)||(input>=97&&input<=122) && inputCauHoi[row - 4].length() < 50){
+			if((input >= 32 && input <= 126)  && inputCauHoi[row - 4].length() < 100 && row != 9){
+					gotoxy( x + col[row-4]+inputCauHoi[row - 4].length() + 1,row);
+					char ch = (char) input;
+//					ch = toupper(ch);
+					printf("%c",ch);
+					inputCauHoi[row-4].push_back(ch);
+			}
+			if((input >= 65 && input <= 68)  && inputCauHoi[row - 4].length() < 1 && row == 9){
 					gotoxy( x + col[row-4]+inputCauHoi[row - 4].length() + 1,row);
 					char ch = (char) input;
 					ch = toupper(ch);
 					printf("%c",ch);
+					inputCauHoi[row-4][0] = ch;
+			}
+		}
+	}
+}
+void SuaCauHoi(ptrDSCauHoi &ptrCauHoi){
+	Layout();
+	int row = 4;
+	int x = 30;
+	string cauhoi[6] = {"CAU HOI:", "A:", "B:", "C:", "D:", "DAP AN:"};
+	int col[6] ={8, 2, 2, 2, 2, 7};
+	string inputCauHoi[6] = {""}; // [0]: NOI DUNG; [1]: A; [2]: B; [3]: C; [4]: D; [5]: DAP AN
+	inputCauHoi[0] = ptrCauHoi->cauhoi.NoiDung;
+	inputCauHoi[1] = ptrCauHoi->cauhoi.A;
+	inputCauHoi[2] = ptrCauHoi->cauhoi.B;
+	inputCauHoi[3] = ptrCauHoi->cauhoi.C;
+	inputCauHoi[4] = ptrCauHoi->cauhoi.D;
+	inputCauHoi[5] = ptrCauHoi->cauhoi.DapAn;
+	//create banner
+	TextColor(red);
+	gotoxy(60,3);
+	cout << "SUA CAU HOI : " << ptrCauHoi->cauhoi.ID;
+	TextColor(blue);
+	for( int i = 0; i < 6; i++){
+		gotoxy(x, row + i);
+		cout << cauhoi[i];
+	}
+	TextColor(green);
+	gotoxy(x + col[0] + 1, row );
+	cout << ptrCauHoi->cauhoi.NoiDung;
+	gotoxy(x + col[1] + 1, row + 1);
+	cout << ptrCauHoi->cauhoi.A;
+	gotoxy(x + col[2] + 1, row + 2);
+	cout << ptrCauHoi->cauhoi.B;
+	gotoxy(x + col[3] + 1, row + 3);
+	cout << ptrCauHoi->cauhoi.C;
+	gotoxy(x + col[4] + 1, row  + 4);
+	cout << ptrCauHoi->cauhoi.D;
+	gotoxy(x + col[5] + 1, row + 5);
+	cout << ptrCauHoi->cauhoi.DapAn;
+	setcursor(1,1);
+	gotoxy(x + col[row - 4] + inputCauHoi[ row - 4].length() + 1, row);
+	TextColor(green);
+	while(1){
+		int input = getch();
+		if(input == 72){	//up
+			if(row>4){
+				row--;
+				gotoxy( x + col[row -4] + inputCauHoi[row - 4].length() + 1, row);
+			}
+		}
+		else if(input == 80){	//down
+			if(row<9){
+				row++;
+				gotoxy( x + col[row - 4 ] + inputCauHoi[row - 4].length() + 1, row);
+			}
+		}
+		else if( input == 13 ){ //enter
+			string flag = kiemtraCauHoi(inputCauHoi[0], inputCauHoi[1], inputCauHoi[2], inputCauHoi[3], inputCauHoi[4], inputCauHoi[5]);
+			if(flag == "true"){
+				ptrCauHoi->cauhoi.NoiDung = inputCauHoi[0];
+				ptrCauHoi->cauhoi.A = inputCauHoi[1];
+				ptrCauHoi->cauhoi.B = inputCauHoi[2];
+				ptrCauHoi->cauhoi.C = inputCauHoi[3];
+				ptrCauHoi->cauhoi.D = inputCauHoi[4];
+				ptrCauHoi->cauhoi.DapAn = inputCauHoi[5][0];
+				return;
+			}
+			MessageBeep(MB_ICONWARNING);
+			MessageBox(0,"XIN NHAP LAI!!!","THONG BAO",0);	
+		}
+		else if( input == 8 ){ //backspace
+			if( inputCauHoi[row-4].length() > 0 && row != 9){
+				gotoxy( x+ col[row - 4]+ inputCauHoi[row - 4].length(),row);
+				printf(" ");
+				inputCauHoi[row - 4].pop_back();
+				gotoxy( x + col[row - 4]+ inputCauHoi[row - 4].length() + 1,row);
+			}
+		}
+		else if( input == 27){	//ESC
+			return;
+		}
+		else if( input != 224 && input !=72 && input != 80 && input != 8 ){ // input char 
+			if((input >= 32 && input <= 126)  && inputCauHoi[row - 4].length() < 100 && row != 9){
+					gotoxy( x + col[row-4]+inputCauHoi[row - 4].length() + 1,row);
+					char ch = (char) input;
+//					ch = toupper(ch);
+					printf("%c",ch);
 					inputCauHoi[row-4].push_back(ch);
-				}
+			}
+			if((input >= 65 && input <= 68)  && inputCauHoi[row - 4].length() < 1 && row == 9){
+					gotoxy( x + col[row-4]+inputCauHoi[row - 4].length() + 1,row);
+					char ch = (char) input;
+					ch = toupper(ch);
+					printf("%c",ch);
+					inputCauHoi[row-4][0] = ch;
+			}
+		}
+	}
+}
+void DSCauHoiTheoMonHoc(MonHoc monHoc, ptrDSCauHoi &dsCauHoi){
+	gotoTop:
+	InnerLayout();
+	setcursor(0,0);
+	int row = 4;
+	int x = 55;
+	int soCau = timKiemCauHoiTheoMaMonHocInt(monHoc.MAMH, dsCauHoi);
+	CauHoi danhSachCauHoiTheoMaMonHoc[soCau];
+	timKiemCauHoiTheoMaMonHoc(monHoc.MAMH, dsCauHoi, danhSachCauHoiTheoMaMonHoc);
+	string sv = "CAU HOI";
+	//create banner
+	TextColor(red);
+	gotoxy(50,3);
+	cout << "DANH SACH CAU HOI CUA MON: " << monHoc.TENMH;
+	TextColor(blue);
+	//
+	gotoxy(25, row);
+	cout << sv;
+	//
+	row++;
+	for(int i = 0; i < soCau; i++){
+		if( i == 0){
+			TextColor(redWrapper);
+			gotoxy(25, row);
+			cout << danhSachCauHoiTheoMaMonHoc[i].NoiDung;
+			TextColor(green);
+		}
+		else{
+			gotoxy(25, row + i);
+			cout << danhSachCauHoiTheoMaMonHoc[i].NoiDung;
+		}
+	}
+	row = 5;
+	// load danh sach sinh vien cua lop theo mang de len xuong cho de dang
+	while(1){
+		int input = getch();
+		if(input == 72){	//	up
+			if(row > 5){
+				TextColor(green);
+				gotoxy(25, row);
+				cout << danhSachCauHoiTheoMaMonHoc[row - 5].NoiDung;
+				row--;
+				TextColor(redWrapper);
+				gotoxy(25, row);
+				cout << danhSachCauHoiTheoMaMonHoc[row - 5].NoiDung;
+				TextColor(green);
+			}
+			// else load the list should be index
+		}
+		else if(input == 80 && row < soCau + 5){	// down
+			TextColor(green);
+			gotoxy(25, row);
+			cout << danhSachCauHoiTheoMaMonHoc[row - 5].NoiDung;
+			row++;
+			TextColor(redWrapper);
+			gotoxy(25, row);
+			cout << danhSachCauHoiTheoMaMonHoc[row - 5].NoiDung;
+			TextColor(green);
+		}
+		else if( input == 102){ // sua
+			ptrDSCauHoi temp = timKiemCauHoiTheoId(danhSachCauHoiTheoMaMonHoc[row - 5].ID,dsCauHoi);
+			SuaCauHoi(temp);
+			goto gotoTop;
+		}
+		else if( input == 120){	// xoa
+			MessageBox(0,"KHONG THE XOA CAU HOI!!!","THONG BAO",0);
+		}
+		else if( input == 110){// them moi
+			TaoCauHoi(monHoc, dsCauHoi);
+			goto gotoTop;
+		}
+		else if( input == 27){
+			return;
 		}
 	}
 }
@@ -1368,7 +1741,25 @@ string kiemtraSuaSinhVien(string inputSV[5]){
 	}
 	return "GIOI TINH KHONG HOP LE";
 }
-string kiemtraCauHoi(string NoiDung, string A, string B, string C, string D, string DapAn){
+string kiemtraMonHoc(string inputMH[2], DSMonHoc dsMonHoc){
+	for(int i = 0; i < 2; i++){
+		if( inputMH[i] == "") return "KHONG THE BO TRONG!!!"; 
+	}
+	if(kiemTraMaMonHoc(inputMH[0], dsMonHoc) != -1){
+		return "MA MON HOC DA TON TAI!!!";
+	}
+	return pass;
+}
+string kiemtraSuaMonHoc(string inputMH[2]){
+	for(int i = 0; i < 2; i++){
+		if( inputMH[i] == "") return "KHONG THE BO TRONG!!!"; 
+	}
+	return pass;
+}
+string kiemtraCauHoi(string NoiDung, string A, string B, string C, string D, char DapAn){
+	if( NoiDung == "" || A  == "" || B == "" || C == "" || D == "" || isblank(DapAn)){
+		return "KHONG THE BO TRONG!!!"; 
+	}
 	return pass;
 }
 //-----
