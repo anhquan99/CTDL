@@ -11,49 +11,22 @@ DSLop dsLop;
 DSMonHoc dsMonHoc;
 ptrDSCauHoi dsCauHoi;
 
-int * randomCauHoi(int arrayCauHoi[], int soCauHoi){ 
-	cout << (int) sizeof(arrayCauHoi) << endl;
-	int *randomResult = new int[soCauHoi];
-	if(soCauHoi == (int) sizeof(arrayCauHoi)){
-		cout << "tra ve het mang" << endl;
-		return arrayCauHoi;
-	}
-	else if(soCauHoi >  (int) sizeof(arrayCauHoi) || soCauHoi <= 0){
-		cout << "NULL" <<endl;
-		return NULL;
-	}
-	else{
-		int temp;
-		srand(time(NULL));
-		for(int i = 0; i < soCauHoi; i++){
-			int randomNumber = rand() % ((int) sizeof(arrayCauHoi) - 1) + i;
-			temp = arrayCauHoi[randomNumber];
-			arrayCauHoi[randomNumber] = arrayCauHoi[i];
-			arrayCauHoi[i] = temp;
-			randomResult[i] = temp;	
-		}
-	}
-	return randomResult;
-}
 int main ()
 {
-//	// ham doc file
-//	dsCauHoi = docDanhSachCauHoi();
-//	dsLop = docDanhSachLop();
-//	dsMonHoc = docDanhSachMonHoc();
-//	for(int i = 0; i < dsLop.index; i++){
-//		dsLop.lop[i]->sv =  docSinhVien(dsLop.lop[i]->MALOP);
-//		ptrsv temp = dsLop.lop[i]->sv;
-//		while(temp != NULL){
-//			temp->dsdiemthi = docDanhSachDiemThi(temp->MSV);
-//			temp = temp->next;
-//		}
-//	}
-//	InitWindow();
-//	Login(dsLop, dsMonHoc, dsCauHoi);
-	int *a = new int[15];
-	cout << sizeof(a) << endl;
-	int *b = new int[10];
+	// ham doc file
+	dsCauHoi = docDanhSachCauHoi();
+	dsLop = docDanhSachLop();
+	dsMonHoc = docDanhSachMonHoc();
+	for(int i = 0; i < dsLop.index; i++){
+		dsLop.lop[i]->sv =  docSinhVien(dsLop.lop[i]->MALOP);
+		ptrsv temp = dsLop.lop[i]->sv;
+		while(temp != NULL){
+			temp->dsdiemthi = docDanhSachDiemThi(temp->MSV);
+			temp = temp->next;
+		}
+	}
+	InitWindow();
+	Login(dsLop, dsMonHoc, dsCauHoi);
 //	randomCauHoi(a,10);
 //	for(int i=0;i<10;i++){
 //		cout << b[i] << endl;

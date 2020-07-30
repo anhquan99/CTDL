@@ -10,8 +10,19 @@
 #include <regex>
 #include "Structure.h"
 #include <stdlib.h> 
+#include <unistd.h> 
+#include <windows.h>
+#include <iomanip>
 using namespace std;
 
+void gotoxy(int x, int y) //set vi tri
+{
+  static HANDLE h = NULL;  
+  if(!h)
+    h = GetStdHandle(STD_OUTPUT_HANDLE);
+  COORD c = { x, y };  
+  SetConsoleCursorPosition(h,c);
+}
 //khoi tao random
 void initialArrayRandomNumber(){
 	int arrayRandomNumber[MAXQUEST];
@@ -500,7 +511,7 @@ ptrsv laySVTruoc(Lop lop, ptrsv sv){
 	}
 }
 
-bool themSinhVien(ptrsv &danhSachSinhVien, SV sinhVien){ 
+   themSinhVien(ptrsv &danhSachSinhVien, SV sinhVien){ 
 	ptrsv p = new SV;
 	ptrsv last;
 	if (danhSachSinhVien!=NULL ) 
@@ -714,31 +725,31 @@ void lietKeDanhSachDiemThi(ptrDT danhSachDiemThi){
 	
 }
 
-bool luuDanhSachDiemThi(string maSinhVien, ptrDT danhSachDiemThi){
-	string tenFile = maSinhVien + ".txt";	
-	ofstream outfile(tenFile, ios::out | ios::binary);
-	if(outfile == NULL){
-		cout << "loi file";
-		return false;
-	}
-	for(ptrDT p = danhSachDiemThi; p != NULL; p = p->next){
-		outfile.write(p->MAMH.c_str(), p->MAMH.size());
-		outfile.write("\0", sizeof(char));
-		outfile.write((char*)&p->DIEM, sizeof(double));
-		outfile.write((char*)&p->TrangThai, sizeof(bool));
-		outfile.write((char*)&p->ThoiGianConLai.phut, sizeof(int));
-		outfile.write((char*)&p->ThoiGianConLai.giay, sizeof(int));
-		outfile.write((char*)&p->SoCau, sizeof(int));	
-		if(p->SoCau > 0){	// da thi		
-			for(int i = 0; i < p->SoCau; i++){
-				outfile.write((char*)&(p->DSCauHoi[i]), sizeof(int));
-				outfile.write((char*)&(p->DapAn[i]), sizeof(char));
-//				cout << "p->DSCauHoi[i]: " << p->DSCauHoi[i] << endl;
-//				cout << "p->DapAn[i]: " << p->DapAn[i] << endl;
-			}
-		}
-	}
-}
+// bool luuDanhSachDiemThi(string maSinhVien, ptrDT danhSachDiemThi){
+// 	string tenFile = maSinhVien + ".txt";	
+// 	ofstream outfile(tenFile, ios::out | ios::binary);
+// 	if(outfile == NULL){
+// 		cout << "loi file";
+// 		return false;
+// 	}
+// 	for(ptrDT p = danhSachDiemThi; p != NULL; p = p->next){
+// 		outfile.write(p->MAMH.c_str(), p->MAMH.size());
+// 		outfile.write("\0", sizeof(char));
+// 		outfile.write((char*)&p->DIEM, sizeof(double));
+// 		outfile.write((char*)&p->TrangThai, sizeof(bool));
+// 		outfile.write((char*)&p->ThoiGianConLai.phut, sizeof(int));
+// 		outfile.write((char*)&p->ThoiGianConLai.giay, sizeof(int));
+// 		outfile.write((char*)&p->SoCau, sizeof(int));	
+// 		if(p->SoCau > 0){	// da thi		
+// 			for(int i = 0; i < p->SoCau; i++){
+// 				outfile.write((char*)&(p->DSCauHoi[i]), sizeof(int));
+// 				outfile.write((char*)&(p->DapAn[i]), sizeof(char));
+// //				cout << "p->DSCauHoi[i]: " << p->DSCauHoi[i] << endl;
+// //				cout << "p->DapAn[i]: " << p->DapAn[i] << endl;
+// 			}
+// 		}
+// 	}
+// }
 
 ptrDT docDanhSachDiemThi(string maSinhVien){
 	ptrDT danhSachDiemThi = NULL;
@@ -1238,5 +1249,310 @@ int timKiemCauHoiTheoMaMonHocInt(string maMonHoc, ptrDSCauHoi danhSachCauHoi ){
 		else p = Stack[sp--];
 	}
 	return cout;
+}
+// VU
+bool kiemTraMonSinhVienDaThi(string maSinhVien, string maMonHoc){
+	ptrDT danhSachDiemThi = docDanhSachDiemThi(maSinhVien);
+	for(ptrDT p = danhSachDiemThi; p != NULL; p = p->next){
+		if(p->MAMH.compare(maMonHoc) == 0)
+			return true;
+	}
+	return false;
+}
+
+bool xacNhan(int &thoiGianThi, int &giay){
+	char c;
+	while(thoiGianThi >= 0){
+		if(kbhit()){
+			c = getch();
+			if(c == 121){
+				return true;
+			}else if(c == 110){
+				return false;
+			}
+		}
+        if(giay == 0){
+        	thoiGianThi--;
+        	if(thoiGianThi == -1){
+        		gotoxy(40,28);
+				cout << "------>HET THOI GIAN <------";
+				break;
+			}
+        	giay = 60;
+		}
+		sleep(1);
+        giay--; 
+	}
+	return true;
+}
+bool luuDanhSachDiemThi(string maSinhVien, ptrDT danhSachDiemThi){
+	string tenFile = maSinhVien + ".txt";	
+	ofstream outfile(tenFile, ios::out | ios::binary);
+	if(outfile == NULL){
+		cout << "loi file";
+		return false;
+	}
+	for(ptrDT p = danhSachDiemThi; p != NULL; p = p->next){
+		outfile.write(p->MAMH.c_str(), p->MAMH.size());
+		outfile.write("\0", sizeof(char));
+		outfile.write((char*)&p->DIEM, sizeof(double));
+		outfile.write((char*)&p->TrangThai, sizeof(bool));
+		outfile.write((char*)&p->ThoiGianConLai.phut, sizeof(int));
+		outfile.write((char*)&p->ThoiGianConLai.giay, sizeof(int));
+		outfile.write((char*)&p->SoCau, sizeof(int));	
+		if(p->SoCau > 0){	// da thi		
+			for(int i = 0; i < p->SoCau; i++){
+				outfile.write((char*)&(p->DSCauHoi[i]), sizeof(int));
+				outfile.write((char*)&(p->DapAn[i]), sizeof(char));
+//				cout << "p->DSCauHoi[i]: " << p->DSCauHoi[i] << endl;
+//				cout << "p->DapAn[i]: " << p->DapAn[i] << endl;
+			}
+		}
+	}
+}
+
+void xoaManHinhTheoToaDo(string nd, string a, string b, string c, string d){
+	gotoxy(40,12);
+	cout << string(100, ' ');
+	gotoxy(40,14);
+	cout << string(100, ' ');
+	gotoxy(40,16);
+	cout << string(100, ' ');
+	gotoxy(40,18);
+	cout << string(100, ' ');
+	gotoxy(40,20);
+	cout << string(100, ' ');
+}
+
+ptrsv docDanhSachSinhVien(string maLop){
+	ptrsv p;
+	ptrsv danhSachSinhVien = NULL;
+	ptrsv last = NULL;
+	string tenFile = maLop + ".txt";
+	streampos size;
+	Lop lop;
+	ifstream infile(tenFile , ios::in | ios::binary | ios::ate);
+	if(infile == NULL){
+		cout << "Loi file" << endl;
+		exit(0);
+	}
+	size = infile.tellg();
+	infile.seekg (0, ios::beg);
+	while(size != infile.tellg()){
+		p = new SV;
+		getline(infile, p->MSV, '\0');
+		getline(infile, p->HO, '\0');
+		getline(infile, p->TEN, '\0');
+		infile.read((char*) &p->PHAI, sizeof(bool));
+		getline(infile, p->password, '\0');
+		p->next = NULL;
+		if (danhSachSinhVien == NULL) {
+			danhSachSinhVien = p;
+		}
+		else{
+			last->next = p;
+		}
+		last = p;
+	};
+	infile.close();	
+	return danhSachSinhVien;
+}
+
+ptrsv kiemTraMaSinhVien(string maSinhVien){
+	//toUppercaseArray(maSinhVien);
+	ptrsv First = docDanhSachSinhVien("D17CQAT01");
+	for(ptrsv i = First; i != NULL; i = i->next){
+		if(i->MSV.compare(maSinhVien) == 0) {
+			return i;
+		}	
+	}
+	return NULL;
+}
+
+int *randomCauHoi(int arrayCauHoi[], int soCauHoi){ 
+	int *randomResult = new int[soCauHoi];
+	if(soCauHoi == (int) sizeof(arrayCauHoi)) return arrayCauHoi;
+	else if(soCauHoi >  (int) sizeof(arrayCauHoi) || soCauHoi <= 0) return NULL;
+	else{
+		int temp;
+		srand(time(NULL));
+		for(int i = 0; i < soCauHoi; i++){
+			int randomNumber = rand() % ((int) sizeof(arrayCauHoi) - 1) + i;
+			temp = arrayCauHoi[randomNumber];
+			arrayCauHoi[randomNumber] = arrayCauHoi[i];
+			arrayCauHoi[i] = temp;
+			randomResult[i] = temp;	
+		}
+	}
+	return randomResult;
+}
+
+int laySoLuongCauHoiCoSan(){
+	ifstream docIndex("DSRandom.txt", ios::in | ios::binary);
+	if(docIndex == NULL){
+		cout << "Loi file" << endl;
+		return -1;
+	}
+	int index;
+	docIndex.read((char*) &index, sizeof(int));
+	return index;
+}
+
+int timKiemCauHoiTheoMaMonHoc(string maMonHoc, CauHoi danhSachCauHoiTheoMaMonHoc[] ){
+	const int STACKSIZE = 500;
+	ptrDSCauHoi Stack[STACKSIZE];
+	int sp = -1, soLuongCau = 0;
+	ptrDSCauHoi p = docDanhSachCauHoi();
+	while(p != NULL){
+		if(maMonHoc.compare(p->cauhoi.MAMH) == 0){
+			danhSachCauHoiTheoMaMonHoc[soLuongCau++] = p->cauhoi;
+		}
+		if(p->right != NULL)
+			Stack[++sp] = p->right;
+		if(p->left != NULL)
+			p= p->left;
+		else if(sp == -1)
+			break;
+		else p = Stack[sp--];
+	}
+	if(soLuongCau == 0){ // khong tim thay cau hoi thuoc ma mon hoc truyen vao
+		return -1;
+	}
+	return soLuongCau;
+}
+
+int layNgauNhienCauHoi(CauHoi danhSachCauHoiDanhChoSinhVien[], int soCauHoi, string maMonHoc){
+	
+	int tongSoCauHoi = laySoLuongCauHoiCoSan();
+
+	CauHoi danhSachCauHoiCuaMotMon[tongSoCauHoi];
+	
+	int soLuongCauCuaMotMon = timKiemCauHoiTheoMaMonHoc(maMonHoc, danhSachCauHoiCuaMotMon);
+
+	if(soLuongCauCuaMotMon == -1) return -1;
+	
+	if(soCauHoi > soLuongCauCuaMotMon) return soLuongCauCuaMotMon;
+	
+	if(soCauHoi == soLuongCauCuaMotMon){
+		for(int i = 0; i < soCauHoi; i++){
+			danhSachCauHoiDanhChoSinhVien[i] = danhSachCauHoiCuaMotMon[i];
+		}
+		return 1;
+	}
+	CauHoi temp;
+	srand(time(NULL));
+	for(int i = 0; i < soCauHoi; i++){
+		int randomNumber = rand() % (soLuongCauCuaMotMon -i) + i;
+		temp = danhSachCauHoiCuaMotMon[randomNumber];
+		danhSachCauHoiCuaMotMon[randomNumber] = danhSachCauHoiCuaMotMon[i];
+		danhSachCauHoiCuaMotMon[i] = temp;
+		danhSachCauHoiDanhChoSinhVien[i] = temp;	
+	}
+	return 1;	
+}
+
+
+Lop* timKiemLop(string maLop){
+	toUppercaseArray(maLop);
+	DSLop danhSachLop = docDanhSachLop();
+	for(int i = 0; i < danhSachLop.index; i++)
+		if(danhSachLop.lop[i]->MALOP.compare(maLop) == 0)
+			return danhSachLop.lop[i];
+	return NULL;
+}
+
+bool luuDiem(DT diemThi, string maSinhVien){
+	string tenFile = maSinhVien + ".txt";	
+	ofstream outfile(tenFile, ios::out | ios::binary | ios::app);
+	if(outfile == NULL){
+		cout << "loi file";
+		return false;
+	}
+		outfile.write(diemThi.MAMH.c_str(), diemThi.MAMH.size());
+		outfile.write("\0", sizeof(char));
+		outfile.write((char*)&diemThi.DIEM, sizeof(double));
+		outfile.write((char*)&diemThi.TrangThai, sizeof(bool));
+		outfile.write((char*)&diemThi.ThoiGianConLai.phut, sizeof(int));
+		outfile.write((char*)&diemThi.ThoiGianConLai.giay, sizeof(int));
+		outfile.write((char*)&diemThi.SoCau, sizeof(int));			
+		for(int i = 0; i < diemThi.SoCau; i++){
+			outfile.write((char*)&(diemThi.DSCauHoi[i]), sizeof(int));
+			outfile.write((char*)&(diemThi.DapAn[i]), sizeof(char));
+		}
+	return true;
+}
+int timKiemMonHocTheoMaMonHoc(string maMonHoc){
+	DSMonHoc p = docDanhSachMonHoc();
+	for(int i = 0; i < p.index; i++ ){
+		if(maMonHoc.compare(p.ds[i]->MAMH) == 0){
+			return i;
+		}
+	}
+	return -1;
+}
+int tinhDiem(int* danhSachIdCauHoi, char* danhSachDapAn, int soLuongCau){
+	int soCauDung = 0;
+	CauHoi cauHoi;
+	ptrDSCauHoi p = docDanhSachCauHoi();
+	for(int i = 0; i < soLuongCau; i++){
+		ptrDSCauHoi cauHoiTam= timKiemCauHoiTheoId(danhSachIdCauHoi[i], p);
+		cauHoi = cauHoiTam->cauhoi;
+		if(cauHoi.DapAn == danhSachDapAn[i]) soCauDung++;
+			
+	}
+	return soCauDung;
+}
+
+bool themMonHoc(DSMonHoc &danhSachMonHoc, MonHoc monHoc){
+	if(danhSachMonHoc.index == MAXMH){
+		cout << "Danh sach mon hoc day";
+		return false;
+	}
+	danhSachMonHoc.ds[danhSachMonHoc.index] = new MonHoc;
+	*danhSachMonHoc.ds[danhSachMonHoc.index] = monHoc;
+	danhSachMonHoc.index++;
+	return true;
+}
+bool demNguoc(int phut){
+    int giay = 0;
+	while (phut >= 0)
+    {
+    	cout << "\r";
+    	cout << setfill('0') << setw(2) << phut << ":";
+		cout << setfill('0') << setw(2) << giay;		
+        sleep(1);
+        if(giay == 0){
+        	phut--;
+        	giay = 60;
+		}
+        giay--;
+        
+    }
+    return false;
+}
+
+bool isFileExist(string tenFile){
+	string ten = tenFile + ".txt";
+	ifstream infile(ten, ios::in | ios::binary | ios::ate);
+	streampos size = infile.tellg();
+	if(size == 0) return false;
+	return true;
+}
+
+bool dangNhap(string maSinhVien, string password){	
+	DSLop danhSachLop = docDanhSachLop();
+	ptrsv danhSachSinhVien;
+	for(int i = 0; i < danhSachLop.index; i++){
+		if(isFileExist(danhSachLop.lop[i]->MALOP) == true){
+			danhSachSinhVien = docDanhSachSinhVien(danhSachLop.lop[i]->MALOP);
+			for(ptrsv i = danhSachSinhVien; i != NULL; i = i->next){
+				if(i->MSV.compare(maSinhVien) == 0 && i->password.compare(password) == 0){
+					return true;
+				}
+				
+			}
+		}
+	}
+	return false;
 }
 #endif
