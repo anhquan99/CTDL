@@ -649,6 +649,7 @@ void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi) 
 	ptrsv beforeCurrent = NULL;
 	current = lop.sv;
 	row = 5;
+	TextColor(green);
 	// load danh sach sinh vien cua lop theo mang de len xuong cho de dang
 	while(1){
 		int input = getch();
@@ -733,10 +734,12 @@ void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi) 
 		else if( input == 13 && current != NULL){ //enter
 			//ds diem cua sinh vien
 			DSDiemCuaSV(current, dsMonHoc, dsCauHoi);
+			TextColor(green);
 			goto gotoTop;
 		}
 		else if( input == 110){// them moi
 			ThemSV(lop, dsLop);
+			TextColor(green);
 			goto gotoTop;
 		}
 		else if( input == 27){
@@ -794,6 +797,7 @@ void ThemSV(Lop &lop, DSLop dsLop){
 				// save lop
 				// luu danh sach lop moi
 				luuDanhSachSinhVienMoi(lop.MALOP, temp);
+				lop.sv = docSinhVien(lop.MALOP);
 				return;
 			}
 			MessageBeep(MB_ICONWARNING);
