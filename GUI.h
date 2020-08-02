@@ -21,6 +21,7 @@ static string pass = "THANH CONG";
 void Layout();
 void InnerLayout();
 void ChitietDemLayout();
+void DSMonHocLayOut();
 // login form
 void Login(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi);
 // main menu
@@ -128,6 +129,17 @@ void ChitietDemLayout(){
 	TextColor(12);
 	gotoxy(30,0);
 	printf("DUNG PHIM < > DE DIEU HUONG  || ESC DE QUAY LAI ");
+	gotoxy(50,1);
+	printf("-------------------------------------");
+	gotoxy(40,2);
+	printf("POSTS AND TELECOMMUNICATIONS INSTITUTE OF TECHNOLOGY");
+}
+void DSMonHocLayout(){
+	system("cls");
+	setcursor(0,0);
+	TextColor(12);
+	gotoxy(10,0);
+	printf("DUNG PHIM LEN XUONG DE DIEU HUONG  ||  ENTER DE CHON || ESC DE QUAY LAI || N DE THEM || D DE XEM DANH SACH DIEM THEO LOP || F DE SUA ");
 	gotoxy(50,1);
 	printf("-------------------------------------");
 	gotoxy(40,2);
@@ -1285,7 +1297,7 @@ void SuaMonHoc(MonHoc &monHoc){
 }
 void DSMonHocUI(DSMonHoc &dsMonHoc, ptrDSCauHoi &dsCauHoi, DSLop dsLop){
 	gotoTop:
-	InnerLayout();
+	DSMonHocLayout();
 	int row = 5;
 	int x = 40;
 	string mon[2] = {"MA MON HOC", "TEN MON HOC"};
