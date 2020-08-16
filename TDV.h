@@ -10,7 +10,6 @@
 #include <regex>
 #include "Structure.h"
 #include <stdlib.h> 
-#include <unistd.h> 
 #include <windows.h>
 #include <iomanip>
 using namespace std;
@@ -1280,7 +1279,7 @@ bool xacNhan(int &thoiGianThi, int &giay){
 			}
         	giay = 60;
 		}
-		sleep(1);
+		Sleep(1000);
         giay--; 
 	}
 	return true;
@@ -1520,7 +1519,7 @@ bool demNguoc(int phut){
     	cout << "\r";
     	cout << setfill('0') << setw(2) << phut << ":";
 		cout << setfill('0') << setw(2) << giay;		
-        sleep(1);
+        Sleep(1000);
         if(giay == 0){
         	phut--;
         	giay = 60;
@@ -1553,6 +1552,186 @@ bool dangNhap(string maSinhVien, string password){
 			}
 		}
 	}
+	return false;
+}
+
+bool luuSinhVienDangThi(string maSinhVien, DT diemThi){
+	ofstream outfile("sinhVienDangThi.txt", ios::out | ios::binary);
+	if(outfile == NULL){
+		cout << "loi file";
+		return false;
+	}
+	// luu ma sinh vien
+	outfile.write(maSinhVien.c_str(), maSinhVien.size());
+	outfile.write("\0", sizeof(char));
+	// luu thong tin lop
+//	outfile.write(lop->MALOP.c_str(), lop->MALOP.size());
+//	outfile.write("\0", sizeof(char));
+//	outfile.write(lop->TENLOP.c_str(), lop->TENLOP.size());	
+//	outfile.write("\0", sizeof(char));
+//	outfile.write(lop->NK.c_str(), lop->NK.size());	
+//	outfile.write("\0", sizeof(char));
+	// luu diem thi
+	outfile.write(diemThi.MAMH.c_str(), diemThi.MAMH.size());
+	outfile.write("\0", sizeof(char));
+	outfile.write((char*)&diemThi.TrangThai, sizeof(int));
+	outfile.write((char*)&diemThi.ThoiGianConLai.phut, sizeof(int));
+	outfile.write((char*)&diemThi.ThoiGianConLai.giay, sizeof(int));
+	outfile.write((char*)&diemThi.SoCau, sizeof(int));			
+	for(int i = 0; i < diemThi.SoCau; i++){
+		outfile.write((char*)&(diemThi.DSCauHoi[i]), sizeof(int));
+		outfile.write((char*)&(diemThi.DapAn[i]), sizeof(char));
+	}
+	outfile.close();
+	return true;
+}
+
+void docSinhVienDangThi(string &maSinhVien, DT &diemThi){
+	ifstream infile("sinhVienDangThi.txt", ios::in | ios::binary);
+	if(infile == NULL) {
+		cout << "loi file";
+		return;
+	}
+	getline(infile, maSinhVien, '\0');
+	getline(infile, diemThi.MAMH, '\0');
+	infile.read((char*)&diemThi.TrangThai, sizeof(int));
+	infile.read((char*)&diemThi.ThoiGianConLai.phut, sizeof(int));
+	infile.read((char*)&diemThi.ThoiGianConLai.giay, sizeof(int));
+	infile.read((char*)&diemThi.SoCau, sizeof(int));
+	if(diemThi.SoCau > 0){
+		diemThi.DSCauHoi = new int[diemThi.SoCau];
+		diemThi.DapAn = new char[diemThi.SoCau];
+		for(int i = 0; i < diemThi.SoCau; i++){
+			infile.read((char*)&diemThi.DSCauHoi[i], sizeof(int));
+			infile.read((char*)&diemThi.DapAn[i], sizeof(char));
+		}
+	}
+	infile.close();
+	return;
+}
+void cleanContenAboutInterrupt(){
+	ofstream outfile("sinhVienDangThi.txt", ios::out | ios::binary | ios::trunc);
+	if(outfile == NULL){
+		cout << "loi file";
+		return;
+	}
+	outfile.close();
+}
+// thoi gian doc lap
+bool stop = 1;
+
+struct Hour {
+	int hour;
+	int minute;
+	int second;
+};
+
+char inToA(int k) {
+	switch (k)
+	{
+	case 0:return '0';
+	case 1:return '1';
+	case 2:return '2';
+	case 3:return '3';
+	case 4:return '4';
+	case 5:return '5';
+	case 6:return '6';
+	case 7:return '7';
+	case 8:return '8';
+	case 9:return '9';
+	default:
+		break;
+	}
+}
+
+void insertarray(char *h, Hour j) {
+	int bait = 0;
+	bait = j.second;
+	h[7] = inToA(bait % 10);
+	h[6] = inToA(bait /= 10);
+
+	bait = j.minute;
+	h[4] = inToA(bait % 10);
+	h[3] = inToA(bait /= 10);
+
+	bait = j.hour;
+	h[1] = inToA(bait % 10);
+	h[0] = inToA(bait /= 10);
+
+}
+
+bool changetime(Hour &h) {
+	if (h.second > 0) --h.second;
+	else if (h.minute > 0) {
+		h.second = 59;
+		--h.minute;
+	}
+	else if (h.hour > 0)
+	{
+		--h.hour;
+		h.minute = 59;
+		h.second = 59;
+	}
+	else return 0;
+	return 1;
+}
+
+//dung de in ra mot chuoi thay the ham cout
+void WriteBlockChar(char * Arraych,	int row, int col, int x, int y, int color)
+{
+	CHAR_INFO *charater = new CHAR_INFO[row*col];
+	for (int i = 0; i < row*col; i++) {
+		charater[i].Attributes = color;
+		charater[i].Char.AsciiChar = Arraych[i];
+	}
+	COORD sizebuff = { col,row };
+	COORD pos = { 0,0 };
+	SMALL_RECT earea = { x,y,x + col - 1,y + row - 1 };
+	WriteConsoleOutput(GetStdHandle(STD_OUTPUT_HANDLE), charater, sizebuff, pos, &earea);
+	delete[] charater;
+}
+
+void printClock(Hour &h) {
+		char a[8] = { '0','0',':','0','0',':','0','0'};
+		while (stop)
+		{
+			if (!changetime(h)) stop = 0;
+			insertarray(a, h);
+			WriteBlockChar(a, 1, 8, 70, 3, 0x004|0x060);
+			Sleep(900);
+		}
+
+		return;
+}
+
+void close(DWORD evt) {
+	if (evt == CTRL_CLOSE_EVENT) stop = 0;
+}
+
+Lop* timLopTheoMaSinhVien(string maSinhVien, DSLop dsLop){
+	for(int i = 0; i < dsLop.index; i++){
+		if(isFileExist(dsLop.lop[i]->MALOP) == true){
+			ptrsv First = docDanhSachSinhVien(dsLop.lop[i]->MALOP);
+			for(ptrsv j = First; j != NULL; j = j->next){
+				if(j->MSV.compare(maSinhVien) == 0){
+					return dsLop.lop[i];
+				}	
+			}
+		}
+	}
+	return NULL;
+}
+
+bool kiemTraSinhVienThiLai(string maSinhVien){
+	string maSinhVienTiepTucThi;
+	ifstream infile("sinhVienDangThi.txt", ios::in | ios::binary);
+	if(infile == NULL) {
+		cout << "loi file";
+		return false;
+	}
+	getline(infile, maSinhVienTiepTucThi, '\0');
+	infile.close();
+	if(maSinhVien.compare(maSinhVienTiepTucThi) == 0) return true;
 	return false;
 }
 #endif

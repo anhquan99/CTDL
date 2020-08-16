@@ -27,6 +27,9 @@ int main ()
 	}
 	InitWindow();
 	Login(dsLop, dsMonHoc, dsCauHoi);
+	
+//	tiepTucThi(dsLop, dsMonHoc, dsCauHoi);
+
 //	randomCauHoi(a,10);
 //	for(int i=0;i<10;i++){
 //		cout << b[i] << endl;
