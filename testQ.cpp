@@ -1,4 +1,3 @@
-// increaser
 #include <iostream>
 #include <string>
 #include <conio.h>
@@ -6,18 +5,32 @@
 #include "TDV.h"
 #include <fstream>
 #include <unistd.h>
-
+#include <time.h>
 using namespace std;
 DSLop dsLop;
+DSMonHoc dsMonHoc;
+ptrDSCauHoi dsCauHoi;
 
 int main ()
 {
+	// ham doc file
+	dsCauHoi = docDanhSachCauHoi();
 	dsLop = docDanhSachLop();
+	dsMonHoc = docDanhSachMonHoc();
 	for(int i = 0; i < dsLop.index; i++){
 		dsLop.lop[i]->sv =  docSinhVien(dsLop.lop[i]->MALOP);
+		ptrsv temp = dsLop.lop[i]->sv;
+		while(temp != NULL){
+			temp->dsdiemthi = docDanhSachDiemThi(temp->MSV);
+			temp = temp->next;
+		}
 	}
 	InitWindow();
-	Login(dsLop);
+	Login(dsLop, dsMonHoc, dsCauHoi);
+//	randomCauHoi(a,10);
+//	for(int i=0;i<10;i++){
+//		cout << b[i] << endl;
+//	}
 //	showClass(dsLop);
 //	DSLop danhSachLop;
 //	streampos size;
@@ -27,8 +40,8 @@ int main ()
 //		cout << "Loi file" << endl;
 //		exit(0);
 //	}
-//	size = infile.tellg();
-//	infile.seekg (0, ios::beg);
+//	size = infile.tellg();v
+//	infile.seekg (0, ios::bgeg);
 //	while(size != infile.tellg()){
 //		getline(infile, lop.MALOP, '\0');
 //		getline(infile, lop.TENLOP, '\0');
@@ -39,5 +52,5 @@ int main ()
 //	};
 //	cout << danhSachLop.index;
 //	infile.close();	
-} 
 
+} 
