@@ -49,8 +49,8 @@ void DSCauHoiTheoMonHoc(MonHoc monHoc, ptrDSCauHoi &dsCauHoi);
 void SuaCauHoi(ptrDSCauHoi &CauHoi);
 void ChiTietCauHoi(ptrDSCauHoi CauHoi);
 // Thi trac nghiem
-void thiTracNghiem(ptrsv &sinhVien, Lop* lop);
-void tiepTucThi(DSLop dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi);
+void thiTracNghiem(ptrsv &sinhVien, Lop* lop, DSMonHoc danhSachMonHoc, ptrDSCauHoi danhSachCauHoi);
+void tiepTucThi(DSLop dslop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi, Lop* lop);
 // ham giao dien
 HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 void setcursor(bool visible, DWORD size);
@@ -172,15 +172,17 @@ void Login(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 				goto gotoTop;
 			}
 			else if(dangNhap(UserAndPass[0], UserAndPass[1])){
+				Lop* lop = timLopTheoMaSinhVien(UserAndPass[0], dsLop);
 				if(kiemTraSinhVienThiLai(UserAndPass[0])){
-					tiepTucThi(dsLop, dsMonHoc, dsCauHoi);
+					tiepTucThi(dsLop, dsMonHoc, dsCauHoi, lop);
 				}
 				// duyet qua tat ca sinh vien tim ra sinh vien khop voi username va password
 				// neu khong khop thi bung ra cai bang khong tim thay
-				ptrsv tempSV = kiemTraMaSinhVien(UserAndPass[0]);
-				Lop* lop = timLopTheoMaSinhVien(UserAndPass[0], dsLop);
-				thiTracNghiem(tempSV, lop);
-				tempSV->dsdiemthi = docDanhSachDiemThi(tempSV->MSV);
+				else{
+					ptrsv tempSV = kiemTraMaSinhVien(lop->sv, UserAndPass[0]);
+					thiTracNghiem(tempSV, lop, dsMonHoc, dsCauHoi);
+					//tempSV->dsdiemthi = docDanhSachDiemThi(tempSV->MSV);
+				}
 				goto gotoTop;
 			}
 			MessageBeep(MB_ICONWARNING);
@@ -1855,7 +1857,7 @@ void DSDiemTheoLop(DSLop dsLop, MonHoc monHoc){
 	}
 }
 //-----
-void thiTracNghiem(ptrsv &sinhVien, Lop* lop){
+void thiTracNghiem(ptrsv &sinhVien, Lop* lop, DSMonHoc danhSachMonHoc, ptrDSCauHoi danhSachCauHoi){
 	DT diemThi;
 	Layout();
 	TextColor(green);
@@ -1880,7 +1882,6 @@ void thiTracNghiem(ptrsv &sinhVien, Lop* lop){
 	
 	int i = 0, viTriMonHoc;
 	string maMonHoc;
-	DSMonHoc danhSachMonHoc = docDanhSachMonHoc();
 	gotoxy(40,7);
 	cout << "STT " << "Ma Mon Hoc  " << "Ten Mon Hoc";
 	for(i = 0; i < danhSachMonHoc.index; i++){
@@ -1904,7 +1905,14 @@ void thiTracNghiem(ptrsv &sinhVien, Lop* lop){
 			gotoxy(82, i+9);
 			cout << string(20, ' ');
 			gotoxy(83, i+9);
-		}else if(viTriMonHoc != -1){
+		}else if(timKiemCauHoiTheoMaMonHocInt(maMonHoc, danhSachCauHoi) == 0){
+			gotoxy(40, i+9);
+			cout << "Mon hoc nay chua co cau hoi! Moi nhap lai: ";
+			gotoxy(82, i+9);
+			cout << string(20, ' ');
+			gotoxy(83, i+9);
+		}
+		else if(viTriMonHoc != -1){
 			gotoxy(40,5);
 			cout << string(100, ' ');
 			gotoxy(40,7);
@@ -1920,10 +1928,22 @@ void thiTracNghiem(ptrsv &sinhVien, Lop* lop){
 	};	
 	diemThi.MAMH = maMonHoc;
 	// cau hoi trac nghiem
-	int thoiGianThi, soCauHoi;
+	Hour time = {0,0,0};
+	int soCauHoi;
 	gotoxy(40, 9);
 	cout << "Nhap so luong phut muon thi: ";
-	cin >> thoiGianThi;
+	cin >> time.minute;
+	while(time.minute <= 0 || time.minute >= 999){
+		gotoxy(79, 9);
+		cout << string(10, ' ');
+		gotoxy(40, 9);
+		cout << "Thoi gian phai > 0 va < 999! Nhap lai: ";
+		cin >> time.minute;	
+	}
+	if(time.minute >= 60){
+		time.hour = time.minute / 60;
+		time.minute = time.minute % 60;
+	}
 	gotoxy(40, 10);
 	cout << "Nhap so cau hoi muon thi:";
 nhapSoCauHoi:	
@@ -1931,16 +1951,7 @@ nhapSoCauHoi:
 	// lay danh sach cau hoi
 	CauHoi mangCauHoi[soCauHoi];
 	int checkDanhSach = layNgauNhienCauHoi(mangCauHoi, soCauHoi, maMonHoc);
-
-	if(checkDanhSach == -1){
-		gotoxy(40, 12);
-		cout << "Mon hoc nay chua co cau hoi nao!";
-		gotoxy(40, 10);
-		cout << "Nhap lai so cau hoi muon thi:";
-		gotoxy(40,28);
-		cout << "------>KET THUC CHUONG TRINH <------";
-		return;	
-	}else if(checkDanhSach != 1){
+	if(checkDanhSach != 1){
 		gotoxy(40, 12);
 		cout << "So luong cau hoi hien co san: " << checkDanhSach;
 		gotoxy(40, 10);
@@ -1974,8 +1985,12 @@ nhapSoCauHoi:
 	//int indexDapAn = 0; // vi tri dap an tuong ung cau hoi ma sinh vien da chon
 	int indexCauHoi = 0; // vi tri cau hoi khi nhan phim -> va <-
 	// thoi gian
-	int giay = 0;
-	
+	int giay = 0; stop = 1;
+	SetConsoleCtrlHandler((PHANDLER_ROUTINE)close, TRUE);
+	thread clock;
+	gotoxy(1,5);    	
+   	cout << "THOI GIAN| ";
+	clock = thread(printClock, ref(time));
 	gotoxy(40,5);
 	cout << "----------------BAI THI TRAC NGHIEM----------------";
 	gotoxy(40,7);		
@@ -1994,16 +2009,10 @@ nhapSoCauHoi:
 	cout << "D: " << mangCauHoi[indexCauHoi].D;
 	gotoxy(40,22);
 	cout << "Dap an cua ban la: ";
-	while (thoiGianThi >= 0)
+	while (stop)
     {
-    	diemThi.ThoiGianConLai.phut = thoiGianThi;
-    	diemThi.ThoiGianConLai.giay = giay;
-    	gotoxy(1,5);    	
-    	setcursor(0,0);
-    	// in thoi gian
-    	cout << "THOI GIAN| ";
-    	cout << setfill('0') << setw(2) << thoiGianThi << ":";
-		cout << setfill('0') << setw(2) << giay;
+    	diemThi.ThoiGianConLai.phut = time.hour*60 + time.minute;
+    	diemThi.ThoiGianConLai.giay = time.second;
 		
 		if(kbhit()){
 			ch = getch();
@@ -2063,47 +2072,38 @@ nhapSoCauHoi:
 			else if(ch == 13){ // xac nhan thi xong
 				gotoxy(40,26);
 				cout << "Thoi gian van con! Ban co chac chan muon nop bai (y|n)? ";
-				if(xacNhan(thoiGianThi, giay) == true){
+				ch = getch();
+				if(ch == 121){
 					gotoxy(94,27);
 					cout << "NOP BAI SOM!!!";
-					break;
-				}else{
+					stop = 0;
+				}else if (ch == 110){
 					gotoxy(40,26);
 					cout << string(100, ' ');
 				}				
-				
 			}
 		}
-        Sleep(950);
-        if(giay == 0){
-        	thoiGianThi--;
-        	if(thoiGianThi == -1){
-        		gotoxy(40,28);
-				cout << "------>HET THOI GIAN <------";
-				break;
-			}
-        	giay = 60;
-		}
-        giay--; 
 		luuSinhVienDangThi(sinhVien->MSV, diemThi); 
     }
-    // tinh diem cho sinh vien
+    clock.join();
+	// tinh diem cho sinh vien
     const float soDiemCuaMotCau = 10.0/soCauHoi;
 	int soCauDung = tinhDiem(diemThi.DSCauHoi, diemThi.DapAn, soCauHoi);
 	gotoxy(40,28);
 	cout << "Diem cua ban la: " << soCauDung*soDiemCuaMotCau;
+	getch();
 	diemThi.DIEM = soCauDung*soDiemCuaMotCau;
 	diemThi.ThoiGianConLai.phut = -1;
 	diemThi.ThoiGianConLai.giay = 0;
 	diemThi.TrangThai = 2;
-	themDiemThi(lop->sv->dsdiemthi, diemThi);
+	themDiemThi(sinhVien->dsdiemthi, diemThi);
+
 	//luu diem cua sinh vien vao file
 	luuDiem(diemThi, sinhVien->MSV);
 	cleanContenAboutInterrupt();
 }
 
-void tiepTucThi(DSLop dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
-	InitWindow();
+void tiepTucThi(DSLop dslop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi, Lop* lop){
 	Layout();
 	TextColor(green);		
 	string maSinhVien;
@@ -2124,8 +2124,7 @@ void tiepTucThi(DSLop dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 		ptrDSCauHoi p = timKiemCauHoiTheoId(diemThi.DSCauHoi[i], dsCauHoi);
 		mangCauHoi[i] =  p->cauhoi;
 	}
-	Lop *lop = timLopTheoMaSinhVien(maSinhVien, dsLop);
-	ptrsv sinhVien =  kiemTraMaSinhVien(maSinhVien);
+	ptrsv sinhVien =  kiemTraMaSinhVien(lop->sv, maSinhVien);
 	// in thong tin sinh vien
 	gotoxy(1,10);
 	cout << "*THONG TIN SINH VIEN*";
@@ -2156,14 +2155,16 @@ void tiepTucThi(DSLop dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 	cout << "C: " << mangCauHoi[indexCauHoi].C; 
 	gotoxy(46,20);
 	cout << "D: " << mangCauHoi[indexCauHoi].D;
+	gotoxy(40,22);
+	cout << "Dap an cua ban la: ";
 	if(diemThi.DapAn[indexCauHoi] != 'n'){
-		gotoxy(40,22);
-		cout << "Dap an cua ban la: ";
 		gotoxy(60,22);
 		cout << diemThi.DapAn[indexCauHoi];
 	}
 	SetConsoleCtrlHandler((PHANDLER_ROUTINE)close, TRUE);
 	thread clock;
+	gotoxy(1,5);    	
+   	cout << "THOI GIAN| ";
 	clock = thread(printClock, ref(time));
 	int i = 0, ch;
 	while (stop)
@@ -2248,29 +2249,17 @@ void tiepTucThi(DSLop dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 	int soCauDung = tinhDiem(diemThi.DSCauHoi, diemThi.DapAn, diemThi.SoCau);
 	gotoxy(40,28);
 	cout << "Diem cua ban la: " << soCauDung*soDiemCuaMotCau;
+	
 	diemThi.DIEM = soCauDung*soDiemCuaMotCau;
 	diemThi.ThoiGianConLai.phut = -1;
 	diemThi.ThoiGianConLai.giay = 0;
 	diemThi.TrangThai = 2;
-	themDiemThi(lop->sv->dsdiemthi, diemThi);
+	themDiemThi(sinhVien->dsdiemthi, diemThi);
 	//luu diem cua sinh vien vao file
 	luuDiem(diemThi, sinhVien->MSV);
 	cleanContenAboutInterrupt();
-	
-//	string maSinhVien;
-//	DT diemThi;
-//	docSinhVienDangThi(maSinhVien, diemThi);
-//	cout << "maSinhVien: " << maSinhVien << endl;
-//	cout << "ma Mon hoc: " << diemThi.MAMH << endl;
-//	cout << "trang thai: " << diemThi.TrangThai << endl;
-//	cout << diemThi.ThoiGianConLai.phut << endl;
-//	cout << diemThi.ThoiGianConLai.giay << endl;
-//	cout << diemThi.SoCau << endl;
-//	for(int i = 0; i < diemThi.SoCau; i++){
-//		cout << "id cau hoi: " << diemThi.DSCauHoi[i] << endl;
-//		cout << "dap an: " << diemThi.DapAn[i] << endl;
-//	}
-//	getch();
+	getch();
+
 }
 
 #endif

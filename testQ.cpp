@@ -17,6 +17,7 @@ int main ()
 	dsCauHoi = docDanhSachCauHoi();
 	dsLop = docDanhSachLop();
 	dsMonHoc = docDanhSachMonHoc();
+	// khoi tao sinh vien cho lop
 	for(int i = 0; i < dsLop.index; i++){
 		dsLop.lop[i]->sv =  docSinhVien(dsLop.lop[i]->MALOP);
 		ptrsv temp = dsLop.lop[i]->sv;

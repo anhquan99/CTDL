@@ -14,6 +14,117 @@
 #include <iomanip>
 using namespace std;
 
+// ham giao dien
+void gotoxy(int x, int y);
+void xoaManHinhTheoToaDo(string nd, string a, string b, string c, string d);
+
+// ham khoi tao so ngau nhien cho cau hoi
+void initialArrayRandomNumber();
+int generateArrayRandomNumber();
+
+// viet ho tro 
+void toUppercaseArray(string &s);
+bool laKiTuVaLaSoNguyen(string s);
+void loaiBoKhoangTrangCuaChuoi(string &chuoi);
+void xoaPhanTuMangTuyenTinh(string &s, int viTri);
+
+// thao tac voi lop
+bool inThongTinLop(Lop *lop);
+bool luuLopVaoCuoiFile(Lop lop);
+bool luuDanhSachLopMoi(DSLop danhSachLop);
+DSLop docDanhSachLop();
+int checkMaLop(DSLop danhSachLop, string &maLop);
+int checkMaLopKhongCoMaLopCu(DSLop danhSachLop, string &maLop, string maLopCu);
+bool kiemTraCuPhapNienKhoa(string &nienKhoa);
+void insertClass(Lop &classroom, DSLop classlist);
+bool insertClassList(DSLop &danhSachLop);
+string insertClassListQ(Lop classrom, DSLop &danhSachLop);
+void showClass(DSLop classList);
+bool xoaLop(DSLop &dsLop, Lop lop);
+bool themLopTheoThuTuMaLop(DSLop &danhSachLop);
+DSLop inDanhSachLopTheoNienKhoa(DSLop danhSachLop, string &nienKhoa);
+bool suaThongTinLop(string maLop);
+Lop* timKiemLop(string maLop);
+
+// thao tac voi sinh vien
+void inThongTinSinhVien(SV sinhVien);
+bool luuSinhVienVaoCuoiFile(string maLop, SV sinhVien);
+bool luuDanhSachSinhVienMoi(string maLop, ptrsv danhSachSinhVien);
+ptrsv docSinhVien(string maLop);
+ptrsv kiemTraMaSinhVien(ptrsv First, string maSinhVien);
+bool kiemTraMaSinhVienTatCa(string maSinhVien, DSLop dsLop);
+ptrsv laySVTruoc(Lop lop, ptrsv sv);
+void themSinhVien(ptrsv &danhSachSinhVien, SV sinhVien);
+void lietKeDanhSachSinhVien(ptrsv First);
+bool dangNhapSinhVien(ptrsv first, string msv, string password);
+bool xoaSinhVien(string maLop, ptrsv first);
+bool suaSinhVien(string maLop, string s_maSinhVien, string s_ho, string s_ten, bool s_phai, string s_password, ptrsv first);
+ptrDT layDTTruoc(SV sv, ptrDT dt);
+bool kiemTraMonSinhVienDaThi(string maSinhVien, string maMonHoc);
+ptrsv docDanhSachSinhVien(string maLop);
+ptrsv kiemTraMaSinhVien(string maSinhVien, DSLop dsLop);
+Lop* timLopTheoMaSinhVien(string maSinhVien, DSLop dsLop);
+
+//thao tac voi diem thi
+bool themDiemThi(ptrDT &danhSachDiemThi, DT diemThi);
+void lietKeDanhSachDiemThi(ptrDT danhSachDiemThi);
+ptrDT docDanhSachDiemThi(string maSinhVien);
+bool luuDanhSachDiemThi(string maSinhVien, ptrDT danhSachDiemThi);
+
+// thao tac voi mon hoc
+bool luuDanhSachMonHoc(DSMonHoc danhSachMonHoc);
+void lietKeDanhSachMonHoc(DSMonHoc danhSachMonHoc);
+void themVaoMangConTroDSMonHoc(DSMonHoc &danhSachMonHoc, MonHoc mon);
+DSMonHoc docDanhSachMonHoc();
+int kiemTraMaMonHoc(string maMonHoc, DSMonHoc dsMonHoc);
+bool themMonHocTheoThuTuMaMonHoc(DSMonHoc &danhSachMonHoc, MonHoc monHoc);
+bool themMonHoc(DSMonHoc &danhSachMonHoc, MonHoc monHoc);
+
+// thao tac voi cau hoi
+CauHoi taoCauHoiVoiIdNgauNhien(string maMonHoc, string noiDung, string a, string b, string c, string d, char dapAn);
+bool themCauHoiVaoCay(ptrDSCauHoi &danhSachCauHoi, CauHoi cauHoi);
+void duyetTrungTu(ptrDSCauHoi &danhSachCauHoi);
+void duyetTienTu(ptrDSCauHoi danhSachCauHoi);
+void napCauHoiVaoMang(CauHoi mangCauHoi[]);
+bool luuDanhSachCauHoi(ptrDSCauHoi danhSachCauHoi);
+ptrDSCauHoi docDanhSachCauHoi();
+ptrDSCauHoi timKiemCauHoiTheoId(int id, ptrDSCauHoi p);
+void timKiemCauHoiTheoMaMonHoc(string maMonHoc, ptrDSCauHoi danhSachCauHoi, CauHoi danhSachCauHoiTheoMaMonHoc[] );
+int timKiemCauHoiTheoMaMonHocInt(string maMonHoc, ptrDSCauHoi danhSachCauHoi );
+int laySoLuongCauHoiCoSan();
+int *randomCauHoi(int arrayCauHoi[], int soCauHoi);
+int timKiemCauHoiTheoMaMonHoc(string maMonHoc, CauHoi danhSachCauHoiTheoMaMonHoc[] );
+int layNgauNhienCauHoi(CauHoi danhSachCauHoiDanhChoSinhVien[], int soCauHoi, string maMonHoc);
+
+// ham khac
+bool xacNhan(int &thoiGianThi, int &giay);
+bool luuDiem(DT diemThi, string maSinhVien);
+int timKiemMonHocTheoMaMonHoc(string maMonHoc);
+int tinhDiem(int* danhSachIdCauHoi, char* danhSachDapAn, int soLuongCau);
+bool demNguoc(int phut);
+bool isFileExist(string tenFile);
+bool dangNhap(string maSinhVien, string password);
+bool luuSinhVienDangThi(string maSinhVien, DT diemThi);
+void docSinhVienDangThi(string &maSinhVien, DT &diemThi);
+void cleanContenAboutInterrupt();
+
+// thoi gian doc lap
+bool stop = 1;
+struct Hour {
+	int hour;
+	int minute;
+	int second;
+};
+char inToA(int k) ;
+void insertarray(char *h, Hour j);
+bool changetime(Hour &h);
+//dung de in ra mot chuoi thay the ham cout
+void WriteBlockChar(char * Arraych,	int row, int col, int x, int y, int color);
+void printClock(Hour &h);
+void close(DWORD evt);
+bool kiemTraSinhVienThiLai(string maSinhVien);
+
+
 void gotoxy(int x, int y) //set vi tri
 {
   static HANDLE h = NULL;  
@@ -105,8 +216,7 @@ bool laKiTuVaLaSoNguyen(string s){
 		if((isalpha(s[i]) || isdigit(s[i])) == false) 
 			return false;
 	}
-	return true;
-	
+	return true;	
 }
 
 void loaiBoKhoangTrangCuaChuoi(string &chuoi){
@@ -192,7 +302,6 @@ DSLop docDanhSachLop(){ // se co truyen vao tham so la ten file muon mo
 	infile.close();	
 	return danhSachLop;
 }
-
 
 int checkMaLop(DSLop danhSachLop, string &maLop){
 	toUppercaseArray(maLop);
@@ -280,6 +389,7 @@ bool insertClassList(DSLop &danhSachLop){
 	return true;
 		
 }
+
 string insertClassListQ(Lop classrom, DSLop &danhSachLop){
 	if(danhSachLop.index == MAXLOP){	
 		return "DANH SACH LOP DA DAY!!!";
@@ -290,6 +400,7 @@ string insertClassListQ(Lop classrom, DSLop &danhSachLop){
 	return "true";
 		
 }
+
 void showClass(DSLop classList){
 	cout << "                     DANH SACH LOP " << endl ;
 	cout <<"MaLop       Tenlop           Nien khoa" << endl;
@@ -477,7 +588,7 @@ ptrsv docSinhVien(string maLop){
 }
 
 ptrsv kiemTraMaSinhVien(ptrsv First, string maSinhVien){
-	//toUppercaseArray(maSinhVien);
+	
 	for(ptrsv i = First; i != NULL; i = i->next){
 		if(i->MSV.compare(maSinhVien) == 0) {
 			return i;
@@ -485,6 +596,7 @@ ptrsv kiemTraMaSinhVien(ptrsv First, string maSinhVien){
 	}
 	return NULL;
 }
+
 bool kiemTraMaSinhVienTatCa(string maSinhVien, DSLop dsLop){
 	for(int i = 0; i < dsLop.index; i++){
 		ptrsv temp = dsLop.lop[i]->sv;
@@ -510,7 +622,7 @@ ptrsv laySVTruoc(Lop lop, ptrsv sv){
 	}
 }
 
-   themSinhVien(ptrsv &danhSachSinhVien, SV sinhVien){ 
+void themSinhVien(ptrsv &danhSachSinhVien, SV sinhVien){ 
 	ptrsv p = new SV;
 	ptrsv last;
 	if (danhSachSinhVien!=NULL ) 
@@ -546,7 +658,6 @@ bool dangNhapSinhVien(ptrsv first, string msv, string password){ // nen luu pwd 
 	}
 	return false;
 }
-
 
 bool xoaSinhVien(string maLop, ptrsv first){
 	ptrsv p; string maSinhVien;
@@ -621,6 +732,7 @@ bool xoaSinhVienCuaQ( Lop &lop, ptrsv current){
 	}
 	return true;
 }
+
 bool suaSinhVien(string maLop, string s_maSinhVien, string s_ho, string s_ten, bool s_phai, string s_password, ptrsv first){
 	ptrsv p; string maSinhVien;
 	char keyPress;
@@ -765,7 +877,7 @@ ptrDT docDanhSachDiemThi(string maSinhVien){
 	while(infile.tellg() != size){
 		getline(infile, diemThi.MAMH, '\0');
 		infile.read((char*)&diemThi.DIEM, sizeof(double));
-		infile.read((char*)&diemThi.TrangThai, sizeof(bool));
+		infile.read((char*)&diemThi.TrangThai, sizeof(int));
 		infile.read((char*)&diemThi.ThoiGianConLai.phut, sizeof(int));
 		infile.read((char*)&diemThi.ThoiGianConLai.giay, sizeof(int));
 		infile.read((char*)&diemThi.SoCau, sizeof(int));
@@ -860,6 +972,7 @@ int kiemTraMaMonHoc(string maMonHoc, DSMonHoc dsMonHoc){
 	}
 	return -1;
 }
+
 bool themMonHocTheoThuTuMaMonHoc(DSMonHoc &danhSachMonHoc, MonHoc monHoc){
 	int j;
 	if(danhSachMonHoc.index == MAXMH) return false;
@@ -871,6 +984,7 @@ bool themMonHocTheoThuTuMaMonHoc(DSMonHoc &danhSachMonHoc, MonHoc monHoc){
 	danhSachMonHoc.index++;
 	return true;
 }
+
 //bool xoaMonHoc(string maMonHoc){
 //	DSMonHoc danhSachMonHoc = docDanhSachMonHoc();
 //	int viTri = kiemTraMaMonHoc(maMonHoc);
@@ -1211,6 +1325,7 @@ ptrDSCauHoi timKiemCauHoiTheoId(int id, ptrDSCauHoi p){
    }
 	return p; 
 }
+
 void timKiemCauHoiTheoMaMonHoc(string maMonHoc, ptrDSCauHoi danhSachCauHoi, CauHoi danhSachCauHoiTheoMaMonHoc[] ){
 	const int STACKSIZE = 500;
 	ptrDSCauHoi Stack[STACKSIZE];
@@ -1229,6 +1344,7 @@ void timKiemCauHoiTheoMaMonHoc(string maMonHoc, ptrDSCauHoi danhSachCauHoi, CauH
 		else p = Stack[sp--];
 	}
 }
+
 int timKiemCauHoiTheoMaMonHocInt(string maMonHoc, ptrDSCauHoi danhSachCauHoi ){
 	const int STACKSIZE = 500;
 	ptrDSCauHoi Stack[STACKSIZE];
@@ -1357,13 +1473,18 @@ ptrsv docDanhSachSinhVien(string maLop){
 	return danhSachSinhVien;
 }
 
-ptrsv kiemTraMaSinhVien(string maSinhVien){
+ptrsv kiemTraMaSinhVien(string maSinhVien, 	DSLop dsLop){ //vu 11/8: sua tu co dinh "D17CQAT01" thanh doc danhsachsinhvien
 	//toUppercaseArray(maSinhVien);
-	ptrsv First = docDanhSachSinhVien("D17CQAT01");
-	for(ptrsv i = First; i != NULL; i = i->next){
-		if(i->MSV.compare(maSinhVien) == 0) {
-			return i;
-		}	
+	for(int i = 0; i < dsLop.index; i++){
+		if(isFileExist(dsLop.lop[i]->MALOP) == true){
+			ptrsv First = docDanhSachSinhVien(dsLop.lop[i]->MALOP);
+			for(ptrsv j = First; j != NULL; j = j->next){
+				if(j->MSV.compare(maSinhVien) == 0){
+					return j;
+				}	
+			}
+		}
+		
 	}
 	return NULL;
 }
@@ -1428,8 +1549,6 @@ int layNgauNhienCauHoi(CauHoi danhSachCauHoiDanhChoSinhVien[], int soCauHoi, str
 	
 	int soLuongCauCuaMotMon = timKiemCauHoiTheoMaMonHoc(maMonHoc, danhSachCauHoiCuaMotMon);
 
-	if(soLuongCauCuaMotMon == -1) return -1;
-	
 	if(soCauHoi > soLuongCauCuaMotMon) return soLuongCauCuaMotMon;
 	
 	if(soCauHoi == soLuongCauCuaMotMon){
@@ -1470,7 +1589,7 @@ bool luuDiem(DT diemThi, string maSinhVien){
 		outfile.write(diemThi.MAMH.c_str(), diemThi.MAMH.size());
 		outfile.write("\0", sizeof(char));
 		outfile.write((char*)&diemThi.DIEM, sizeof(double));
-		outfile.write((char*)&diemThi.TrangThai, sizeof(bool));
+		outfile.write((char*)&diemThi.TrangThai, sizeof(int));
 		outfile.write((char*)&diemThi.ThoiGianConLai.phut, sizeof(int));
 		outfile.write((char*)&diemThi.ThoiGianConLai.giay, sizeof(int));
 		outfile.write((char*)&diemThi.SoCau, sizeof(int));			
@@ -1618,14 +1737,6 @@ void cleanContenAboutInterrupt(){
 	outfile.close();
 }
 // thoi gian doc lap
-bool stop = 1;
-
-struct Hour {
-	int hour;
-	int minute;
-	int second;
-};
-
 char inToA(int k) {
 	switch (k)
 	{
@@ -1697,7 +1808,7 @@ void printClock(Hour &h) {
 		{
 			if (!changetime(h)) stop = 0;
 			insertarray(a, h);
-			WriteBlockChar(a, 1, 8, 70, 3, 0x004|0x060);
+			WriteBlockChar(a, 1, 8, 12, 5, 0x004|0x060);
 			Sleep(900);
 		}
 
