@@ -17,6 +17,15 @@ int main ()
 	dsCauHoi = docDanhSachCauHoi();
 	dsLop = docDanhSachLop();
 	dsMonHoc = docDanhSachMonHoc();
+//	cout << timKiemCauHoiTheoMaMonHocInt("DADA2", dsCauHoi);
+//	MonHoc mon;
+//	mon.MAMH = "DADA";
+//	mon.TENMH = "Daten test";
+//	cout << themMonHocTheoThuTuMaMonHoc(dsMonHoc, mon);
+//	for(int i = 0; i < dsMonHoc.index; i++){
+//		cout << "mamh: " << dsMonHoc.ds[i]->MAMH <<endl;
+//		cout << "tenmh: " << dsMonHoc.ds[i]->TENMH <<endl;
+//	}
 	// khoi tao sinh vien cho lop
 	for(int i = 0; i < dsLop.index; i++){
 		dsLop.lop[i]->sv =  docSinhVien(dsLop.lop[i]->MALOP);

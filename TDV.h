@@ -976,7 +976,7 @@ int kiemTraMaMonHoc(string maMonHoc, DSMonHoc dsMonHoc){
 bool themMonHocTheoThuTuMaMonHoc(DSMonHoc &danhSachMonHoc, MonHoc monHoc){
 	int j;
 	if(danhSachMonHoc.index == MAXMH) return false;
-	for(j=0; j < danhSachMonHoc.index && monHoc.MAMH.compare(danhSachMonHoc.ds[j]->MAMH) == 1; j++);
+	for(j=0; (j < danhSachMonHoc.index) && (monHoc.MAMH.compare(danhSachMonHoc.ds[j]->MAMH) == 1); j++);
 	for(int i = danhSachMonHoc.index-1; i >= j; i--)
 		danhSachMonHoc.ds[i+1] = danhSachMonHoc.ds[i];
 	danhSachMonHoc.ds[j] = new MonHoc;
@@ -1735,6 +1735,7 @@ void cleanContenAboutInterrupt(){
 		return;
 	}
 	outfile.close();
+	return;
 }
 // thoi gian doc lap
 char inToA(int k) {
