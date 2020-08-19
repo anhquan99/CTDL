@@ -784,13 +784,13 @@ void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi) 
 	}
 }
 void ThemSV(Lop &lop, DSLop dsLop){
-	Layout();
 	int row = 4;
 	int x = 30;
 	string sv[5] = {"MA SINH VIEN:", "HO:", "TEN:", "PHAI:", "PASSWORD:"};
 	int col[5] ={13, 3, 4, 5, 9 };
 	string inputSV[5] = {""}; // [0]: MSV;[1]: HO; [2]: TEN; [3]: PHAI; [4]: PASSWORD
 	gotoAgain:
+	Layout();
 	//create banner
 	TextColor(red);
 	gotoxy(60,3);
@@ -835,7 +835,10 @@ void ThemSV(Lop &lop, DSLop dsLop){
 				// luu danh sach lop moi
 				luuDanhSachSinhVienMoi(lop.MALOP, temp);
 				lop.sv = docSinhVien(lop.MALOP);
-				inputSV = {""};
+				for(int i =0 ; i < 5; i++){
+					inputSV[i] = "";
+				}
+				row = 4;
 				goto gotoAgain;
 			}
 			MessageBeep(MB_ICONWARNING);
