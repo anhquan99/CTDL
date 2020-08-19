@@ -2054,13 +2054,13 @@ void thiTracNghiem(ptrsv &sinhVien, Lop* lop, DSMonHoc danhSachMonHoc, ptrDSCauH
 		time.minute = time.minute % 60;
 	}
 	gotoxy(40, 10);
-	cout << "Nhap so cau hoi muon thi:";
+	cout << "Nhap so cau hoi muon thi: ";
 nhapSoCauHoi:	
 	cin >> soCauHoi;
 	// lay danh sach cau hoi
 	CauHoi mangCauHoi[soCauHoi];
 	if(soLuongCauHoiCuaMotMon < soCauHoi){
-		string message = "So luong cau hoi hien co san: " + to_string(soLuongCauHoiCuaMotMon) + ".\nNhap lai so cau hoi muon thi";
+		string message = "So luong cau hoi hien co san: " + to_string(soLuongCauHoiCuaMotMon) + ".\nNhap lai so cau hoi muon thi: ";
 		MessageBox(0,message.c_str(), "XAC NHAN",0);
 //		gotoxy(40, 12);
 //		cout << "So luong cau hoi hien co san: " << soLuongCauHoiCuaMotMon;
@@ -2068,7 +2068,7 @@ nhapSoCauHoi:
 //		cout << "Nhap lai so cau hoi muon thi:";
 		goto gotoTop;
 	}else{
-		int checkDanhSach = layNgauNhienCauHoi(mangCauHoi, soCauHoi, maMonHoc);
+		bool checkDanhSach = layNgauNhienCauHoi(mangCauHoi, soCauHoi, maMonHoc, soLuongCauHoiCuaMotMon);
 		gotoxy(40, 10);
 		cout << string(100, ' ');
 		gotoxy(40, 12);
