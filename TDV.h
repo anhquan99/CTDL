@@ -93,8 +93,7 @@ void timKiemCauHoiTheoMaMonHoc(string maMonHoc, ptrDSCauHoi danhSachCauHoi, CauH
 int timKiemCauHoiTheoMaMonHocInt(string maMonHoc, ptrDSCauHoi danhSachCauHoi );
 int laySoLuongCauHoiCoSan();
 int *randomCauHoi(int arrayCauHoi[], int soCauHoi);
-int timKiemCauHoiTheoMaMonHoc(string maMonHoc, CauHoi danhSachCauHoiTheoMaMonHoc[] );
-int layNgauNhienCauHoi(CauHoi danhSachCauHoiDanhChoSinhVien[], int soCauHoi, string maMonHoc);
+bool layNgauNhienCauHoi(CauHoi danhSachCauHoiDanhChoSinhVien[], int soCauHoi, string maMonHoc, int soLuongCauHoiCuaMotMon, ptrDSCauHoi danhSachCauHoi);
 
 // ham khac
 bool xacNhan(int &thoiGianThi, int &giay);
@@ -1518,40 +1517,36 @@ int laySoLuongCauHoiCoSan(){
 	return index;
 }
 
-int timKiemCauHoiTheoMaMonHoc(string maMonHoc, CauHoi danhSachCauHoiTheoMaMonHoc[] ){
-	const int STACKSIZE = 500;
-	ptrDSCauHoi Stack[STACKSIZE];
-	int sp = -1, soLuongCau = 0;
-	ptrDSCauHoi p = docDanhSachCauHoi();
-	while(p != NULL){
-		if(maMonHoc.compare(p->cauhoi.MAMH) == 0){
-			danhSachCauHoiTheoMaMonHoc[soLuongCau++] = p->cauhoi;
-		}
-		if(p->right != NULL)
-			Stack[++sp] = p->right;
-		if(p->left != NULL)
-			p= p->left;
-		else if(sp == -1)
-			break;
-		else p = Stack[sp--];
-	}
-	if(soLuongCau == 0){ // khong tim thay cau hoi thuoc ma mon hoc truyen vao
-		return -1;
-	}
-	return soLuongCau;
-}
+//int timKiemCauHoiTheoMaMonHoc(string maMonHoc, CauHoi danhSachCauHoiTheoMaMonHoc[] ){
+//	const int STACKSIZE = 500;
+//	ptrDSCauHoi Stack[STACKSIZE];
+//	int sp = -1, soLuongCau = 0;
+//	ptrDSCauHoi p = docDanhSachCauHoi();
+//	while(p != NULL){
+//		if(maMonHoc.compare(p->cauhoi.MAMH) == 0){
+//			danhSachCauHoiTheoMaMonHoc[soLuongCau++] = p->cauhoi;
+//		}
+//		if(p->right != NULL)
+//			Stack[++sp] = p->right;
+//		if(p->left != NULL)
+//			p= p->left;
+//		else if(sp == -1)
+//			break;
+//		else p = Stack[sp--];
+//	}
+//	if(soLuongCau == 0){ // khong tim thay cau hoi thuoc ma mon hoc truyen vao
+//		return -1;
+//	}
+//	return soLuongCau;
+//}
 
-int layNgauNhienCauHoi(CauHoi danhSachCauHoiDanhChoSinhVien[], int soCauHoi, string maMonHoc){
+bool layNgauNhienCauHoi(CauHoi danhSachCauHoiDanhChoSinhVien[], int soCauHoi, string maMonHoc, int soLuongCauHoiCuaMotMon, ptrDSCauHoi danhSachCauHoi){
 	
-	int tongSoCauHoi = laySoLuongCauHoiCoSan();
-
-	CauHoi danhSachCauHoiCuaMotMon[tongSoCauHoi];
+	CauHoi danhSachCauHoiCuaMotMon[soLuongCauHoiCuaMotMon];
 	
-	int soLuongCauCuaMotMon = timKiemCauHoiTheoMaMonHoc(maMonHoc, danhSachCauHoiCuaMotMon);
-
-	if(soCauHoi > soLuongCauCuaMotMon) return soLuongCauCuaMotMon;
+	timKiemCauHoiTheoMaMonHoc(maMonHoc, danhSachCauHoi, danhSachCauHoiCuaMotMon);
 	
-	if(soCauHoi == soLuongCauCuaMotMon){
+	if(soCauHoi == soLuongCauHoiCuaMotMon){
 		for(int i = 0; i < soCauHoi; i++){
 			danhSachCauHoiDanhChoSinhVien[i] = danhSachCauHoiCuaMotMon[i];
 		}
@@ -1560,7 +1555,7 @@ int layNgauNhienCauHoi(CauHoi danhSachCauHoiDanhChoSinhVien[], int soCauHoi, str
 	CauHoi temp;
 	srand(time(NULL));
 	for(int i = 0; i < soCauHoi; i++){
-		int randomNumber = rand() % (soLuongCauCuaMotMon -i) + i;
+		int randomNumber = rand() % (soLuongCauHoiCuaMotMon -i) + i;
 		temp = danhSachCauHoiCuaMotMon[randomNumber];
 		danhSachCauHoiCuaMotMon[randomNumber] = danhSachCauHoiCuaMotMon[i];
 		danhSachCauHoiCuaMotMon[i] = temp;
