@@ -47,7 +47,6 @@ bool suaThongTinLop(string maLop);
 Lop* timKiemLop(string maLop);
 
 // thao tac voi sinh vien
-void inThongTinSinhVien(SV sinhVien);
 bool luuSinhVienVaoCuoiFile(string maLop, SV sinhVien);
 bool luuDanhSachSinhVienMoi(string maLop, ptrsv danhSachSinhVien);
 ptrsv docSinhVien(string maLop);
@@ -163,6 +162,7 @@ void initialArrayRandomNumber(){
 		outfile.write((char*)&arrayRandomNumber[i], sizeof(int));
 	}
 	outfile.close();
+	return;
 }
 
 // random 
@@ -365,6 +365,7 @@ void insertClass(Lop &classroom, DSLop classlist){
 		}
 	}while(check1 == false);
 	classroom.NK = nienKhoa;
+	return;
 }
 
 bool insertClassList(DSLop &danhSachLop){
@@ -386,7 +387,6 @@ bool insertClassList(DSLop &danhSachLop){
 		return false;
 	}
 	return true;
-		
 }
 
 string insertClassListQ(Lop classrom, DSLop &danhSachLop){
@@ -397,7 +397,6 @@ string insertClassListQ(Lop classrom, DSLop &danhSachLop){
 	*danhSachLop.lop[danhSachLop.index] = classrom, 
 	danhSachLop.index++;
 	return "true";
-		
 }
 
 void showClass(DSLop classList){
@@ -407,6 +406,7 @@ void showClass(DSLop classList){
 		cout << classList.lop[i]->MALOP << "       " << classList.lop[i]->TENLOP << "      " 
 		<<  classList.lop[i]->NK << endl;
 	}
+	return;
 }
 
 bool xoaLop(DSLop &dsLop, Lop lop){
@@ -500,14 +500,11 @@ bool suaThongTinLop(string maLop){
 	}
 	showClass(danhSachLop);
 	luuDanhSachLopMoi(danhSachLop);
+	return true;
 }
 
 // thao tac voi sinh vien
 
-void inThongTinSinhVien(SV sinhVien){
-	string phai = sinhVien.PHAI ? "Nam" : "Nu";
-	cout << sinhVien.HO << " " << sinhVien.TEN << " " << sinhVien.MSV << " " << phai << " " << sinhVien.password << endl;
-}
 
 bool luuSinhVienVaoCuoiFile(string maLop, SV sinhVien){
 	string tenFile = maLop + ".txt";
@@ -890,6 +887,7 @@ ptrDT docDanhSachDiemThi(string maSinhVien){
 		}
 		themDiemThi(danhSachDiemThi, diemThi);
 	}
+	infile.close();
 	return danhSachDiemThi;
 }
 
@@ -910,6 +908,7 @@ bool luuDanhSachMonHoc(DSMonHoc danhSachMonHoc){
 //		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.gio), sizeof(int));
 //		outfile.write((char*)&(danhSachMonHoc.ds[i]->ThoiGianThi.phut), sizeof(int));
 	}
+	outfile.close();
 }
 
 void lietKeDanhSachMonHoc(DSMonHoc danhSachMonHoc){
@@ -945,6 +944,7 @@ DSMonHoc docDanhSachMonHoc(){
 //		infile.read((char*)&mon.ThoiGianThi.phut, sizeof(int));
 		themVaoMangConTroDSMonHoc(danhSachMonHoc, mon);
 	}
+	infile.close();
 	return danhSachMonHoc;
 }
 
@@ -1233,6 +1233,7 @@ void napCauHoiVaoMang(CauHoi mangCauHoi[]){
 		infile.read((char*)&cauHoi.DapAn, sizeof(char));
 		mangCauHoi[i++] = cauHoi; 
 	}
+	infile.close();
 	return;
 }
 
@@ -1278,6 +1279,7 @@ bool luuDanhSachCauHoi(ptrDSCauHoi danhSachCauHoi){
 		else p = Stack[sp--];
 	}
 	outfile.close();
+	return true;
 }
 
 ptrDSCauHoi docDanhSachCauHoi(){
@@ -1310,6 +1312,7 @@ ptrDSCauHoi docDanhSachCauHoi(){
 		
 		themCauHoiVaoCay(danhSachCauHoi, cauHoi);
 	}
+	infile.close();
 	return danhSachCauHoi;
 }
 
@@ -1423,6 +1426,7 @@ bool luuDanhSachDiemThi(string maSinhVien, ptrDT danhSachDiemThi){
 			}
 		}
 	}
+	outfile.close();
 }
 
 void xoaManHinhTheoToaDo(string nd, string a, string b, string c, string d){
@@ -1514,6 +1518,7 @@ int laySoLuongCauHoiCoSan(){
 	}
 	int index;
 	docIndex.read((char*) &index, sizeof(int));
+	docIndex.close();
 	return index;
 }
 
@@ -1592,6 +1597,7 @@ bool luuDiem(DT diemThi, string maSinhVien){
 			outfile.write((char*)&(diemThi.DSCauHoi[i]), sizeof(int));
 			outfile.write((char*)&(diemThi.DapAn[i]), sizeof(char));
 		}
+	outfile.close();
 	return true;
 }
 int timKiemMonHocTheoMaMonHoc(string maMonHoc){
@@ -1649,6 +1655,7 @@ bool isFileExist(string tenFile){
 	ifstream infile(ten, ios::in | ios::binary | ios::ate);
 	streampos size = infile.tellg();
 	if(size == 0) return false;
+	infile.close();
 	return true;
 }
 
@@ -1678,13 +1685,6 @@ bool luuSinhVienDangThi(string maSinhVien, DT diemThi){
 	// luu ma sinh vien
 	outfile.write(maSinhVien.c_str(), maSinhVien.size());
 	outfile.write("\0", sizeof(char));
-	// luu thong tin lop
-//	outfile.write(lop->MALOP.c_str(), lop->MALOP.size());
-//	outfile.write("\0", sizeof(char));
-//	outfile.write(lop->TENLOP.c_str(), lop->TENLOP.size());	
-//	outfile.write("\0", sizeof(char));
-//	outfile.write(lop->NK.c_str(), lop->NK.size());	
-//	outfile.write("\0", sizeof(char));
 	// luu diem thi
 	outfile.write(diemThi.MAMH.c_str(), diemThi.MAMH.size());
 	outfile.write("\0", sizeof(char));
@@ -1839,6 +1839,7 @@ bool kiemTraSinhVienThiLai(string maSinhVien){
 	getline(infile, maSinhVienTiepTucThi, '\0');
 	infile.close();
 	if(maSinhVien.compare(maSinhVienTiepTucThi) == 0) return true;
+	infile.close();
 	return false;
 }
 #endif
