@@ -32,6 +32,7 @@ void ThemLop(DSLop &dsLop);
 void DSLopHoc(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi);
 void SuaLop(Lop &lop, DSLop dsLop);
 void DSSVCuaLop(Lop &lop, DSLop dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi);
+void giaoVienThi(DSMonHoc danhSachMonHoc, ptrDSCauHoi danhSachCauHoi);
 // create update delete SV
 //void ThongTinSV();
 void ThemSV(Lop &lop, DSLop dsLop);
@@ -238,7 +239,7 @@ void Login(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 	gotoTop:
 	InnerLayout();
-	string func[2] = {"LOP", "MON HOC"};
+	string func[3] = {"LOP", "MON HOC", "THI THU"};
 	int row = 4;
 	int x = 55;
 	//create banner
@@ -249,7 +250,7 @@ void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 	TextColor(192);
 	cout << func[0] << "\n";
 	TextColor(blue);
-	for(int i=1;i<2;i++){
+	for(int i=1;i<3;i++){
 		gotoxy(x,row + i);
 		cout  << func[i] << "\n";
 	}	
@@ -273,7 +274,7 @@ void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 				}
 				break;
 			case 80:
-			if(row<5){
+			if(row<6){
 					gotoxy(x,row);
 					TextColor(blue);
 					cout  << func[row -4] << "\n";
@@ -294,7 +295,9 @@ void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 					case 5:	//mon hoc
 						dsMonHoc = docDanhSachMonHoc();
 						DSMonHocUI(dsMonHoc, dsCauHoi, dsLop);
-						goto gotoTop;			
+						goto gotoTop;
+					case 6: // thi thu
+						giaoVienThi(dsMonHoc, dsCauHoi);			
 				}	
 				break;
 			case 27:
