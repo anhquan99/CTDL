@@ -297,7 +297,8 @@ void MainMenuGV(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 						DSMonHocUI(dsMonHoc, dsCauHoi, dsLop);
 						goto gotoTop;
 					case 6: // thi thu
-						giaoVienThi(dsMonHoc, dsCauHoi);			
+						giaoVienThi(dsMonHoc, dsCauHoi);
+						goto gotoTop;
 				}	
 				break;
 			case 27:
@@ -1998,97 +1999,148 @@ void thiTracNghiem(ptrsv &sinhVien, Lop* lop, DSMonHoc danhSachMonHoc, ptrDSCauH
 				for(i = 0; i < danhSachMonHoc.index; i++){
 					gotoxy(40,i+8);
 					cout << string(80, ' ');
-				}			
+				}
+				gotoxy(40,7);
+				cout << string(100, ' ');
+				gotoxy(40,7);
+				cout << "HAY NHAP NHUNG THONG TIN BEN DUOI DE TIEN HANH THI!!!";			
 				break;
 			}
 		}
 		else if( input == 27){
 			return;
 		}
-//		cin >> maMonHoc;
-//		soLuongCauHoiCuaMotMon = timKiemCauHoiTheoMaMonHocInt(maMonHoc, danhSachCauHoi) ;
-//		viTriMonHoc = timKiemMonHocTheoMaMonHoc(maMonHoc);
-//		if(viTriMonHoc == -1){
-//			gotoxy(40, i+9);
-//			cout << "Ma mon hoc khong chinh xac! Moi nhap lai: ";
-//			gotoxy(82, i+9);
-//			cout << string(20, ' ');
-//			gotoxy(82, i+9);
-//		}else if(kiemTraMonSinhVienDaThi(sinhVien->MSV, maMonHoc) == true){
-//			gotoxy(40, i+9);
-//			cout << "Mon hoc nay da duoc thi roi! Moi nhap lai: ";
-//			gotoxy(82, i+9);
-//			cout << string(20, ' ');
-//			gotoxy(83, i+9);
-//		}else if(soLuongCauHoiCuaMotMon == 0){
-//			gotoxy(40, i+9);
-//			cout << "Mon hoc nay chua co cau hoi! Moi nhap lai: ";
-//			gotoxy(82, i+9);
-//			cout << string(20, ' ');
-//			gotoxy(83, i+9);
-//		}else if(viTriMonHoc != -1){
-//			gotoxy(40,5);
-//			cout << string(100, ' ');
-//			gotoxy(40,7);
-//			cout << string(100, ' ');
-//			for(i = 0; i < danhSachMonHoc.index; i++){
-//				gotoxy(40,i+8);
-//				cout << string(80, ' ');
-//			}
-//			gotoxy(40, i+9);
-//			cout << string(100, ' ');		
-//			break;
-//		}
 	};	
-//	diemThi.MAMH = maMonHoc;
+	
 	// cau hoi trac nghiem
-	Hour time = {0,0,0};
+	
+	char input;
 	int soCauHoi;
+	
+nhapPhut:
+	bool check = true;
+	Hour time = {0,0,0};
+	int doDaiChuoi = 0;
 	gotoxy(40, 9);
 	cout << "Nhap so luong phut muon thi: ";
-	cin >> time.minute;
-	while(time.minute <= 0 || time.minute >= 999){
-		gotoxy(79, 9);
-		cout << string(10, ' ');
-		gotoxy(40, 9);
-		cout << "Thoi gian phai > 0 va < 999! Nhap lai: ";
-		cin >> time.minute;	
+	while(1){
+		input = getch();
+		if(input == 27){
+			goto gotoTop;
+		}else if(input >= 48 && input <=57){ // 0->9
+			cout << input;
+			doDaiChuoi++; // do dai so int de phuc vu cho xoa
+			time.minute += input - '0';
+			time.minute *= 10; 
+		}else if(input == 8 && doDaiChuoi > 0){ // backspace
+			gotoxy(doDaiChuoi+68, 9);
+			cout << " ";	
+			doDaiChuoi--;
+			gotoxy(doDaiChuoi+69, 9);
+			if(time.minute != 0){
+				time.minute /= 10;
+				if(check && time.minute != 0){
+					time.minute /= 10;
+					check = false;
+				}
+			}
+		}else if(input == 13){ // enter
+			if(doDaiChuoi == 0){
+				string message = "Khong duoc bo trong. Moi Nhap lai!";
+				MessageBox(0,message.c_str(), "XAC NHAN",0);
+				goto nhapPhut;
+			}else if(time.minute == 0){
+				gotoxy(68, 9);
+				cout << string(50, ' ');
+				string message = "Thoi gian phai > 0. Moi Nhap lai!";
+				MessageBox(0,message.c_str(), "XAC NHAN",0);
+				goto nhapPhut;
+			} 
+			time.minute /= 10;
+			if(time.minute >= 300){
+				gotoxy(68, 9);
+				cout << string(50, ' ');
+				string message = "Thoi gian phai < 300. Moi Nhap lai!";
+				MessageBox(0,message.c_str(), "XAC NHAN",0);
+				goto nhapPhut;
+			}
+			break;
+		}
 	}
+//	gotoxy(40, 9);
+//	cout << "Nhap so luong phut muon thi: ";
+//	cin >> time.minute;
+//	while(time.minute <= 0 || time.minute >= 999){
+//		gotoxy(79, 9);
+//		cout << string(10, ' ');
+//		gotoxy(40, 9);
+//		cout << "Thoi gian phai > 0 va < 999! Nhap lai: ";
+//		cin >> time.minute;	
+//	}
 	if(time.minute >= 60){
 		time.hour = time.minute / 60;
 		time.minute = time.minute % 60;
 	}
+	
+nhapSoCauHoi:
+	soCauHoi = 0;
+	check = true;
+	doDaiChuoi = 0;
 	gotoxy(40, 10);
-	cout << "Nhap so cau hoi muon thi: ";
-nhapSoCauHoi:	
-	bool checkSoCauHoi = cin >> soCauHoi;
-	// lay danh sach cau hoi
-	if(checkSoCauHoi == false){
-		cin.clear(); //clear bad input flag
-	    cin.ignore(numeric_limits<streamsize>::max(), '\n'); //discard input
-	    string message = "So cau hoi phai la so nguyen duong";
-		MessageBox(0,message.c_str(), "XAC NHAN",0);
-		goto gotoTop;
-	}else if(soCauHoi <= 0){
-		string message = "So luong cau hoi phai lon hon 0";
-		MessageBox(0,message.c_str(), "XAC NHAN",0);
-		goto gotoTop;
-	}else if(soLuongCauHoiCuaMotMon < soCauHoi){
-		string message = "So luong cau hoi hien co san: " + to_string(soLuongCauHoiCuaMotMon);
-		MessageBox(0,message.c_str(), "XAC NHAN",0);
-//		gotoxy(40, 12);
-//		cout << "So luong cau hoi hien co san: " << soLuongCauHoiCuaMotMon;
-//		gotoxy(40, 10);
-//		cout << "Nhap lai so cau hoi muon thi:";
-		goto gotoTop;
-	}else{
-		gotoxy(40, 10);
-		cout << string(100, ' ');
-		gotoxy(40, 12);
-		cout << string(100, ' ');
-		gotoxy(40, 9);
-		cout << string(100, ' ');
+	cout << "Nhap so cau hoi muon thi: ";	
+	while(1){
+		input = getch();
+		if(input == 27){
+			goto gotoTop;
+		}else if(input >= 48 && input <=57){ // 0->9
+			cout << input;
+			doDaiChuoi++; // do dai so int de phuc vu cho xoa
+			soCauHoi += input - '0';
+			soCauHoi *= 10;
+		}else if(input == 8 && doDaiChuoi > 0){ // backspace
+			gotoxy(doDaiChuoi+65, 10);
+			cout << " ";	
+			doDaiChuoi--;
+			gotoxy(doDaiChuoi+66, 10);
+			if(soCauHoi != 0){
+				soCauHoi /= 10;
+				if(check && soCauHoi != 0){
+					soCauHoi /= 10;
+					check = false;
+				}
+			}
+			
+		}else if(input == 13){ // enter
+			if(doDaiChuoi == 0){
+				string message = "Khong duoc bo trong. Moi Nhap lai!";
+				MessageBox(0,message.c_str(), "XAC NHAN",0);
+				goto nhapSoCauHoi;
+			}else if(soCauHoi == 0){
+				gotoxy(66, 10);
+				cout << string(50, ' ');
+				string message = "So luong cau hoi phai > 0. Moi Nhap lai!";
+				MessageBox(0,message.c_str(), "XAC NHAN",0);
+				goto nhapSoCauHoi;
+			}
+			soCauHoi /= 10;
+			if(soLuongCauHoiCuaMotMon < soCauHoi){
+				gotoxy(66, 10);
+				cout << string(50, ' ');
+				string message = "So luong cau hoi hien co san: " + to_string(soLuongCauHoiCuaMotMon);
+				MessageBox(0,message.c_str(), "XAC NHAN",0);
+				goto nhapSoCauHoi;
+			}else{
+				gotoxy(40, 10);
+				cout << string(100, ' ');
+				gotoxy(40, 12);
+				cout << string(100, ' ');
+				gotoxy(40, 9);
+				cout << string(100, ' ');
+				break;
+			}
+		}
 	}
+	// lay danh sach cau hoi
 	CauHoi mangCauHoi[soCauHoi];
 	layNgauNhienCauHoi(mangCauHoi, soCauHoi, maMonHoc, soLuongCauHoiCuaMotMon, danhSachCauHoi);
 	
@@ -2230,6 +2282,8 @@ nhapSoCauHoi:
 	//luu diem cua sinh vien vao file
 	luuDiem(diemThi, sinhVien->MSV);
 	cleanContenAboutInterrupt();
+	gotoxy(40,30);
+	cout << "---NHAN PHIM BAT KI DE QUAY VE MAN HINH DANG NHAP---";
 	getch();
 }
 
@@ -2393,8 +2447,9 @@ void tiepTucThi(DSLop dslop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi, Lop* lop){
 	//luu diem cua sinh vien vao file
 	luuDiem(diemThi, sinhVien->MSV);
 	cleanContenAboutInterrupt();
+	gotoxy(40,30);
+	cout << "---NHAN PHIM BAT KI DE QUAY VE MAN HINH DANG NHAP---";
 	getch();
-
 }
 
 void giaoVienThi(DSMonHoc danhSachMonHoc, ptrDSCauHoi danhSachCauHoi){
@@ -2412,7 +2467,7 @@ void giaoVienThi(DSMonHoc danhSachMonHoc, ptrDSCauHoi danhSachCauHoi){
 	gotoxy(40,7);
 	cout << "Ma Mon Hoc  ";
 	gotoxy(60,7);
-	cout << "Ten Mon Hoc";
+	cout << "Ten Mon Hoc ";
 	int row = 8;
 	for(i = 0; i < danhSachMonHoc.index; i++){
 		if(i == 0){
@@ -2483,53 +2538,134 @@ void giaoVienThi(DSMonHoc danhSachMonHoc, ptrDSCauHoi danhSachCauHoi){
 		}
 	};	
 	// cau hoi trac nghiem
-	Hour time = {0,0,0};
+	
+	char input;
 	int soCauHoi;
+	
+nhapPhut:
+	bool check = true;
+	Hour time = {0,0,0};
+	int doDaiChuoi = 0;
 	gotoxy(40, 9);
 	cout << "Nhap so luong phut muon thi: ";
-	cin >> time.minute;
-	while(time.minute <= 0 || time.minute >= 999){
-		gotoxy(79, 9);
-		cout << string(10, ' ');
-		gotoxy(40, 9);
-		cout << "Thoi gian phai > 0 va < 999! Nhap lai: ";
-		cin >> time.minute;	
+	while(1){
+		input = getch();
+		if(input == 27){
+			goto gotoTop;
+		}else if(input >= 48 && input <=57){ // 0->9
+			cout << input;
+			doDaiChuoi++; // do dai so int de phuc vu cho xoa
+			time.minute += input - '0';
+			time.minute *= 10; 
+		}else if(input == 8 && doDaiChuoi > 0){ // backspace
+			gotoxy(doDaiChuoi+68, 9);
+			cout << " ";	
+			doDaiChuoi--;
+			gotoxy(doDaiChuoi+69, 9);
+			if(time.minute != 0){
+				time.minute /= 10;
+				if(check && time.minute != 0){
+					time.minute /= 10;
+					check = false;
+				}
+			}
+		}else if(input == 13){ // enter
+			if(doDaiChuoi == 0){
+				string message = "Khong duoc bo trong. Moi Nhap lai!";
+				MessageBox(0,message.c_str(), "XAC NHAN",0);
+				goto nhapPhut;
+			}else if(time.minute == 0){
+				gotoxy(68, 9);
+				cout << string(50, ' ');
+				string message = "Thoi gian phai > 0. Moi Nhap lai!";
+				MessageBox(0,message.c_str(), "XAC NHAN",0);
+				goto nhapPhut;
+			} 
+			time.minute /= 10;
+			if(time.minute >= 300){
+				gotoxy(68, 9);
+				cout << string(50, ' ');
+				string message = "Thoi gian phai < 300. Moi Nhap lai!";
+				MessageBox(0,message.c_str(), "XAC NHAN",0);
+				goto nhapPhut;
+			}
+			break;
+		}
 	}
+//	gotoxy(40, 9);
+//	cout << "Nhap so luong phut muon thi: ";
+//	cin >> time.minute;
+//	while(time.minute <= 0 || time.minute >= 999){
+//		gotoxy(79, 9);
+//		cout << string(10, ' ');
+//		gotoxy(40, 9);
+//		cout << "Thoi gian phai > 0 va < 999! Nhap lai: ";
+//		cin >> time.minute;	
+//	}
 	if(time.minute >= 60){
 		time.hour = time.minute / 60;
 		time.minute = time.minute % 60;
 	}
+	
+nhapSoCauHoi:
+	soCauHoi = 0;
+	check = true;
+	doDaiChuoi = 0;
 	gotoxy(40, 10);
-	cout << "Nhap so cau hoi muon thi: ";
-nhapSoCauHoi:	
-	bool checkSoCauHoi = cin >> soCauHoi;
-	// lay danh sach cau hoi
-	if(checkSoCauHoi == false){
-		cin.clear(); //clear bad input flag
-	    cin.ignore(numeric_limits<streamsize>::max(), '\n'); //discard input
-	    string message = "So cau hoi phai la so nguyen duong";
-		MessageBox(0,message.c_str(), "XAC NHAN",0);
-		goto gotoTop;
-	}else if(soCauHoi <= 0){
-		string message = "So luong cau hoi phai lon hon 0";
-		MessageBox(0,message.c_str(), "XAC NHAN",0);
-		goto gotoTop;
-	}else if(soLuongCauHoiCuaMotMon < soCauHoi){
-		string message = "So luong cau hoi hien co san: " + to_string(soLuongCauHoiCuaMotMon);
-		MessageBox(0,message.c_str(), "XAC NHAN",0);
-//		gotoxy(40, 12);
-//		cout << "So luong cau hoi hien co san: " << soLuongCauHoiCuaMotMon;
-//		gotoxy(40, 10);
-//		cout << "Nhap lai so cau hoi muon thi:";
-		goto gotoTop;
-	}else{
-		gotoxy(40, 10);
-		cout << string(100, ' ');
-		gotoxy(40, 12);
-		cout << string(100, ' ');
-		gotoxy(40, 9);
-		cout << string(100, ' ');
+	cout << "Nhap so cau hoi muon thi: ";	
+	while(1){
+		input = getch();
+		if(input == 27){
+			goto gotoTop;
+		}else if(input >= 48 && input <=57){ // 0->9
+			cout << input;
+			doDaiChuoi++; // do dai so int de phuc vu cho xoa
+			soCauHoi += input - '0';
+			soCauHoi *= 10;
+		}else if(input == 8 && doDaiChuoi > 0){ // backspace
+			gotoxy(doDaiChuoi+65, 10);
+			cout << " ";	
+			doDaiChuoi--;
+			gotoxy(doDaiChuoi+66, 10);
+			if(soCauHoi != 0){
+				soCauHoi /= 10;
+				if(check && soCauHoi != 0){
+					soCauHoi /= 10;
+					check = false;
+				}
+			}
+			
+		}else if(input == 13){ // enter
+			if(doDaiChuoi == 0){
+				string message = "Khong duoc bo trong. Moi Nhap lai!";
+				MessageBox(0,message.c_str(), "XAC NHAN",0);
+				goto nhapSoCauHoi;
+			}else if(soCauHoi == 0){
+				gotoxy(66, 10);
+				cout << string(50, ' ');
+				string message = "So luong cau hoi phai > 0. Moi Nhap lai!";
+				MessageBox(0,message.c_str(), "XAC NHAN",0);
+				goto nhapSoCauHoi;
+			}
+			soCauHoi /= 10;
+			if(soLuongCauHoiCuaMotMon < soCauHoi){
+				gotoxy(66, 10);
+				cout << string(50, ' ');
+				string message = "So luong cau hoi hien co san: " + to_string(soLuongCauHoiCuaMotMon);
+				MessageBox(0,message.c_str(), "XAC NHAN",0);
+				goto nhapSoCauHoi;
+			}else{
+				gotoxy(40, 10);
+				cout << string(100, ' ');
+				gotoxy(40, 12);
+				cout << string(100, ' ');
+				gotoxy(40, 9);
+				cout << string(100, ' ');
+				break;
+			}
+		}
 	}
+	
 	CauHoi mangCauHoi[soCauHoi];
 	layNgauNhienCauHoi(mangCauHoi, soCauHoi, maMonHoc, soLuongCauHoiCuaMotMon, danhSachCauHoi);
 	
@@ -2657,6 +2793,8 @@ nhapSoCauHoi:
 	int soCauDung = tinhDiem(diemThi.DSCauHoi, diemThi.DapAn, soCauHoi);
 	gotoxy(40,28);
 	cout << "Diem cua ban la: " << soCauDung*soDiemCuaMotCau;
+	gotoxy(40,30);
+	cout << "---NHAN PHIM BAT KI DE QUAY VE MAN HINH DANG NHAP---";
 	getch();
 }
 #endif
