@@ -2044,6 +2044,8 @@ nhapPhut:
 					check = false;
 				}
 			}
+//			string message = "Thoi gian phai < 300. Moi Nhap lai!"+to_string(time.minute);
+//			MessageBox(0,message.c_str(), "XAC NHAN",0);
 		}else if(input == 13){ // enter
 			if(doDaiChuoi == 0){
 				string message = "Khong duoc bo trong. Moi Nhap lai!";
@@ -2057,7 +2059,7 @@ nhapPhut:
 				goto nhapPhut;
 			} 
 			time.minute /= 10;
-			if(time.minute >= 300){
+			if(time.minute >= 300 || doDaiChuoi > 3){
 				gotoxy(68, 9);
 				cout << string(50, ' ');
 				string message = "Thoi gian phai < 300. Moi Nhap lai!";
@@ -2109,7 +2111,6 @@ nhapSoCauHoi:
 					check = false;
 				}
 			}
-			
 		}else if(input == 13){ // enter
 			if(doDaiChuoi == 0){
 				string message = "Khong duoc bo trong. Moi Nhap lai!";
@@ -2123,7 +2124,7 @@ nhapSoCauHoi:
 				goto nhapSoCauHoi;
 			}
 			soCauHoi /= 10;
-			if(soLuongCauHoiCuaMotMon < soCauHoi){
+			if((soLuongCauHoiCuaMotMon < soCauHoi) || doDaiChuoi > 3){
 				gotoxy(66, 10);
 				cout << string(50, ' ');
 				string message = "So luong cau hoi hien co san: " + to_string(soLuongCauHoiCuaMotMon);
@@ -2283,7 +2284,7 @@ nhapSoCauHoi:
 	luuDiem(diemThi, sinhVien->MSV);
 	cleanContenAboutInterrupt();
 	gotoxy(40,30);
-	cout << "---NHAN PHIM BAT KI DE QUAY VE MAN HINH DANG NHAP---";
+	cout << "---NHAN PHIM BAT KI DE QUAY VE ---";
 	getch();
 }
 
@@ -2529,7 +2530,11 @@ void giaoVienThi(DSMonHoc danhSachMonHoc, ptrDSCauHoi danhSachCauHoi){
 				for(i = 0; i < danhSachMonHoc.index; i++){
 					gotoxy(40,i+8);
 					cout << string(80, ' ');
-				}			
+				}	
+				gotoxy(40,7);
+				cout << string(100, ' ');
+				gotoxy(40,7);
+				cout << "HAY NHAP NHUNG THONG TIN BEN DUOI DE TIEN HANH THI!!!";		
 				break;
 			}
 		}
@@ -2582,7 +2587,7 @@ nhapPhut:
 				goto nhapPhut;
 			} 
 			time.minute /= 10;
-			if(time.minute >= 300){
+			if(time.minute >= 300 || doDaiChuoi > 3){
 				gotoxy(68, 9);
 				cout << string(50, ' ');
 				string message = "Thoi gian phai < 300. Moi Nhap lai!";
@@ -2648,7 +2653,7 @@ nhapSoCauHoi:
 				goto nhapSoCauHoi;
 			}
 			soCauHoi /= 10;
-			if(soLuongCauHoiCuaMotMon < soCauHoi){
+			if(soLuongCauHoiCuaMotMon < soCauHoi || doDaiChuoi > 3){
 				gotoxy(66, 10);
 				cout << string(50, ' ');
 				string message = "So luong cau hoi hien co san: " + to_string(soLuongCauHoiCuaMotMon);
@@ -2794,7 +2799,7 @@ nhapSoCauHoi:
 	gotoxy(40,28);
 	cout << "Diem cua ban la: " << soCauDung*soDiemCuaMotCau;
 	gotoxy(40,30);
-	cout << "---NHAN PHIM BAT KI DE QUAY VE MAN HINH DANG NHAP---";
+	cout << "--- NHAN PHIM BAT KI DE QUAY VE ---";
 	getch();
 }
 #endif
