@@ -460,7 +460,7 @@ void DSLopHoc(DSLop &dsLop, DSMonHoc dsMonHoc, ptrDSCauHoi dsCauHoi){
 		else if( input == 27){
 			return;
 		}
-		else{ // input char 
+		else if(row == 4){ // input char 
 			if(((input>=48&&input<=57)||(input == 45)) && nk.length() < 9){
 					gotoxy( x + col+ nk.length() + 1,row);
 					char ch = (char) input;
@@ -1564,8 +1564,8 @@ void SuaCauHoi(ptrDSCauHoi &ptrCauHoi){
 			MessageBeep(MB_ICONWARNING);
 			MessageBox(0,flag.c_str(),"THONG BAO",0);	
 		}
-		else if( input == 8 ){ //backspace
-			if( inputCauHoi[row-4].length() > 0 && row != 9){
+		else if( input == 8 && row != 9){ //backspace
+			if( inputCauHoi[row-4].length() > 0){
 				gotoxy( x+ col[row - 4]+ inputCauHoi[row - 4].length(),row);
 				printf(" ");
 				inputCauHoi[row - 4].pop_back();
@@ -1583,8 +1583,8 @@ void SuaCauHoi(ptrDSCauHoi &ptrCauHoi){
 					printf("%c",ch);
 					inputCauHoi[row-4].push_back(ch);
 			}
-			if((input >= 97 && input <= 100)  && inputCauHoi[row - 4].length() < 1 && row == 9){
-					gotoxy( x + col[row-4]+inputCauHoi[row - 4].length() + 1,row);
+			if((input >= 97 && input <= 100) && row == 9){
+					gotoxy( x + col[row-4]+ 1,row);
 					char ch = (char) input;
 					ch = toupper(ch);
 					printf("%c",ch);
